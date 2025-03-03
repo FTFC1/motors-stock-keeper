@@ -1,51 +1,36 @@
-
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
 import { VehicleStatus } from '@/types';
-import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 interface StatusBadgeProps {
   status: VehicleStatus;
-  size?: 'sm' | 'md';
-  children?: ReactNode;
+  count?: number;
+  className?: string;
 }
 
-export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps) {
-  const baseClasses = "inline-flex items-center rounded-full font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
-  
-  // Using more vibrant, consistent badge colors with the specified values
-  const statusClasses = {
-    available: "bg-[#34C759]",
-    display: "bg-[#3b82f6]",
-    transit: "bg-[#FF9500]",
-    sold: "bg-[#6366f1]",
-    reserved: "bg-[#8b5cf6]",
-    unavailable: "bg-[#ef4444]",
-  };
-  
-  const sizeClasses = {
-    sm: "text-xs px-8 py-4 rounded-[16px]",
-    md: "text-xs px-8 py-4 rounded-[16px]"
-  };
-  
-  const statusLabels = {
-    available: "Available",
-    display: "Display",
-    transit: "In Transit",
-    sold: "Sold",
-    reserved: "Reserved",
-    unavailable: "Unavailable",
-  };
+const statusColors: Record<VehicleStatus, { bg: string; text: string }> = {
+  available: { bg: 'bg-green-500/20', text: 'text-green-600' },
+  display: { bg: 'bg-blue-500/20', text: 'text-blue-600' },
+  transit: { bg: 'bg-orange-500/20', text: 'text-orange-600' },
+  sold: { bg: 'bg-purple-500/20', text: 'text-purple-600' },
+  reserved: { bg: 'bg-yellow-500/20', text: 'text-yellow-600' },
+  unavailable: { bg: 'bg-red-500/20', text: 'text-red-600' }
+};
+
+export function StatusBadge({ status, count, className }: StatusBadgeProps) {
+  const { bg, text } = statusColors[status];
   
   return (
-    <span className={cn(baseClasses, statusClasses[status], sizeClasses[size])}>
-      <span className={cn("mr-1.5 h-2 w-2 rounded-full", "bg-white")} />
-      {children ? (
-        <>
-          {statusLabels[status]}: {children}
-        </>
-      ) : (
-        statusLabels[status]
+    <Badge
+      variant="outline"
+      className={cn(
+        'capitalize font-medium border-0',
+        bg,
+        text,
+        className
       )}
-    </span>
+    >
+      {status}{count !== undefined && `: ${count}`}
+    </Badge>
   );
 }

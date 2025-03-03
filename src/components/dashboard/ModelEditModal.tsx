@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -21,62 +20,40 @@ import { Save, X } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InfoIcon } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
 interface ModelEditModalProps {
   isOpen: boolean;
   onClose: () => void;
+  groupId: string;
   brand: string;
   model: string;
   trim: string;
   fuelType: string;
-  onSave: (brand: string, model: string, trim: string, fuelType: string) => void;
+  onUpdate: (groupId: string, brand: string, model: string, trim: string, fuelType: string) => void;
 }
 
-export function ModelEditModal({ 
-  isOpen, 
-  onClose, 
-  brand, 
-  model, 
-  trim, 
-  fuelType, 
-  onSave 
+export function ModelEditModal({
+  isOpen,
+  onClose,
+  groupId,
+  brand: initialBrand,
+  model: initialModel,
+  trim: initialTrim,
+  fuelType: initialFuelType,
+  onUpdate,
 }: ModelEditModalProps) {
   const isMobile = useMobile();
   
-  const [formData, setFormData] = useState({
-    brand,
-    model,
-    trim,
-    fuelType,
-  });
-
-  // Reset form data when modal is opened with a new model
-  React.useEffect(() => {
-    if (isOpen) {
-      setFormData({
-        brand,
-        model,
-        trim,
-        fuelType,
-      });
-    }
-  }, [isOpen, brand, model, trim, fuelType]);
-
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  const [brand, setBrand] = useState(initialBrand);
+  const [model, setModel] = useState(initialModel);
+  const [trim, setTrim] = useState(initialTrim);
+  const [fuelType, setFuelType] = useState(initialFuelType);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(
-      formData.brand,
-      formData.model,
-      formData.trim,
-      formData.fuelType
-    );
+    onUpdate(groupId, brand, model, trim, fuelType);
+    onClose();
   };
 
   return (
@@ -100,43 +77,43 @@ export function ModelEditModal({
             
             <div className="grid grid-cols-1 gap-6">
               <div className="space-y-2">
-                <label htmlFor="brand" className="text-[14px] font-medium">Brand</label>
+                <Label htmlFor="brand">Brand</Label>
                 <Input
                   id="brand"
-                  value={formData.brand}
-                  onChange={(e) => handleChange('brand', e.target.value)}
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
                   className="min-h-[48px]"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="model" className="text-[14px] font-medium">Model</label>
+                <Label htmlFor="model">Model</Label>
                 <Input
                   id="model"
-                  value={formData.model}
-                  onChange={(e) => handleChange('model', e.target.value)}
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
                   className="min-h-[48px]"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="trim" className="text-[14px] font-medium">Trim</label>
+                <Label htmlFor="trim">Trim</Label>
                 <Input
                   id="trim"
-                  value={formData.trim}
-                  onChange={(e) => handleChange('trim', e.target.value)}
+                  value={trim}
+                  onChange={(e) => setTrim(e.target.value)}
                   className="min-h-[48px]"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="fuelType" className="text-[14px] font-medium">Fuel Type</label>
+                <Label htmlFor="fuelType">Fuel Type</Label>
                 <Select
-                  value={formData.fuelType}
-                  onValueChange={(value) => handleChange('fuelType', value)}
+                  value={fuelType}
+                  onValueChange={(value) => setFuelType(value)}
                 >
                   <SelectTrigger id="fuelType" className="min-h-[48px]">
                     <SelectValue placeholder="Select fuel type" />

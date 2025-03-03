@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -19,47 +18,42 @@ import {
 } from '@/components/ui/select';
 import { Save, X } from 'lucide-react';
 import { useMobile } from '@/hooks/use-mobile';
-import { Vehicle, VehicleStatus } from '@/types';
+import { Vehicle, VehicleStatus, VehicleUnit } from '@/types';
+import { Label } from '@/components/ui/label';
 
 interface UnitEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  vehicle: Vehicle | null;
-  onSave: (updatedVehicle: Vehicle) => void;
+  unit: VehicleUnit;
+  brand: string;
+  model: string;
+  trim: string;
+  fuelType: string;
+  onUpdate: (unit: VehicleUnit) => void;
 }
 
-export function UnitEditModal({ 
-  isOpen, 
-  onClose, 
-  vehicle, 
-  onSave 
+export function UnitEditModal({
+  isOpen,
+  onClose,
+  unit,
+  brand,
+  model,
+  trim,
+  fuelType,
+  onUpdate,
 }: UnitEditModalProps) {
   const isMobile = useMobile();
   
-  const [formData, setFormData] = useState<Vehicle | null>(null);
+  const [status, setStatus] = useState<VehicleStatus>(unit.status);
   
-  // Reset form data when modal is opened with a new vehicle
-  React.useEffect(() => {
-    if (vehicle) {
-      setFormData({ ...vehicle });
-    }
-  }, [vehicle]);
-
-  if (!formData) return null;
-
-  const handleChange = (field: keyof Vehicle, value: string | number | VehicleStatus) => {
-    setFormData(prev => {
-      if (!prev) return prev;
-      return { ...prev, [field]: value };
-    });
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData) return;
-    
-    onSave(formData);
+    onUpdate({
+      ...unit,
+      status,
+      lastUpdated: new Date().toISOString()
+    });
+    onClose();
   };
 
   return (
@@ -67,50 +61,38 @@ export function UnitEditModal({
       <DialogContent className={`sm:max-w-md ${isMobile ? 'w-[100vw] h-[100vh]' : ''}`}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Vehicle Unit</DialogTitle>
-            <DialogDescription>
-              ID: {formData.id}
-            </DialogDescription>
+            <DialogTitle>Edit Unit Status</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-4">
+              <div>
+                <Label className="font-medium">Vehicle Details</Label>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {brand} {model} - {trim} • {fuelType}
+                </p>
+              </div>
+              
+              <div>
+                <Label className="font-medium">Unit Number</Label>
+                <p className="text-sm text-muted-foreground mt-1">#{unit.unitNumber}</p>
+              </div>
+              
               <div className="space-y-2">
-                <label htmlFor="status" className="text-sm font-medium">Status</label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: VehicleStatus) => handleChange('status', value)}
-                >
-                  <SelectTrigger id="status" className="min-h-[48px]">
+                <Label htmlFor="status">Status</Label>
+                <Select value={status} onValueChange={(value) => setStatus(value as VehicleStatus)}>
+                  <SelectTrigger id="status">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="available">Available</SelectItem>
-                    <SelectItem value="reserved">Reserved</SelectItem>
-                    <SelectItem value="transit">In Transit</SelectItem>
-                    <SelectItem value="unavailable">Unavailable</SelectItem>
                     <SelectItem value="display">Display</SelectItem>
+                    <SelectItem value="transit">In Transit</SelectItem>
                     <SelectItem value="sold">Sold</SelectItem>
+                    <SelectItem value="reserved">Reserved</SelectItem>
+                    <SelectItem value="unavailable">Unavailable</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="stockLevel" className="text-sm font-medium">Stock Level</label>
-                <Input
-                  id="stockLevel"
-                  type="number"
-                  min="0"
-                  value={formData.stockLevel}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    if (!isNaN(val) && val >= 0) {
-                      handleChange('stockLevel', val);
-                    }
-                  }}
-                  className="min-h-[48px]"
-                  required
-                />
               </div>
             </div>
           </div>
@@ -122,7 +104,7 @@ export function UnitEditModal({
             </Button>
             <Button type="submit" className="min-h-[48px]">
               <Save className="mr-2 h-4 w-4" />
-              Save Unit
+              Save Changes
             </Button>
           </DialogFooter>
         </form>

@@ -2,12 +2,48 @@ import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/common/PageLayout';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { VehicleFilters } from '@/components/dashboard/VehicleFilters';
-import { FilterState, FilterOptions, Vehicle, SortOption, VehicleStatus } from '@/types';
+import { FilterState, FilterOptions, Vehicle, SortOption, VehicleStatus, VehicleUnit } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import { GroupedVehicleCard } from '@/components/dashboard/GroupedVehicleCard';
 import { useMobile } from '@/hooks/use-mobile';
 
-// Mock data - in a real app this would come from an API
+// Helper function to generate a random number of units for a vehicle
+const generateRandomUnits = (baseId: string, min: number = 1, max: number = 5): VehicleUnit[] => {
+  const numUnits = Math.floor(Math.random() * (max - min + 1)) + min;
+  const units: VehicleUnit[] = [];
+  const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'sold', 'reserved', 'unavailable'];
+  
+  for (let i = 1; i <= numUnits; i++) {
+    units.push({
+      id: `${baseId}-${String(i).padStart(3, '0')}`,
+      unitNumber: i,
+      status: statuses[Math.floor(Math.random() * statuses.length)],
+      lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+      updatedBy: 'admin@motors.com'
+    });
+  }
+  
+  return units;
+};
+
+// Helper function to calculate status counts
+const calculateStatusCounts = (units: VehicleUnit[]): Record<VehicleStatus, number> => {
+  const counts: Record<VehicleStatus, number> = {
+    available: 0,
+    display: 0,
+    transit: 0,
+    sold: 0,
+    reserved: 0,
+    unavailable: 0
+  };
+  
+  units.forEach(unit => {
+    counts[unit.status]++;
+  });
+  
+  return counts;
+};
+
 const generateMockVehicles = (): Vehicle[] => {
   const vehicleOptions = {
     Changan: {
@@ -69,19 +105,16 @@ const generateMockVehicles = (): Vehicle[] => {
   };
 
   const brands = Object.keys(vehicleOptions);
-  const fuelTypes = ['Petrol', 'Diesel', 'Electric', 'CNG'];
-  const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'sold', 'reserved', 'unavailable'];
-  
   const vehicles: Vehicle[] = [];
   
-  // Create at least one vehicle for each model and trim combination
+  // Create vehicles with individual units
   brands.forEach(brand => {
     const models = Object.keys(vehicleOptions[brand]);
     models.forEach(model => {
       const trims = vehicleOptions[brand][model];
       trims.forEach(trim => {
         // Determine appropriate fuel type based on the vehicle type
-        let appropriateFuelTypes = fuelTypes;
+        let appropriateFuelTypes = ['Petrol', 'Diesel', 'Electric', 'CNG'];
         if (model.includes('Electric')) {
           appropriateFuelTypes = ['Electric'];
         } else if (model.includes('CNG')) {
@@ -90,16 +123,16 @@ const generateMockVehicles = (): Vehicle[] => {
           appropriateFuelTypes = ['Diesel'];
         }
 
+        const fuelType = appropriateFuelTypes[Math.floor(Math.random() * appropriateFuelTypes.length)];
+        const baseId = `${brand}-${model}-${trim}`.toLowerCase().replace(/\s+/g, '-');
+        
         const vehicle: Vehicle = {
-          id: `${brand}-${model}-${trim}`.toLowerCase().replace(/\s+/g, '-'),
+          id: baseId,
           brand,
           model,
           trim,
-          fuelType: appropriateFuelTypes[Math.floor(Math.random() * appropriateFuelTypes.length)],
-          status: statuses[Math.floor(Math.random() * statuses.length)],
-          stockLevel: Math.floor(Math.random() * 10),
-          lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-          updatedBy: 'admin@motors.com'
+          fuelType,
+          units: generateRandomUnits(baseId)
         };
         
         vehicles.push(vehicle);
@@ -116,7 +149,9 @@ interface VehicleGroup {
   model: string;
   trim: string;
   fuelType: string;
-  vehicles: Vehicle[];
+  units: VehicleUnit[];
+  totalStock: number;
+  statusCounts: Record<VehicleStatus, number>;
 }
 
 const Dashboard = () => {
@@ -213,16 +248,26 @@ const Dashboard = () => {
     }
     
     if (filters.status) {
-      result = result.filter(vehicle => vehicle.status === filters.status);
+      result = result.filter(vehicle => 
+        vehicle.units.some(unit => unit.status === filters.status)
+      );
     }
     
     // Apply sorting
     switch (filters.sort) {
       case 'newest':
-        result.sort((a, b) => new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime());
+        result.sort((a, b) => {
+          const aLatest = Math.max(...a.units.map(u => new Date(u.lastUpdated).getTime()));
+          const bLatest = Math.max(...b.units.map(u => new Date(u.lastUpdated).getTime()));
+          return bLatest - aLatest;
+        });
         break;
       case 'oldest':
-        result.sort((a, b) => new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime());
+        result.sort((a, b) => {
+          const aOldest = Math.min(...a.units.map(u => new Date(u.lastUpdated).getTime()));
+          const bOldest = Math.min(...b.units.map(u => new Date(u.lastUpdated).getTime()));
+          return aOldest - bOldest;
+        });
         break;
       case 'az':
         result.sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
@@ -231,10 +276,10 @@ const Dashboard = () => {
         result.sort((a, b) => `${b.brand} ${b.model}`.localeCompare(`${a.brand} ${a.model}`));
         break;
       case 'quantity-asc':
-        result.sort((a, b) => a.stockLevel - b.stockLevel);
+        result.sort((a, b) => a.units.length - b.units.length);
         break;
       case 'quantity-desc':
-        result.sort((a, b) => b.stockLevel - a.stockLevel);
+        result.sort((a, b) => b.units.length - a.units.length);
         break;
     }
     
@@ -246,7 +291,7 @@ const Dashboard = () => {
     const groups: VehicleGroup[] = [];
     
     filteredVehicles.forEach(vehicle => {
-      const { brand, model, trim, fuelType } = vehicle;
+      const { brand, model, trim, fuelType, units } = vehicle;
       const groupKey = `${brand}-${model}-${trim}-${fuelType}`;
       
       const existingGroup = groups.find(group => 
@@ -257,7 +302,9 @@ const Dashboard = () => {
       );
       
       if (existingGroup) {
-        existingGroup.vehicles.push(vehicle);
+        existingGroup.units.push(...units);
+        existingGroup.totalStock = existingGroup.units.length;
+        existingGroup.statusCounts = calculateStatusCounts(existingGroup.units);
       } else {
         groups.push({
           id: groupKey,
@@ -265,12 +312,13 @@ const Dashboard = () => {
           model,
           trim,
           fuelType,
-          vehicles: [vehicle]
+          units,
+          totalStock: units.length,
+          statusCounts: calculateStatusCounts(units)
         });
       }
     });
     
-    // Sort groups by brand and model
     return groups.sort((a, b) => {
       if (a.brand !== b.brand) {
         return a.brand.localeCompare(b.brand);
@@ -307,7 +355,6 @@ const Dashboard = () => {
             model,
             trim,
             fuelType,
-            lastUpdated: new Date().toISOString()
           };
         }
         
@@ -321,22 +368,27 @@ const Dashboard = () => {
     });
   };
   
-  const handleUpdateVehicle = (updatedVehicle: Vehicle) => {
+  const handleUpdateVehicle = (updatedUnit: VehicleUnit) => {
     setVehicles(prevVehicles => {
       return prevVehicles.map(vehicle => {
-        if (vehicle.id === updatedVehicle.id) {
+        const hasUnit = vehicle.units.some(unit => unit.id === updatedUnit.id);
+        
+        if (hasUnit) {
           return {
-            ...updatedVehicle,
-            lastUpdated: new Date().toISOString()
+            ...vehicle,
+            units: vehicle.units.map(unit => 
+              unit.id === updatedUnit.id ? updatedUnit : unit
+            )
           };
         }
+        
         return vehicle;
       });
     });
     
     toast({
-      title: "Vehicle updated",
-      description: `${updatedVehicle.brand} ${updatedVehicle.model} unit has been updated.`,
+      title: "Unit updated",
+      description: `Unit #${updatedUnit.unitNumber} status has been updated.`,
     });
   };
   
@@ -412,7 +464,9 @@ const Dashboard = () => {
                 model={group.model}
                 trim={group.trim}
                 fuelType={group.fuelType}
-                vehicles={group.vehicles}
+                units={group.units}
+                totalStock={group.totalStock}
+                statusCounts={group.statusCounts}
                 onUpdateModel={handleUpdateModel}
                 onUpdateVehicle={handleUpdateVehicle}
               />
