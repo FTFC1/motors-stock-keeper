@@ -37,8 +37,8 @@ export function DashboardHeader({
   return (
     <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Vehicles Inventory</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-[18px] font-bold tracking-tight">Vehicles Inventory</h2>
+        <p className="text-[14px] text-muted-foreground mt-2">
           {isFiltered && typeof filteredCount === 'number'
             ? `Showing ${filteredCount} of ${totalCount} vehicles`
             : `${totalCount} vehicles in inventory`}
@@ -50,7 +50,7 @@ export function DashboardHeader({
           <Button
             variant="outline"
             onClick={onClearFilters}
-            className="h-9"
+            className="min-h-[48px]"
           >
             <FilterX className="mr-2 h-4 w-4" />
             Clear Filters
@@ -58,7 +58,7 @@ export function DashboardHeader({
         )}
         
         {isAdmin && (
-          <Button onClick={handleAddVehicle} className="h-9">
+          <Button onClick={handleAddVehicle} className="min-h-[48px]">
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Vehicle
           </Button>

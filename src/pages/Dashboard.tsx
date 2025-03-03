@@ -298,7 +298,7 @@ const Dashboard = () => {
           onClearFilters={handleResetFilters}
         />
         
-        <div className="pt-2">
+        <div className="pt-6">
           <VehicleFilters 
             filterOptions={filterOptions}
             filters={filters}
@@ -308,7 +308,7 @@ const Dashboard = () => {
         </div>
         
         {isLoading ? (
-          <div className="w-full py-8">
+          <div className="w-full py-8 mt-6">
             <div className="space-y-6">
               {Array(3).fill(0).map((_, i) => (
                 <div 
@@ -319,7 +319,7 @@ const Dashboard = () => {
             </div>
           </div>
         ) : groupedVehicles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="flex flex-col items-center justify-center py-16 text-center mt-6">
             <div className="rounded-full bg-muted p-4 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -343,7 +343,7 @@ const Dashboard = () => {
             </p>
           </div>
         ) : (
-          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className={`grid gap-6 mt-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
             {groupedVehicles.map((group) => (
               <GroupedVehicleCard
                 key={group.id}

@@ -10,21 +10,21 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps) {
-  const baseClasses = "inline-flex items-center rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+  const baseClasses = "inline-flex items-center rounded-full font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
   
-  // Using more muted, consistent badge colors
+  // Using more vibrant, consistent badge colors with the specified values
   const statusClasses = {
-    available: "bg-status-available/10 text-status-available border border-status-available/20",
-    display: "bg-status-display/10 text-status-display border border-status-display/20",
-    transit: "bg-status-transit/10 text-status-transit border border-status-transit/20",
-    sold: "bg-status-sold/10 text-status-sold border border-status-sold/20",
-    reserved: "bg-status-reserved/10 text-status-reserved border border-status-reserved/20",
-    unavailable: "bg-status-unavailable/10 text-status-unavailable border border-status-unavailable/20",
+    available: "bg-[#34C759]",
+    display: "bg-[#3b82f6]",
+    transit: "bg-[#FF9500]",
+    sold: "bg-[#6366f1]",
+    reserved: "bg-[#8b5cf6]",
+    unavailable: "bg-[#ef4444]",
   };
   
   const sizeClasses = {
-    sm: "text-xs px-2 py-0.5",
-    md: "text-xs px-2.5 py-0.5"
+    sm: "text-xs px-8 py-4 rounded-[16px]",
+    md: "text-xs px-8 py-4 rounded-[16px]"
   };
   
   const statusLabels = {
@@ -38,7 +38,7 @@ export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps)
   
   return (
     <span className={cn(baseClasses, statusClasses[status], sizeClasses[size])}>
-      <span className={cn("mr-1 h-1.5 w-1.5 rounded-full", `bg-status-${status}`)} />
+      <span className={cn("mr-1.5 h-2 w-2 rounded-full", "bg-white")} />
       {children ? (
         <>
           {statusLabels[status]}: {children}

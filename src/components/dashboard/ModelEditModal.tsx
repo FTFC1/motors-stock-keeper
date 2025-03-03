@@ -84,23 +84,23 @@ export function ModelEditModal({
       <DialogContent className={`sm:max-w-md ${isMobile ? 'w-[100vw] h-[100vh]' : ''}`}>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit Model</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-[18px] font-bold">Edit Model</DialogTitle>
+            <DialogDescription className="text-[14px] mt-2">
               Update model information
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
             <Alert className="bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30">
               <InfoIcon className="h-4 w-4" />
-              <AlertDescription>
+              <AlertDescription className="text-[14px]">
                 Changes will apply to all units of this model
               </AlertDescription>
             </Alert>
             
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-6">
               <div className="space-y-2">
-                <label htmlFor="brand" className="text-sm font-medium">Brand</label>
+                <label htmlFor="brand" className="text-[14px] font-medium">Brand</label>
                 <Input
                   id="brand"
                   value={formData.brand}
@@ -111,7 +111,7 @@ export function ModelEditModal({
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="model" className="text-sm font-medium">Model</label>
+                <label htmlFor="model" className="text-[14px] font-medium">Model</label>
                 <Input
                   id="model"
                   value={formData.model}
@@ -122,7 +122,7 @@ export function ModelEditModal({
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="trim" className="text-sm font-medium">Trim</label>
+                <label htmlFor="trim" className="text-[14px] font-medium">Trim</label>
                 <Input
                   id="trim"
                   value={formData.trim}
@@ -133,7 +133,7 @@ export function ModelEditModal({
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="fuelType" className="text-sm font-medium">Fuel Type</label>
+                <label htmlFor="fuelType" className="text-[14px] font-medium">Fuel Type</label>
                 <Select
                   value={formData.fuelType}
                   onValueChange={(value) => handleChange('fuelType', value)}
@@ -152,7 +152,7 @@ export function ModelEditModal({
             </div>
           </div>
           
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button variant="outline" type="button" onClick={onClose} className="min-h-[48px]">
               <X className="mr-2 h-4 w-4" />
               Cancel

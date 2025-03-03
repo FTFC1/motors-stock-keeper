@@ -75,19 +75,19 @@ export function GroupedVehicleCard({
   
   return (
     <Card className="mb-6 overflow-hidden shadow-sm border-muted/60">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="text-lg flex justify-between items-start">
           <div>
-            <span className="font-semibold text-xl">{brand} {model}</span>
-            <div className="text-sm font-normal text-muted-foreground mt-1">
+            <span className="font-semibold text-[18px]">{brand} {model}</span>
+            <div className="text-[14px] font-normal text-muted-foreground mt-2">
               {trim} • {fuelType}
             </div>
           </div>
           <div className="flex items-center space-x-1">
             <Button 
-              variant="outline" 
+              variant="default" 
               size="sm" 
-              className="h-12 min-w-[80px]"
+              className="min-h-[48px] min-w-[120px]"
               onClick={handleEditModel}
             >
               <Edit className="h-4 w-4 mr-2" />
@@ -97,15 +97,15 @@ export function GroupedVehicleCard({
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="pb-3 pt-1">
-        <div className="flex flex-col space-y-4">
+      <CardContent className="pb-4 pt-1">
+        <div className="flex flex-col space-y-8">
           <div className="flex justify-between items-center">
-            <div className="text-sm font-medium text-muted-foreground">Total Stock:</div>
+            <div className="text-[14px] font-medium text-muted-foreground">Total Stock:</div>
             <div className="font-bold text-base">{totalStock}</div>
           </div>
           
           <div className="flex flex-col space-y-2">
-            <div className="text-sm font-medium text-muted-foreground">Status Breakdown:</div>
+            <div className="text-[14px] font-medium text-muted-foreground">Status Breakdown:</div>
             <div className="flex flex-wrap gap-2">
               {Object.entries(statusCounts)
                 .filter(([_, count]) => count > 0) // Only show statuses with vehicles
@@ -149,7 +149,7 @@ export function GroupedVehicleCard({
         isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
       )}>
         <div className="border-t py-4 px-6 bg-muted/20">
-          <h4 className="font-medium mb-3 text-sm">Individual Units ({vehicles.length})</h4>
+          <h4 className="font-medium mb-4 text-[14px]">Individual Units ({vehicles.length})</h4>
           <div className="space-y-3">
             {vehicles.map((vehicle) => (
               <div 
@@ -163,7 +163,7 @@ export function GroupedVehicleCard({
                   <StatusBadge status={vehicle.status} size="sm" />
                 </div>
                 <Button
-                  variant="outline"
+                  variant="default"
                   size="sm"
                   className="min-h-[48px] min-w-[48px]"
                   onClick={() => handleEditUnit(vehicle)}
