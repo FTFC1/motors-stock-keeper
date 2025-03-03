@@ -1,11 +1,11 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/common/PageLayout';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { VehicleFilters } from '@/components/dashboard/VehicleFilters';
-import { VehicleTable } from '@/components/dashboard/VehicleTable';
 import { FilterState, FilterOptions, Vehicle, SortOption, VehicleStatus } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
+import { GroupedVehicleCard } from '@/components/dashboard/GroupedVehicleCard';
+import { useMobile } from '@/hooks/use-mobile';
 
 // Mock data - in a real app this would come from an API
 const generateMockVehicles = (): Vehicle[] => {
@@ -49,6 +49,15 @@ const generateMockVehicles = (): Vehicle[] => {
   return vehicles;
 };
 
+interface VehicleGroup {
+  id: string;
+  brand: string;
+  model: string;
+  trim: string;
+  fuelType: string;
+  vehicles: Vehicle[];
+}
+
 const Dashboard = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
@@ -70,6 +79,8 @@ const Dashboard = () => {
     status: '',
     sort: 'newest',
   });
+  
+  const isMobile = useMobile();
   
   // Initialize data - in a real app, this would fetch from an API
   useEffect(() => {
@@ -169,6 +180,44 @@ const Dashboard = () => {
     setFilteredVehicles(result);
   }, [vehicles, filters]);
   
+  // Group vehicles by shared attributes
+  const groupedVehicles = useMemo(() => {
+    const groups: VehicleGroup[] = [];
+    
+    filteredVehicles.forEach(vehicle => {
+      const { brand, model, trim, fuelType } = vehicle;
+      const groupKey = `${brand}-${model}-${trim}-${fuelType}`;
+      
+      const existingGroup = groups.find(group => 
+        group.brand === brand && 
+        group.model === model && 
+        group.trim === trim && 
+        group.fuelType === fuelType
+      );
+      
+      if (existingGroup) {
+        existingGroup.vehicles.push(vehicle);
+      } else {
+        groups.push({
+          id: groupKey,
+          brand,
+          model,
+          trim,
+          fuelType,
+          vehicles: [vehicle]
+        });
+      }
+    });
+    
+    // Sort groups by brand and model
+    return groups.sort((a, b) => {
+      if (a.brand !== b.brand) {
+        return a.brand.localeCompare(b.brand);
+      }
+      return a.model.localeCompare(b.model);
+    });
+  }, [filteredVehicles]);
+  
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
   };
@@ -182,6 +231,51 @@ const Dashboard = () => {
       fuelType: '',
       status: '',
       sort: 'newest',
+    });
+  };
+  
+  const handleUpdateModel = (groupId: string, brand: string, model: string, trim: string, fuelType: string) => {
+    setVehicles(prevVehicles => {
+      return prevVehicles.map(vehicle => {
+        const vehicleGroupId = `${vehicle.brand}-${vehicle.model}-${vehicle.trim}-${vehicle.fuelType}`;
+        
+        if (vehicleGroupId === groupId) {
+          return {
+            ...vehicle,
+            brand,
+            model,
+            trim,
+            fuelType,
+            lastUpdated: new Date().toISOString()
+          };
+        }
+        
+        return vehicle;
+      });
+    });
+    
+    toast({
+      title: "Model updated",
+      description: `${brand} ${model} has been updated successfully.`,
+    });
+  };
+  
+  const handleUpdateVehicle = (updatedVehicle: Vehicle) => {
+    setVehicles(prevVehicles => {
+      return prevVehicles.map(vehicle => {
+        if (vehicle.id === updatedVehicle.id) {
+          return {
+            ...updatedVehicle,
+            lastUpdated: new Date().toISOString()
+          };
+        }
+        return vehicle;
+      });
+    });
+    
+    toast({
+      title: "Vehicle updated",
+      description: `${updatedVehicle.brand} ${updatedVehicle.model} unit has been updated.`,
     });
   };
   
@@ -210,10 +304,58 @@ const Dashboard = () => {
           onResetFilters={handleResetFilters}
         />
         
-        <VehicleTable 
-          vehicles={filteredVehicles}
-          isLoading={isLoading}
-        />
+        {isLoading ? (
+          <div className="w-full py-6">
+            <div className="space-y-4">
+              {Array(3).fill(0).map((_, i) => (
+                <div 
+                  key={i} 
+                  className="w-full h-48 bg-muted/30 rounded-md animate-pulse" 
+                />
+              ))}
+            </div>
+          </div>
+        ) : groupedVehicles.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="rounded-full bg-muted p-3 mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6 text-muted-foreground"
+              >
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold">No Vehicles Available</h3>
+            <p className="text-muted-foreground text-sm max-w-sm mt-1">
+              Try adjusting your search or filter criteria to find what you're looking for.
+            </p>
+          </div>
+        ) : (
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+            {groupedVehicles.map((group) => (
+              <GroupedVehicleCard
+                key={group.id}
+                groupId={group.id}
+                brand={group.brand}
+                model={group.model}
+                trim={group.trim}
+                fuelType={group.fuelType}
+                vehicles={group.vehicles}
+                onUpdateModel={handleUpdateModel}
+                onUpdateVehicle={handleUpdateVehicle}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </PageLayout>
   );

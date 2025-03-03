@@ -1,0 +1,186 @@
+
+import React, { useState } from 'react';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { StatusBadge } from './StatusBadge';
+import { Vehicle, VehicleStatus } from '@/types';
+import { ChevronDown, ChevronUp, Edit } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ModelEditModal } from './ModelEditModal';
+import { UnitEditModal } from './UnitEditModal';
+
+interface GroupedVehicleCardProps {
+  groupId: string;
+  brand: string;
+  model: string;
+  trim: string;
+  fuelType: string;
+  vehicles: Vehicle[];
+  onUpdateModel: (groupId: string, brand: string, model: string, trim: string, fuelType: string) => void;
+  onUpdateVehicle: (vehicle: Vehicle) => void;
+}
+
+export function GroupedVehicleCard({
+  groupId,
+  brand,
+  model,
+  trim,
+  fuelType,
+  vehicles,
+  onUpdateModel,
+  onUpdateVehicle
+}: GroupedVehicleCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isModelModalOpen, setIsModelModalOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  
+  const totalStock = vehicles.reduce((acc, vehicle) => acc + vehicle.stockLevel, 0);
+  
+  // Count vehicles by status
+  const statusCounts = vehicles.reduce((acc: Record<VehicleStatus, number>, vehicle) => {
+    const status = vehicle.status;
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {} as Record<VehicleStatus, number>);
+  
+  const handleEditModel = () => {
+    setIsModelModalOpen(true);
+  };
+  
+  const handleEditUnit = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsUnitModalOpen(true);
+  };
+  
+  const handleSaveModel = (updatedBrand: string, updatedModel: string, updatedTrim: string, updatedFuelType: string) => {
+    onUpdateModel(groupId, updatedBrand, updatedModel, updatedTrim, updatedFuelType);
+    setIsModelModalOpen(false);
+  };
+  
+  const handleSaveUnit = (updatedVehicle: Vehicle) => {
+    onUpdateVehicle(updatedVehicle);
+    setIsUnitModalOpen(false);
+    setSelectedVehicle(null);
+  };
+  
+  return (
+    <Card className="mb-4 overflow-hidden">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg flex justify-between items-start">
+          <div>
+            <span className="font-semibold">{brand} {model}</span>
+            <div className="text-sm font-normal text-muted-foreground mt-1">
+              {trim} • {fuelType}
+            </div>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-9 min-w-[80px]"
+              onClick={handleEditModel}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Model
+            </Button>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className="pb-2">
+        <div className="flex flex-col space-y-2">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-muted-foreground">Total Stock:</div>
+            <div className="font-medium">{totalStock}</div>
+          </div>
+          
+          <div className="flex flex-col space-y-1">
+            <div className="text-sm text-muted-foreground">Status Breakdown:</div>
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(statusCounts).map(([status, count]) => (
+                <StatusBadge 
+                  key={status} 
+                  status={status as VehicleStatus} 
+                  size="sm"
+                >
+                  {count}
+                </StatusBadge>
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="flex justify-between items-center pt-1 pb-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-between min-h-[48px]"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? (
+            <>
+              <span>Collapse</span>
+              <ChevronUp className="h-4 w-4 ml-2" />
+            </>
+          ) : (
+            <>
+              <span>Expand</span>
+              <ChevronDown className="h-4 w-4 ml-2" />
+            </>
+          )}
+        </Button>
+      </CardFooter>
+      
+      <div className={cn(
+        "overflow-hidden transition-all duration-300",
+        isExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+      )}>
+        <div className="border-t py-3 px-6 bg-muted/20">
+          <h4 className="font-medium mb-2 text-sm">Individual Units</h4>
+          <div className="space-y-2">
+            {vehicles.map((vehicle) => (
+              <div 
+                key={vehicle.id} 
+                className="flex justify-between items-center p-2 rounded-md hover:bg-muted"
+              >
+                <div className="flex items-center">
+                  <div className="font-mono text-xs text-muted-foreground mr-3">
+                    {vehicle.id}
+                  </div>
+                  <StatusBadge status={vehicle.status} size="sm" />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="min-h-[48px] min-w-[48px]"
+                  onClick={() => handleEditUnit(vehicle)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      <ModelEditModal
+        isOpen={isModelModalOpen}
+        onClose={() => setIsModelModalOpen(false)}
+        brand={brand}
+        model={model}
+        trim={trim}
+        fuelType={fuelType}
+        onSave={handleSaveModel}
+      />
+      
+      <UnitEditModal
+        isOpen={isUnitModalOpen}
+        onClose={() => setIsUnitModalOpen(false)}
+        vehicle={selectedVehicle}
+        onSave={handleSaveUnit}
+      />
+    </Card>
+  );
+}

@@ -2,9 +2,13 @@
 import { useState, useEffect } from 'react';
 
 export function useMobile(breakpoint = 768): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false
+  );
   
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const checkViewport = () => {
       setIsMobile(window.innerWidth < breakpoint);
     };

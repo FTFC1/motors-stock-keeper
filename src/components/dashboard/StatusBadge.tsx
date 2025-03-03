@@ -1,13 +1,15 @@
 
 import { cn } from '@/lib/utils';
 import { VehicleStatus } from '@/types';
+import { ReactNode } from 'react';
 
 interface StatusBadgeProps {
   status: VehicleStatus;
   size?: 'sm' | 'md';
+  children?: ReactNode;
 }
 
-export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
+export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps) {
   const baseClasses = "inline-flex items-center rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
   
   const statusClasses = {
@@ -37,6 +39,7 @@ export function StatusBadge({ status, size = 'md' }: StatusBadgeProps) {
     <span className={cn(baseClasses, statusClasses[status], sizeClasses[size])}>
       <span className={cn("mr-1 h-1.5 w-1.5 rounded-full", `bg-status-${status}`)} />
       {statusLabels[status]}
+      {children ? <span className="ml-1.5 font-medium">{children}</span> : null}
     </span>
   );
 }
