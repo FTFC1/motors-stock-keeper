@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/common/PageLayout';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -289,7 +290,7 @@ const Dashboard = () => {
   
   return (
     <PageLayout>
-      <div className="container py-6 space-y-6 animate-fadeIn">
+      <div className="container py-8 space-y-8 animate-fadeIn">
         <DashboardHeader 
           totalCount={vehicles.length}
           filteredCount={filteredVehicles.length}
@@ -297,16 +298,18 @@ const Dashboard = () => {
           onClearFilters={handleResetFilters}
         />
         
-        <VehicleFilters 
-          filterOptions={filterOptions}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onResetFilters={handleResetFilters}
-        />
+        <div className="pt-2">
+          <VehicleFilters 
+            filterOptions={filterOptions}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onResetFilters={handleResetFilters}
+          />
+        </div>
         
         {isLoading ? (
-          <div className="w-full py-6">
-            <div className="space-y-4">
+          <div className="w-full py-8">
+            <div className="space-y-6">
               {Array(3).fill(0).map((_, i) => (
                 <div 
                   key={i} 
@@ -316,8 +319,8 @@ const Dashboard = () => {
             </div>
           </div>
         ) : groupedVehicles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="rounded-full bg-muted p-3 mb-4">
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-4 mb-5">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -328,19 +331,19 @@ const Dashboard = () => {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="h-6 w-6 text-muted-foreground"
+                className="h-8 w-8 text-muted-foreground"
               >
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
-            <h3 className="text-lg font-semibold">No Vehicles Available</h3>
-            <p className="text-muted-foreground text-sm max-w-sm mt-1">
+            <h3 className="text-xl font-semibold">No Vehicles Available</h3>
+            <p className="text-muted-foreground text-base max-w-sm mt-2">
               Try adjusting your search or filter criteria to find what you're looking for.
             </p>
           </div>
         ) : (
-          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
+          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
             {groupedVehicles.map((group) => (
               <GroupedVehicleCard
                 key={group.id}

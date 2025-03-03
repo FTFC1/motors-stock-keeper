@@ -12,6 +12,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps) {
   const baseClasses = "inline-flex items-center rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
   
+  // Using more muted, consistent badge colors
   const statusClasses = {
     available: "bg-status-available/10 text-status-available border border-status-available/20",
     display: "bg-status-display/10 text-status-display border border-status-display/20",
@@ -38,8 +39,13 @@ export function StatusBadge({ status, size = 'md', children }: StatusBadgeProps)
   return (
     <span className={cn(baseClasses, statusClasses[status], sizeClasses[size])}>
       <span className={cn("mr-1 h-1.5 w-1.5 rounded-full", `bg-status-${status}`)} />
-      {statusLabels[status]}
-      {children ? <span className="ml-1.5 font-medium">{children}</span> : null}
+      {children ? (
+        <>
+          {statusLabels[status]}: {children}
+        </>
+      ) : (
+        statusLabels[status]
+      )}
     </span>
   );
 }
