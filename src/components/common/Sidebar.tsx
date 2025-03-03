@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
@@ -9,33 +8,52 @@ import {
   Settings,
   FileText,
   Activity,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SidebarLinkProps {
   to: string;
   label: string;
   icon: React.ReactNode;
   isActive: boolean;
+  isCollapsed: boolean;
 }
 
-function SidebarLink({ to, label, icon, isActive }: SidebarLinkProps) {
+function SidebarLink({ to, label, icon, isActive, isCollapsed }: SidebarLinkProps) {
   return (
-    <Link
-      to={to}
-      className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-accent",
-        isActive ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground"
-      )}
-    >
-      {icon}
-      <span>{label}</span>
-    </Link>
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            to={to}
+            className={cn(
+              "flex items-center gap-3 rounded-md px-3 py-2 transition-all hover:bg-accent w-full",
+              isActive ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground",
+              isCollapsed && "justify-center px-2"
+            )}
+          >
+            {icon}
+            {!isCollapsed && <span>{label}</span>}
+          </Link>
+        </TooltipTrigger>
+        {isCollapsed && (
+          <TooltipContent side="right">
+            {label}
+          </TooltipContent>
+        )}
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
 export function Sidebar() {
   const location = useLocation();
   const { user } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   if (!user) return null;
   
@@ -91,8 +109,13 @@ export function Sidebar() {
   );
   
   return (
-    <div className="w-64 border-r h-[calc(100vh-4rem)] py-6 px-3 hidden md:block">
-      <div className="space-y-1">
+    <div 
+      className={cn(
+        "border-r h-[calc(100vh-4rem)] py-6 transition-all duration-300 hidden md:flex flex-col",
+        isCollapsed ? "w-[4.5rem]" : "w-64"
+      )}
+    >
+      <div className="space-y-1 flex-1 px-3">
         {filteredLinks.map((link) => (
           <SidebarLink
             key={link.to}
@@ -100,8 +123,23 @@ export function Sidebar() {
             label={link.label}
             icon={link.icon}
             isActive={link.isActive}
+            isCollapsed={isCollapsed}
           />
         ))}
+      </div>
+      <div className="border-t pt-4 px-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-full h-8"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronLeft className="h-4 w-4" />
+          )}
+        </Button>
       </div>
     </div>
   );
