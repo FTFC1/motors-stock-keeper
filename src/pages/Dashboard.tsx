@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/common/PageLayout';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -10,42 +9,103 @@ import { useMobile } from '@/hooks/use-mobile';
 
 // Mock data - in a real app this would come from an API
 const generateMockVehicles = (): Vehicle[] => {
-  const brands = ['BMW', 'Audi', 'Mercedes', 'Toyota', 'Honda', 'Ford', 'Tesla'];
-  const models = {
-    BMW: ['3 Series', '5 Series', 'X3', 'X5'],
-    Audi: ['A3', 'A4', 'Q5', 'Q7'],
-    Mercedes: ['C-Class', 'E-Class', 'GLC', 'S-Class'],
-    Toyota: ['Corolla', 'Camry', 'RAV4', 'Highlander'],
-    Honda: ['Civic', 'Accord', 'CR-V', 'Pilot'],
-    Ford: ['Focus', 'Mustang', 'Explorer', 'F-150'],
-    Tesla: ['Model 3', 'Model S', 'Model X', 'Model Y'],
+  const vehicleOptions = {
+    Changan: {
+      'Alsvin V3': ['Dynamic'],
+      'Eado Plus': ['Executive'],
+      'CS 15': ['Dynamic'],
+      'CS 35 Plus': ['Luxury', 'Luxury Pro'],
+      'CS 55': ['Luxury', 'Luxury Pro'],
+      'CS 75 Plus': ['Luxury Pro'],
+      'CS 85': ['Coupe'],
+      'CS 95 Plus': ['Plus'],
+      'UNI-T': ['Aventus', 'Black Edition', 'SVP'],
+      'UNI-K': ['Executive', 'Bespoke'],
+      'X7 Plus': ['Luxury Pro'],
+      'Hunter': ['Luxury', 'Luxury Pro', 'Executive'],
+      'Hunter Plus': ['Luxury Pro'],
+      'Star Truck': ['Single Cab'],
+      'Star 5': ['Cargo', 'Passenger'],
+      'G10': ['Passenger']
+    },
+    Maxus: {
+      'D90': ['Executive'],
+      'T60': ['Comfort', 'Comfort 4x4', 'Elite', 'Luxury 4x4'],
+      'C100': ['2.8 Ton'],
+      'C300': ['4.2 Ton']
+    },
+    ZNA: {
+      'Rich 6': ['Luxury trim']
+    },
+    KAMA: {
+      'D3': ['1.5T', '3T']
+    },
+    DFAC: {
+      'CAPTAIN W01': [
+        '1.5T Single Row - Flat Cargo',
+        '1.5T Single Row - Cargo Box',
+        '1.5T Double Row - Flat Cargo',
+        '1.5T Double Row - Cargo Box',
+        '12+2 Passenger Van - CNG'
+      ],
+      'CAPTAIN T': [
+        '2T Single Row - Flat Cargo',
+        '2.5T Single Row - Flat Cargo',
+        '2T Single Row - Cargo Box',
+        '2.5T Single Row - Cargo Box'
+      ]
+    },
+    HYUNDAI: {
+      'HX340SL': ['34T'],
+      'HL660L': ['17.3T'],
+      '30DE-7': ['3T'],
+      '30LE-7': ['3T'],
+      '50D-9SA': ['5T']
+    },
+    LOVOL: {
+      'FR220D': ['22T'],
+      'FL955F': ['16.6T']
+    }
   };
-  const trims = ['Base', 'Sport', 'Premium', 'Luxury', 'Limited'];
-  const fuelTypes = ['Petrol', 'Diesel', 'Hybrid', 'Electric'];
+
+  const brands = Object.keys(vehicleOptions);
+  const fuelTypes = ['Petrol', 'Diesel', 'Electric', 'CNG'];
   const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'sold', 'reserved', 'unavailable'];
   
   const vehicles: Vehicle[] = [];
   
-  for (let i = 1; i <= 50; i++) {
-    const brand = brands[Math.floor(Math.random() * brands.length)];
-    const model = models[brand as keyof typeof models][Math.floor(Math.random() * models[brand as keyof typeof models].length)];
-    const trim = trims[Math.floor(Math.random() * trims.length)];
-    const fuelType = fuelTypes[Math.floor(Math.random() * fuelTypes.length)];
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
-    const stockLevel = Math.floor(Math.random() * 20);
-    
-    vehicles.push({
-      id: `vehicle-${i}`,
-      brand,
-      model,
-      trim,
-      fuelType,
-      status,
-      stockLevel,
-      lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
-      updatedBy: 'admin@motors.com',
+  // Create at least one vehicle for each model and trim combination
+  brands.forEach(brand => {
+    const models = Object.keys(vehicleOptions[brand]);
+    models.forEach(model => {
+      const trims = vehicleOptions[brand][model];
+      trims.forEach(trim => {
+        // Determine appropriate fuel type based on the vehicle type
+        let appropriateFuelTypes = fuelTypes;
+        if (model.includes('Electric')) {
+          appropriateFuelTypes = ['Electric'];
+        } else if (model.includes('CNG')) {
+          appropriateFuelTypes = ['CNG'];
+        } else if (brand === 'HYUNDAI' || brand === 'LOVOL' || model.includes('Ton')) {
+          appropriateFuelTypes = ['Diesel'];
+        }
+
+        const vehicle: Vehicle = {
+          id: `${brand}-${model}-${trim}`.toLowerCase().replace(/\s+/g, '-'),
+          brand,
+          model,
+          trim,
+          fuelType: appropriateFuelTypes[Math.floor(Math.random() * appropriateFuelTypes.length)],
+          status: statuses[Math.floor(Math.random() * statuses.length)],
+          stockLevel: Math.floor(Math.random() * 10),
+          lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+          updatedBy: 'admin@motors.com'
+        };
+        
+        vehicles.push(vehicle);
+      });
     });
-  }
+  });
   
   return vehicles;
 };
