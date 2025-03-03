@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -12,8 +12,10 @@ import { StatusBadge } from './StatusBadge';
 import { Vehicle } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { Edit, Plus, Minus, CheckCircle } from 'lucide-react';
+import { Edit, Plus, Minus, CheckCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { VehicleCard } from './VehicleCard';
+import { VehicleDetailModal } from './VehicleDetailModal';
 
 interface VehicleTableProps {
   vehicles: Vehicle[];
@@ -27,6 +29,27 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
+  
+  // Check viewport size on mount and when window is resized
+  useEffect(() => {
+    const checkViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkViewport();
+    
+    // Add event listener
+    window.addEventListener('resize', checkViewport);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkViewport);
+    };
+  }, []);
   
   const handleEdit = (vehicle: Vehicle) => {
     setEditingId(vehicle.id);
@@ -53,6 +76,16 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
   
   const handleDecrement = () => {
     setEditValue((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleOpenDetailModal = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedVehicle(null);
   };
   
   if (isLoading) {
@@ -90,7 +123,7 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </div>
-        <h3 className="text-lg font-semibold">No vehicles found</h3>
+        <h3 className="text-lg font-semibold">No Vehicles Available</h3>
         <p className="text-muted-foreground text-sm max-w-sm mt-1">
           Try adjusting your search or filter criteria to find what you're looking for.
         </p>
@@ -98,6 +131,27 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
     );
   }
   
+  // Mobile layout - card view
+  if (isMobile) {
+    return (
+      <div className="space-y-4">
+        {vehicles.map((vehicle) => (
+          <VehicleCard 
+            key={vehicle.id}
+            vehicle={vehicle}
+            onClickMoreInfo={handleOpenDetailModal}
+          />
+        ))}
+        <VehicleDetailModal 
+          isOpen={isDetailModalOpen}
+          onClose={handleCloseDetailModal}
+          vehicle={selectedVehicle}
+        />
+      </div>
+    );
+  }
+  
+  // Desktop layout - table view
   return (
     <div className="border rounded-md">
       <Table>
@@ -183,21 +237,7 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
                         className="h-8 w-8"
                         onClick={handleCancel}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                        >
-                          <line x1="18" y1="6" x2="6" y2="18"></line>
-                          <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ) : (
