@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from './StatusBadge';
 import { Vehicle, VehicleStatus, VehicleUnit } from '@/types';
-import { ChevronDown, ChevronUp, Edit } from 'lucide-react';
+import { ChevronDown, ChevronUp, Edit, Plus, AlertCircle, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModelEditModal } from './ModelEditModal';
 import { UnitEditModal } from './UnitEditModal';
-import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AddUnitsForm } from './AddUnitsForm';
+import { BatchEditForm } from './BatchEditForm';
+import { InventorySheet } from './InventorySheet';
 
 interface GroupedVehicleCardProps {
   groupId: string;
@@ -20,6 +24,8 @@ interface GroupedVehicleCardProps {
   statusCounts: Record<VehicleStatus, number>;
   onUpdateModel: (groupId: string, brand: string, model: string, trim: string, fuelType: string) => void;
   onUpdateVehicle: (unit: VehicleUnit) => void;
+  onAddUnits: (color: string, quantity: number, status: VehicleStatus) => void;
+  onBatchUpdateStatus: (units: VehicleUnit[], newStatus: VehicleStatus) => void;
 }
 
 export function GroupedVehicleCard({
@@ -32,145 +38,163 @@ export function GroupedVehicleCard({
   totalStock,
   statusCounts,
   onUpdateModel,
-  onUpdateVehicle
+  onUpdateVehicle,
+  onAddUnits,
+  onBatchUpdateStatus
 }: GroupedVehicleCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isModelEditOpen, setIsModelEditOpen] = useState(false);
+  const [showModelEdit, setShowModelEdit] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<VehicleUnit | null>(null);
-  
+  const [showAddUnits, setShowAddUnits] = useState(false);
+  const [selectedConfig, setSelectedConfig] = useState<{
+    color: string;
+    units: VehicleUnit[];
+    status: VehicleStatus;
+  } | null>(null);
+  const [showInventory, setShowInventory] = useState(false);
+
+  // Helper function to group units by configuration (trim + color)
+  const groupByConfig = (units: VehicleUnit[]) => {
+    return units.reduce((acc, unit) => {
+      const config = `${unit.color}`;
+      if (!acc[config]) {
+        acc[config] = [];
+      }
+      acc[config].push(unit);
+      return acc;
+    }, {} as Record<string, VehicleUnit[]>);
+  };
+
   // Get non-zero status counts
   const activeStatuses = Object.entries(statusCounts)
     .filter(([_, count]) => count > 0)
     .map(([status, count]) => ({ status: status as VehicleStatus, count }));
-  
-  const handleEditModel = () => {
-    setIsModelEditOpen(true);
+
+  const handleAddUnits = (data: { color: string; quantity: number; status: VehicleStatus }) => {
+    onAddUnits(data.color, data.quantity, data.status);
+    setShowAddUnits(false);
   };
-  
-  const handleEditUnit = (unit: VehicleUnit) => {
-    setSelectedUnit(unit);
+
+  const handleBatchUpdate = (data: { units: VehicleUnit[]; newStatus: VehicleStatus }) => {
+    onBatchUpdateStatus(data.units, data.newStatus);
+    setSelectedConfig(null);
   };
-  
-  const handleSaveModel = (updatedBrand: string, updatedModel: string, updatedTrim: string, updatedFuelType: string) => {
-    onUpdateModel(groupId, updatedBrand, updatedModel, updatedTrim, updatedFuelType);
-    setIsModelEditOpen(false);
-  };
-  
-  const handleSaveUnit = (updatedUnit: VehicleUnit) => {
-    onUpdateVehicle(updatedUnit);
-    setSelectedUnit(null);
-  };
-  
+
   return (
-    <Card className="mb-6 overflow-hidden shadow-sm border-muted/60">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex justify-between items-start">
-          <div>
-            <span className="font-semibold text-[18px]">{brand} {model}</span>
-            <div className="text-[14px] font-normal text-muted-foreground mt-2">
-              {trim} • {fuelType}
+    <Card className="mb-6 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
+      <CardHeader className="pb-3 space-y-4">
+        {/* Vehicle Identity */}
+        <div className="flex justify-between items-start gap-6">
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-3">
+              <Badge className="h-6 px-2.5 bg-primary/10 text-primary hover:bg-primary/15">
+                {brand}
+              </Badge>
+              <h3 className="text-lg font-semibold tracking-tight">
+                {model}
+              </h3>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">{trim}</span>
+              <span className="text-muted-foreground/30">•</span>
+              <Badge variant="secondary" className="h-5 px-2">
+                {fuelType}
+              </Badge>
             </div>
           </div>
-          <div className="flex items-center space-x-1">
+
+          {/* Actions */}
+          <div className="flex items-center gap-3">
             <Button 
-              variant="default" 
-              size="sm" 
-              className="min-h-[48px] min-w-[120px]"
-              onClick={handleEditModel}
+              variant="outline" 
+              size="sm"
+              className="h-9 px-3.5 font-medium"
+              onClick={() => setShowAddUnits(true)}
             >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Model
+              <Plus className="h-4 w-4 mr-2" />
+              Add Units
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setShowModelEdit(true)}
+            >
+              <Edit className="h-4 w-4" />
             </Button>
           </div>
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="pb-4 pt-1">
-        <div className="flex flex-col space-y-8">
-          <div className="flex justify-between items-center">
-            <div className="text-[14px] font-medium text-muted-foreground">Total Stock:</div>
-            <div className="font-bold text-base">{totalStock}</div>
-          </div>
-          
-          {activeStatuses.length > 0 && (
-            <div className="flex flex-col space-y-2">
-              <div className="text-[14px] font-medium text-muted-foreground">Status Breakdown:</div>
-              <div className="flex flex-wrap gap-2">
-                {activeStatuses.map(({ status, count }) => (
-                  <StatusBadge 
-                    key={status} 
-                    status={status} 
-                    count={count}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
-      </CardContent>
-      
-      <CardFooter className="flex justify-between items-center pt-1 pb-2 border-t">
+
+        {/* Stats */}
+        <div className="flex items-center justify-between pt-1">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Total Stock</span>
+              <span className="font-semibold text-base">{totalStock}</span>
+            </div>
+            <div className="h-4 w-px bg-border" />
+            <div className="flex flex-wrap items-center gap-2">
+              {activeStatuses.map(({ status, count }) => (
+                <StatusBadge 
+                  key={status} 
+                  status={status} 
+                  count={count}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardFooter className="flex justify-between items-center pt-1 pb-3 border-t">
         <Button
           variant="ghost"
-          size="sm"
-          className="w-full justify-between min-h-[48px]"
-          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full justify-between h-10 hover:bg-muted/50"
+          onClick={() => setShowInventory(true)}
         >
-          {isExpanded ? (
-            <>
-              <span>Collapse</span>
-              <ChevronUp className="h-4 w-4 ml-2" />
-            </>
-          ) : (
-            <>
-              <span>Expand</span>
-              <ChevronDown className="h-4 w-4 ml-2" />
-            </>
-          )}
+          <span className="text-sm">View Inventory</span>
+          <ChevronRight className="h-4 w-4 ml-2" />
         </Button>
       </CardFooter>
-      
-      <div className={cn(
-        "overflow-hidden transition-all duration-300",
-        isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-      )}>
-        <div className="border-t py-4 px-6 bg-muted/20">
-          <h4 className="font-medium mb-4 text-[14px]">Individual Units ({units.length})</h4>
-          <div className="space-y-3">
-            {units.map((unit) => (
-              <div 
-                key={unit.id} 
-                className="flex justify-between items-center p-3 rounded-md hover:bg-muted"
-              >
-                <div className="flex items-center">
-                  <div className="font-mono text-xs text-muted-foreground mr-3">
-                    {unit.unitNumber}
-                  </div>
-                  <StatusBadge status={unit.status} />
-                </div>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="min-h-[48px] min-w-[48px]"
-                  onClick={() => handleEditUnit(unit)}
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      
+
+      {/* Inventory Sheet */}
+      <InventorySheet
+        isOpen={showInventory}
+        onClose={() => setShowInventory(false)}
+        brand={brand}
+        model={model}
+        trim={trim}
+        fuelType={fuelType}
+        units={units}
+        onEditUnit={(unit) => {
+          setSelectedUnit(unit);
+          setShowInventory(false);
+        }}
+        onAddUnits={(color) => {
+          setShowAddUnits(true);
+          setShowInventory(false);
+        }}
+        onBatchEdit={(units) => {
+          setSelectedConfig({
+            color: units[0].color || '',
+            units,
+            status: units[0].status
+          });
+          setShowInventory(false);
+        }}
+      />
+
+      {/* Modals */}
       <ModelEditModal
-        isOpen={isModelEditOpen}
-        onClose={() => setIsModelEditOpen(false)}
+        isOpen={showModelEdit}
+        onClose={() => setShowModelEdit(false)}
         groupId={groupId}
         brand={brand}
         model={model}
         trim={trim}
         fuelType={fuelType}
-        onUpdate={handleSaveModel}
+        onUpdate={onUpdateModel}
       />
       
       {selectedUnit && (
@@ -182,9 +206,44 @@ export function GroupedVehicleCard({
           model={model}
           trim={trim}
           fuelType={fuelType}
-          onUpdate={handleSaveUnit}
+          onUpdate={onUpdateVehicle}
         />
       )}
+
+      {selectedConfig && (
+        <Dialog open={!!selectedConfig} onOpenChange={() => setSelectedConfig(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Batch Edit Units</DialogTitle>
+              <DialogDescription>
+                Update status for {selectedConfig.units.length} {selectedConfig.color || "No Color"} units
+              </DialogDescription>
+            </DialogHeader>
+            <BatchEditForm
+              units={selectedConfig.units}
+              currentStatus={selectedConfig.status}
+              color={selectedConfig.color}
+              onSubmit={handleBatchUpdate}
+              onCancel={() => setSelectedConfig(null)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      <Dialog open={showAddUnits} onOpenChange={setShowAddUnits}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Units</DialogTitle>
+            <DialogDescription>
+              Add multiple units with the same configuration
+            </DialogDescription>
+          </DialogHeader>
+          <AddUnitsForm
+            onSubmit={handleAddUnits}
+            onCancel={() => setShowAddUnits(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

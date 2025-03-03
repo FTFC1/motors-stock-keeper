@@ -8,29 +8,50 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const statusColors: Record<VehicleStatus, { bg: string; text: string }> = {
-  available: { bg: 'bg-green-500/20', text: 'text-green-600' },
-  display: { bg: 'bg-blue-500/20', text: 'text-blue-600' },
-  transit: { bg: 'bg-orange-500/20', text: 'text-orange-600' },
-  sold: { bg: 'bg-purple-500/20', text: 'text-purple-600' },
-  reserved: { bg: 'bg-yellow-500/20', text: 'text-yellow-600' },
-  unavailable: { bg: 'bg-red-500/20', text: 'text-red-600' }
+const statusConfig = {
+  available: {
+    color: 'bg-emerald-500/10 text-emerald-500',
+    label: 'Available'
+  },
+  display: {
+    color: 'bg-blue-500/10 text-blue-500',
+    label: 'Display'
+  },
+  transit: {
+    color: 'bg-orange-500/10 text-orange-500',
+    label: 'Transit'
+  },
+  sold: {
+    color: 'bg-purple-500/10 text-purple-500',
+    label: 'Sold'
+  },
+  reserved: {
+    color: 'bg-yellow-500/10 text-yellow-500',
+    label: 'Reserved'
+  },
+  unavailable: {
+    color: 'bg-red-500/10 text-red-500',
+    label: 'Unavailable'
+  }
 };
 
 export function StatusBadge({ status, count, className }: StatusBadgeProps) {
-  const { bg, text } = statusColors[status];
-  
+  const config = statusConfig[status];
+
   return (
-    <Badge
-      variant="outline"
-      className={cn(
-        'capitalize font-medium border-0',
-        bg,
-        text,
-        className
+    <span className={cn(
+      "inline-flex items-center gap-1.5",
+      "px-2 py-0.5 rounded-md text-xs font-medium",
+      config.color,
+      className
+    )}>
+      {config.label}
+      {count !== undefined && (
+        <>
+          <span className="w-px h-3 bg-current opacity-20" />
+          <span>{count}</span>
+        </>
       )}
-    >
-      {status}{count !== undefined && `: ${count}`}
-    </Badge>
+    </span>
   );
 }

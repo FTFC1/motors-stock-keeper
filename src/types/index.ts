@@ -15,6 +15,7 @@ export interface VehicleUnit {
   status: VehicleStatus;
   lastUpdated: string;
   updatedBy: string;
+  color: string;  // Add color field
 }
 
 export interface Vehicle {

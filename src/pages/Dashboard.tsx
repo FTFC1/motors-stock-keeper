@@ -8,16 +8,20 @@ import { GroupedVehicleCard } from '@/components/dashboard/GroupedVehicleCard';
 import { useMobile } from '@/hooks/use-mobile';
 
 // Helper function to generate a random number of units for a vehicle
-const generateRandomUnits = (baseId: string, min: number = 1, max: number = 5): VehicleUnit[] => {
-  const numUnits = Math.floor(Math.random() * (max - min + 1)) + min;
+const generateRandomUnits = (baseId: string, numUnits: number): VehicleUnit[] => {
   const units: VehicleUnit[] = [];
   const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'sold', 'reserved', 'unavailable'];
+  const colors = [
+    'White', 'Black', 'Silver', 'Grey', 'Blue', 'Red', 'Green', 
+    'Titanium Grey', 'Andes Grey', 'Porsche Grey', 'Dark Grey'
+  ];
   
   for (let i = 1; i <= numUnits; i++) {
     units.push({
       id: `${baseId}-${String(i).padStart(3, '0')}`,
       unitNumber: i,
       status: statuses[Math.floor(Math.random() * statuses.length)],
+      color: colors[Math.floor(Math.random() * colors.length)],
       lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
       updatedBy: 'admin@motors.com'
     });
@@ -132,7 +136,7 @@ const generateMockVehicles = (): Vehicle[] => {
           model,
           trim,
           fuelType,
-          units: generateRandomUnits(baseId)
+          units: generateRandomUnits(baseId, Math.floor(Math.random() * 5) + 1)
         };
         
         vehicles.push(vehicle);
@@ -155,6 +159,7 @@ interface VehicleGroup {
 }
 
 const Dashboard = () => {
+  console.log('Dashboard component rendering');
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -182,12 +187,14 @@ const Dashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
+      console.log('Loading data...');
       
       try {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         const mockVehicles = generateMockVehicles();
+        console.log('Generated mock vehicles:', mockVehicles);
         setVehicles(mockVehicles);
         
         // Extract filter options from data
@@ -196,8 +203,9 @@ const Dashboard = () => {
           models: Array.from(new Set(mockVehicles.map(v => v.model))).sort(),
           trims: Array.from(new Set(mockVehicles.map(v => v.trim))).sort(),
           fuelTypes: Array.from(new Set(mockVehicles.map(v => v.fuelType))).sort(),
-          statuses: Array.from(new Set(mockVehicles.map(v => v.status))).sort() as VehicleStatus[],
+          statuses: Array.from(new Set(mockVehicles.flatMap(v => v.units.map(u => u.status)))).sort() as VehicleStatus[],
         };
+        console.log('Filter options:', options);
         
         setFilterOptions(options);
       } catch (error) {
@@ -392,6 +400,58 @@ const Dashboard = () => {
     });
   };
   
+  const handleAddUnits = (groupId: string, color: string, quantity: number, status: VehicleStatus) => {
+    setVehicles(prevVehicles => {
+      return prevVehicles.map(vehicle => {
+        if (vehicle.id === groupId) {
+          // Generate new units
+          const newUnits = Array.from({ length: quantity }, (_, i) => ({
+            id: `${vehicle.id}-${String(vehicle.units.length + i + 1).padStart(3, '0')}`,
+            unitNumber: vehicle.units.length + i + 1,
+            status,
+            color,
+            lastUpdated: new Date().toISOString(),
+            updatedBy: 'admin@motors.com'
+          }));
+
+          return {
+            ...vehicle,
+            units: [...vehicle.units, ...newUnits]
+          };
+        }
+        return vehicle;
+      });
+    });
+
+    toast({
+      title: "Units added",
+      description: `Added ${quantity} ${color} unit${quantity > 1 ? 's' : ''} to stock.`,
+    });
+  };
+
+  const handleBatchUpdateStatus = (groupId: string, units: VehicleUnit[], newStatus: VehicleStatus) => {
+    setVehicles(prevVehicles => {
+      return prevVehicles.map(vehicle => {
+        if (vehicle.id === groupId) {
+          return {
+            ...vehicle,
+            units: vehicle.units.map(unit => 
+              units.some(u => u.id === unit.id)
+                ? { ...unit, status: newStatus, lastUpdated: new Date().toISOString() }
+                : unit
+            )
+          };
+        }
+        return vehicle;
+      });
+    });
+
+    toast({
+      title: "Status updated",
+      description: `Updated ${units.length} unit${units.length > 1 ? 's' : ''} to ${newStatus}.`,
+    });
+  };
+  
   const isFiltered = 
     !!filters.search || 
     !!filters.brand || 
@@ -469,6 +529,12 @@ const Dashboard = () => {
                 statusCounts={group.statusCounts}
                 onUpdateModel={handleUpdateModel}
                 onUpdateVehicle={handleUpdateVehicle}
+                onAddUnits={(color, quantity, status) => 
+                  handleAddUnits(group.id, color, quantity, status)
+                }
+                onBatchUpdateStatus={(units, newStatus) => 
+                  handleBatchUpdateStatus(group.id, units, newStatus)
+                }
               />
             ))}
           </div>
