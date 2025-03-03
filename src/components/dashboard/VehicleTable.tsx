@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Table, 
   TableBody, 
@@ -16,6 +16,7 @@ import { Edit, Plus, Minus, CheckCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { VehicleCard } from './VehicleCard';
 import { VehicleDetailModal } from './VehicleDetailModal';
+import { useMobile } from '@/hooks/use-mobile';
 
 interface VehicleTableProps {
   vehicles: Vehicle[];
@@ -29,31 +30,28 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const isMobile = useMobile();
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
   
-  // Check viewport size on mount and when window is resized
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    // Initial check
-    checkViewport();
-    
-    // Add event listener
-    window.addEventListener('resize', checkViewport);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkViewport);
-    };
-  }, []);
-  
   const handleEdit = (vehicle: Vehicle) => {
-    setEditingId(vehicle.id);
-    setEditValue(vehicle.stockLevel);
+    if (isMobile) {
+      // Open the edit modal on mobile
+      setSelectedVehicle(vehicle);
+      setIsDetailModalOpen(true);
+    } else {
+      // Inline edit on desktop
+      setEditingId(vehicle.id);
+      setEditValue(vehicle.stockLevel);
+    }
+  };
+  
+  const handleUpdateStock = (vehicle: Vehicle, newStockLevel: number) => {
+    // In a real app, this would update the database
+    toast({
+      title: "Stock updated",
+      description: `${vehicle.brand} ${vehicle.model} stock updated to ${newStockLevel}`,
+    });
   };
   
   const handleSave = (vehicle: Vehicle) => {
@@ -78,9 +76,15 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
     setEditValue((prev) => Math.max(0, prev - 1));
   };
 
-  const handleOpenDetailModal = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle);
-    setIsDetailModalOpen(true);
+  const handleSaveVehicle = (updatedVehicle: Vehicle) => {
+    // In a real app, this would update the database
+    toast({
+      title: "Vehicle updated",
+      description: `${updatedVehicle.brand} ${updatedVehicle.model} has been updated successfully.`,
+    });
+    
+    setIsDetailModalOpen(false);
+    setSelectedVehicle(null);
   };
 
   const handleCloseDetailModal = () => {
@@ -139,13 +143,15 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
           <VehicleCard 
             key={vehicle.id}
             vehicle={vehicle}
-            onClickMoreInfo={handleOpenDetailModal}
+            onEdit={handleEdit}
+            onUpdateStock={handleUpdateStock}
           />
         ))}
         <VehicleDetailModal 
           isOpen={isDetailModalOpen}
           onClose={handleCloseDetailModal}
           vehicle={selectedVehicle}
+          onSave={handleSaveVehicle}
         />
       </div>
     );
@@ -257,6 +263,13 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
           ))}
         </TableBody>
       </Table>
+      
+      <VehicleDetailModal 
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+        vehicle={selectedVehicle}
+        onSave={handleSaveVehicle}
+      />
     </div>
   );
 }
