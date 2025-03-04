@@ -81,82 +81,86 @@ export function GroupedVehicleCard({
   };
 
   return (
-    <Card className="mb-6 overflow-hidden shadow-sm hover:shadow-md transition-all duration-200">
-      <CardHeader className="pb-3 space-y-4">
-        {/* Vehicle Identity */}
-        <div className="flex justify-between items-start gap-6">
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-3">
-              <Badge className="h-6 px-2.5 bg-primary/10 text-primary hover:bg-primary/15">
-                {brand}
-              </Badge>
-              <h3 className="text-lg font-semibold tracking-tight">
-                {model}
-              </h3>
-            </div>
-            
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">{trim}</span>
-              <span className="text-muted-foreground/30">•</span>
-              <Badge variant="secondary" className="h-5 px-2">
-                {fuelType}
-              </Badge>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="h-9 px-3.5 font-medium"
-              onClick={() => setShowAddUnits(true)}
+    <Card className="overflow-hidden bg-background/40 hover:bg-background/60 transition-colors duration-200">
+      <div className="p-5 space-y-5">
+        {/* Header Section */}
+        <div className="space-y-3">
+          {/* Brand Badge */}
+          <div className="flex items-center justify-between">
+            <Badge 
+              variant="secondary" 
+              className="h-7 px-3 bg-muted/50 text-foreground/70 hover:bg-muted/70"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Units
-            </Button>
+              {brand}
+            </Badge>
+            
+            {/* Edit Button */}
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-9 w-9"
+              className="h-8 w-8"
               onClick={() => setShowModelEdit(true)}
             >
               <Edit className="h-4 w-4" />
             </Button>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Total Stock</span>
-              <span className="font-semibold text-base">{totalStock}</span>
-            </div>
-            <div className="h-4 w-px bg-border" />
-            <div className="flex flex-wrap items-center gap-2">
-              {activeStatuses.map(({ status, count }) => (
-                <StatusBadge 
-                  key={status} 
-                  status={status} 
-                  count={count}
-                />
-              ))}
+          
+          {/* Model Name */}
+          <div className="space-y-1">
+            <h3 className="text-xl font-semibold tracking-tight">
+              {model}
+            </h3>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-muted-foreground">{trim}</span>
+              <span className="text-muted-foreground/30">•</span>
+              <Badge variant="outline" className="h-5 px-2 bg-background/50">
+                {fuelType}
+              </Badge>
             </div>
           </div>
         </div>
-      </CardHeader>
-
-      <CardFooter className="flex justify-between items-center pt-1 pb-3 border-t">
-        <Button
-          variant="ghost"
-          className="w-full justify-between h-10 hover:bg-muted/50"
-          onClick={() => setShowInventory(true)}
-        >
-          <span className="text-sm">View Inventory</span>
-          <ChevronRight className="h-4 w-4 ml-2" />
-        </Button>
-      </CardFooter>
+        
+        {/* Stats Section */}
+        <div className="flex items-center gap-4">
+          <div className="space-y-1">
+            <span className="text-sm text-muted-foreground">Total Stock</span>
+            <div className="text-2xl font-semibold">{totalStock}</div>
+          </div>
+          
+          <div className="h-10 w-px bg-border/50" />
+          
+          <div className="flex-1 flex flex-wrap gap-2">
+            {activeStatuses.map(({ status, count }) => (
+              <StatusBadge 
+                key={status} 
+                status={status} 
+                count={count}
+              />
+            ))}
+          </div>
+        </div>
+        
+        {/* Actions Section */}
+        <div className="grid grid-cols-2 gap-3">
+          <Button 
+            variant="outline" 
+            className="h-10"
+            onClick={() => setShowAddUnits(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Units
+          </Button>
+          
+          <Button
+            variant="default"
+            className="h-10"
+            onClick={() => setShowInventory(true)}
+          >
+            View Inventory
+            <ChevronRight className="h-4 w-4 ml-2" />
+          </Button>
+        </div>
+      </div>
 
       {/* Inventory Sheet */}
       <InventorySheet
