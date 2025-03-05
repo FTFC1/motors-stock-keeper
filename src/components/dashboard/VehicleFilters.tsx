@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FilterChip } from './FilterChip';
-import { FilterState, FilterOptions, SortOption, VehicleStatus } from '@/types';
+import { FilterState, FilterOptions, SortOption, VehicleStatus, WheelDriveType, TransmissionType } from '@/types';
 import {
   Popover,
   PopoverContent,
@@ -18,18 +17,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-interface VehicleFiltersProps {
-  filterOptions: FilterOptions;
+export interface VehicleFiltersProps {
+  options: FilterOptions;
   filters: FilterState;
   onFilterChange: (newFilters: Partial<FilterState>) => void;
   onResetFilters: () => void;
+  loading?: boolean;
 }
 
 export function VehicleFilters({
-  filterOptions,
+  options,
   filters,
   onFilterChange,
   onResetFilters,
+  loading = false
 }: VehicleFiltersProps) {
   const [searchValue, setSearchValue] = useState(filters.search);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
@@ -52,6 +53,8 @@ export function VehicleFilters({
     if (filters.model) count++;
     if (filters.trim) count++;
     if (filters.fuelType) count++;
+    if (filters.wheelDrive) count++;
+    if (filters.transmissionType) count++;
     if (filters.status) count++;
     if (filters.search) count++;
     
@@ -77,13 +80,14 @@ export function VehicleFilters({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             className="pl-9"
+            disabled={loading}
           />
         </div>
         
         <div className="flex gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="flex gap-2 w-full sm:w-auto">
+              <Button variant="outline" className="flex gap-2 w-full sm:w-auto" disabled={loading}>
                 <Filter className="h-4 w-4" />
                 <span>Filters</span>
                 {activeFiltersCount > 0 && (
@@ -108,7 +112,7 @@ export function VehicleFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All Brands</SelectItem>
-                      {filterOptions.brands.map((brand) => (
+                      {options.brands.map((brand) => (
                         <SelectItem key={brand} value={brand}>
                           {brand}
                         </SelectItem>
@@ -128,7 +132,7 @@ export function VehicleFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All Models</SelectItem>
-                      {filterOptions.models.map((model) => (
+                      {options.models.map((model) => (
                         <SelectItem key={model} value={model}>
                           {model}
                         </SelectItem>
@@ -148,7 +152,7 @@ export function VehicleFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All Trims</SelectItem>
-                      {filterOptions.trims.map((trim) => (
+                      {options.trims.map((trim) => (
                         <SelectItem key={trim} value={trim}>
                           {trim}
                         </SelectItem>
@@ -168,7 +172,7 @@ export function VehicleFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All Fuel Types</SelectItem>
-                      {filterOptions.fuelTypes.map((fuel) => (
+                      {options.fuelTypes.map((fuel) => (
                         <SelectItem key={fuel} value={fuel}>
                           {fuel}
                         </SelectItem>
@@ -176,6 +180,54 @@ export function VehicleFilters({
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {options.wheelDrives && options.wheelDrives.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Wheel Drive</label>
+                    <Select
+                      value={filters.wheelDrive}
+                      onValueChange={(value) => 
+                        onFilterChange({ wheelDrive: value as WheelDriveType | '' })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Drive Types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Drive Types</SelectItem>
+                        {options.wheelDrives.map((drive) => (
+                          <SelectItem key={drive} value={drive}>
+                            {drive}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                
+                {options.transmissionTypes && options.transmissionTypes.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Transmission</label>
+                    <Select
+                      value={filters.transmissionType}
+                      onValueChange={(value) => 
+                        onFilterChange({ transmissionType: value as TransmissionType | '' })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Transmissions" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Transmissions</SelectItem>
+                        {options.transmissionTypes.map((transmission) => (
+                          <SelectItem key={transmission} value={transmission}>
+                            {transmission}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Status</label>
@@ -190,7 +242,7 @@ export function VehicleFilters({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All Statuses</SelectItem>
-                      {filterOptions.statuses.map((status) => (
+                      {options.statuses.map((status) => (
                         <SelectItem key={status} value={status}>
                           {status.charAt(0).toUpperCase() + status.slice(1)}
                         </SelectItem>
@@ -209,6 +261,7 @@ export function VehicleFilters({
           <Select
             value={filters.sort}
             onValueChange={(value) => onFilterChange({ sort: value as SortOption })}
+            disabled={loading}
           >
             <SelectTrigger className="w-full sm:w-[180px]">
               <div className="flex items-center gap-2">
@@ -265,21 +318,26 @@ export function VehicleFilters({
             />
           )}
           
+          {filters.wheelDrive && (
+            <FilterChip
+              label={`Drive: ${filters.wheelDrive}`}
+              onRemove={() => onFilterChange({ wheelDrive: '' })}
+            />
+          )}
+          
+          {filters.transmissionType && (
+            <FilterChip
+              label={`Transmission: ${filters.transmissionType}`}
+              onRemove={() => onFilterChange({ transmissionType: '' })}
+            />
+          )}
+          
           {filters.status && (
             <FilterChip
               label={`Status: ${filters.status}`}
               onRemove={() => onFilterChange({ status: '' })}
             />
           )}
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onResetFilters}
-            className="text-xs h-6 px-2"
-          >
-            Clear All
-          </Button>
         </div>
       )}
     </div>

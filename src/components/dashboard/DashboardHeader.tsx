@@ -1,11 +1,10 @@
-
 import { useAuth } from '@/context/AuthContext';
 import { PlusCircle, FilterX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
-interface DashboardHeaderProps {
-  totalCount: number;
+export interface DashboardHeaderProps {
+  totalCount?: number;
   filteredCount?: number;
   onAddVehicle?: () => void;
   onClearFilters?: () => void;
@@ -38,11 +37,13 @@ export function DashboardHeader({
     <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
       <div>
         <h2 className="text-[18px] font-bold tracking-tight">Vehicles Inventory</h2>
-        <p className="text-[14px] text-muted-foreground mt-2">
-          {isFiltered && typeof filteredCount === 'number'
-            ? `Showing ${filteredCount} of ${totalCount} vehicles`
-            : `${totalCount} vehicles in inventory`}
-        </p>
+        {totalCount !== undefined && (
+          <p className="text-[14px] text-muted-foreground mt-2">
+            {isFiltered && typeof filteredCount === 'number'
+              ? `Showing ${filteredCount} of ${totalCount} vehicles`
+              : `${totalCount} vehicles in inventory`}
+          </p>
+        )}
       </div>
       
       <div className="flex gap-2">

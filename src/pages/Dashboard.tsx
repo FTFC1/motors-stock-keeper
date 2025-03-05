@@ -2,9 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import { PageLayout } from '@/components/common/PageLayout';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { VehicleFilters } from '@/components/dashboard/VehicleFilters';
-import { FilterState, FilterOptions, Vehicle, SortOption, VehicleStatus, VehicleUnit } from '@/types';
+import { FilterState, FilterOptions, Vehicle, SortOption, VehicleStatus, VehicleUnit, BrandGroup, WheelDriveType, TransmissionType } from '@/types';
 import { useToast } from '@/components/ui/use-toast';
 import { GroupedVehicleCard } from '@/components/dashboard/GroupedVehicleCard';
+import { BrandCard } from '@/components/dashboard/BrandCard';
 import { useMobile } from '@/hooks/use-mobile';
 
 // Helper function to generate a random number of units for a vehicle
@@ -51,60 +52,69 @@ const calculateStatusCounts = (units: VehicleUnit[]): Record<VehicleStatus, numb
 const generateMockVehicles = (): Vehicle[] => {
   const vehicleOptions = {
     Changan: {
-      'Alsvin V3': ['Dynamic'],
-      'Eado Plus': ['Executive'],
-      'CS 15': ['Dynamic'],
-      'CS 35 Plus': ['Luxury', 'Luxury Pro'],
-      'CS 55': ['Luxury', 'Luxury Pro'],
-      'CS 75 Plus': ['Luxury Pro'],
-      'CS 85': ['Coupe'],
-      'CS 95 Plus': ['Plus'],
-      'UNI-T': ['Aventus', 'Black Edition', 'SVP'],
-      'UNI-K': ['Executive', 'Bespoke'],
-      'X7 Plus': ['Luxury Pro'],
-      'Hunter': ['Luxury', 'Luxury Pro', 'Executive'],
-      'Hunter Plus': ['Luxury Pro'],
-      'Star Truck': ['Single Cab'],
-      'Star 5': ['Cargo', 'Passenger'],
-      'G10': ['Passenger']
+      'Alsvin V3': [
+        { trim: 'Dynamic', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'Eado Plus': [
+        { trim: 'Executive', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'CS 15': [
+        { trim: 'Dynamic', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'CS 35 Plus': [
+        { trim: 'Luxury', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType },
+        { trim: 'Luxury Pro', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'CS 55': [
+        { trim: 'Luxury', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType },
+        { trim: 'Luxury Pro', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'CS 75 Plus': [
+        { trim: 'Luxury Pro', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'CS 85': [
+        { trim: 'Coupe', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'UNI-T': [
+        { trim: 'Aventus', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType },
+        { trim: 'Black Edition', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType },
+        { trim: 'SVP', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'Hunter': [
+        { trim: 'Luxury', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType },
+        { trim: 'Luxury Pro', wheelDrive: '4x4' as WheelDriveType, transmission: 'Manual' as TransmissionType },
+        { trim: 'Executive', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ]
     },
     Maxus: {
-      'D90': ['Executive'],
-      'T60': ['Comfort', 'Comfort 4x4', 'Elite', 'Luxury 4x4'],
-      'C100': ['2.8 Ton'],
-      'C300': ['4.2 Ton']
+      'D90': [
+        { trim: 'Executive', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ],
+      'T60': [
+        { trim: 'Comfort', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType },
+        { trim: 'Comfort 4x4', wheelDrive: '4x4' as WheelDriveType, transmission: 'Manual' as TransmissionType },
+        { trim: 'Elite', wheelDrive: '4x2' as WheelDriveType, transmission: 'Auto' as TransmissionType },
+        { trim: 'Luxury 4x4', wheelDrive: '4x4' as WheelDriveType, transmission: 'Auto' as TransmissionType }
+      ]
     },
     ZNA: {
-      'Rich 6': ['Luxury trim']
+      'Rich 6': [
+        { trim: 'Luxury trim', wheelDrive: '4x4' as WheelDriveType, transmission: 'Manual' as TransmissionType }
+      ]
     },
     KAMA: {
-      'D3': ['1.5T', '3T']
-    },
-    DFAC: {
-      'CAPTAIN W01': [
-        '1.5T Single Row - Flat Cargo',
-        '1.5T Single Row - Cargo Box',
-        '1.5T Double Row - Flat Cargo',
-        '1.5T Double Row - Cargo Box',
-        '12+2 Passenger Van - CNG'
-      ],
-      'CAPTAIN T': [
-        '2T Single Row - Flat Cargo',
-        '2.5T Single Row - Flat Cargo',
-        '2T Single Row - Cargo Box',
-        '2.5T Single Row - Cargo Box'
+      'D3': [
+        { trim: '1.5T', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType },
+        { trim: '3T', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType }
       ]
     },
     HYUNDAI: {
-      'HX340SL': ['34T'],
-      'HL660L': ['17.3T'],
-      '30DE-7': ['3T'],
-      '30LE-7': ['3T'],
-      '50D-9SA': ['5T']
-    },
-    LOVOL: {
-      'FR220D': ['22T'],
-      'FL955F': ['16.6T']
+      'HL660L': [
+        { trim: '17.3T', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType }
+      ],
+      '30LE-7': [
+        { trim: '3T', wheelDrive: '4x2' as WheelDriveType, transmission: 'Manual' as TransmissionType }
+      ]
     }
   };
 
@@ -115,8 +125,8 @@ const generateMockVehicles = (): Vehicle[] => {
   brands.forEach(brand => {
     const models = Object.keys(vehicleOptions[brand]);
     models.forEach(model => {
-      const trims = vehicleOptions[brand][model];
-      trims.forEach(trim => {
+      const configurations = vehicleOptions[brand][model];
+      configurations.forEach(config => {
         // Determine appropriate fuel type based on the vehicle type
         let appropriateFuelTypes = ['Petrol', 'Diesel', 'Electric', 'CNG'];
         if (model.includes('Electric')) {
@@ -128,14 +138,16 @@ const generateMockVehicles = (): Vehicle[] => {
         }
 
         const fuelType = appropriateFuelTypes[Math.floor(Math.random() * appropriateFuelTypes.length)];
-        const baseId = `${brand}-${model}-${trim}`.toLowerCase().replace(/\s+/g, '-');
+        const baseId = `${brand}-${model}-${config.trim}`.toLowerCase().replace(/\s+/g, '-');
         
         const vehicle: Vehicle = {
           id: baseId,
           brand,
           model,
-          trim,
+          trim: config.trim,
           fuelType,
+          wheelDrive: config.wheelDrive,
+          transmissionType: config.transmission,
           units: generateRandomUnits(baseId, Math.floor(Math.random() * 5) + 1)
         };
         
@@ -153,6 +165,8 @@ interface VehicleGroup {
   model: string;
   trim: string;
   fuelType: string;
+  wheelDrive?: WheelDriveType;
+  transmissionType?: TransmissionType;
   units: VehicleUnit[];
   totalStock: number;
   statusCounts: Record<VehicleStatus, number>;
@@ -169,6 +183,8 @@ const Dashboard = () => {
     models: [],
     trims: [],
     fuelTypes: [],
+    wheelDrives: [],
+    transmissionTypes: [],
     statuses: [],
   });
   const [filters, setFilters] = useState<FilterState>({
@@ -177,6 +193,8 @@ const Dashboard = () => {
     model: '',
     trim: '',
     fuelType: '',
+    wheelDrive: '',
+    transmissionType: '',
     status: '',
     sort: 'newest',
   });
@@ -203,6 +221,8 @@ const Dashboard = () => {
           models: Array.from(new Set(mockVehicles.map(v => v.model))).sort(),
           trims: Array.from(new Set(mockVehicles.map(v => v.trim))).sort(),
           fuelTypes: Array.from(new Set(mockVehicles.map(v => v.fuelType))).sort(),
+          wheelDrives: Array.from(new Set(mockVehicles.map(v => v.wheelDrive).filter(Boolean))) as WheelDriveType[],
+          transmissionTypes: Array.from(new Set(mockVehicles.map(v => v.transmissionType).filter(Boolean))) as TransmissionType[],
           statuses: Array.from(new Set(mockVehicles.flatMap(v => v.units.map(u => u.status)))).sort() as VehicleStatus[],
         };
         console.log('Filter options:', options);
@@ -255,6 +275,14 @@ const Dashboard = () => {
       result = result.filter(vehicle => vehicle.fuelType === filters.fuelType);
     }
     
+    if (filters.wheelDrive) {
+      result = result.filter(vehicle => vehicle.wheelDrive === filters.wheelDrive);
+    }
+    
+    if (filters.transmissionType) {
+      result = result.filter(vehicle => vehicle.transmissionType === filters.transmissionType);
+    }
+    
     if (filters.status) {
       result = result.filter(vehicle => 
         vehicle.units.some(unit => unit.status === filters.status)
@@ -294,19 +322,21 @@ const Dashboard = () => {
     setFilteredVehicles(result);
   }, [vehicles, filters]);
   
-  // Group vehicles by shared attributes
-  const groupedVehicles = useMemo(() => {
+  // Group vehicles by model, trim, and fuel type
+  const vehicleGroups = useMemo(() => {
     const groups: VehicleGroup[] = [];
     
     filteredVehicles.forEach(vehicle => {
-      const { brand, model, trim, fuelType, units } = vehicle;
-      const groupKey = `${brand}-${model}-${trim}-${fuelType}`;
+      const { brand, model, trim, fuelType, wheelDrive, transmissionType, units } = vehicle;
+      const groupKey = `${brand}-${model}-${trim}-${fuelType}-${wheelDrive || ''}-${transmissionType || ''}`;
       
       const existingGroup = groups.find(group => 
         group.brand === brand && 
         group.model === model && 
         group.trim === trim && 
-        group.fuelType === fuelType
+        group.fuelType === fuelType &&
+        group.wheelDrive === wheelDrive &&
+        group.transmissionType === transmissionType
       );
       
       if (existingGroup) {
@@ -320,6 +350,8 @@ const Dashboard = () => {
           model,
           trim,
           fuelType,
+          wheelDrive,
+          transmissionType,
           units,
           totalStock: units.length,
           statusCounts: calculateStatusCounts(units)
@@ -327,13 +359,41 @@ const Dashboard = () => {
       }
     });
     
-    return groups.sort((a, b) => {
-      if (a.brand !== b.brand) {
-        return a.brand.localeCompare(b.brand);
-      }
-      return a.model.localeCompare(b.model);
-    });
+    return groups;
   }, [filteredVehicles]);
+  
+  // Group by brand for brand-first organization
+  const brandGroups = useMemo(() => {
+    const groups: BrandGroup[] = [];
+    
+    // First group vehicles by brand
+    vehicleGroups.forEach(group => {
+      const { brand } = group;
+      
+      const existingBrandGroup = groups.find(bg => bg.brand === brand);
+      
+      if (existingBrandGroup) {
+        existingBrandGroup.vehicleGroups.push(group);
+        existingBrandGroup.totalStock += group.totalStock;
+        
+        // Update status counts
+        Object.entries(group.statusCounts).forEach(([status, count]) => {
+          existingBrandGroup.statusCounts[status as VehicleStatus] = 
+            (existingBrandGroup.statusCounts[status as VehicleStatus] || 0) + count;
+        });
+      } else {
+        groups.push({
+          brand,
+          vehicleGroups: [group],
+          totalStock: group.totalStock,
+          statusCounts: { ...group.statusCounts }
+        });
+      }
+    });
+    
+    // Sort brands by total stock (most inventory first)
+    return groups.sort((a, b) => b.totalStock - a.totalStock);
+  }, [vehicleGroups]);
   
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -346,42 +406,43 @@ const Dashboard = () => {
       model: '',
       trim: '',
       fuelType: '',
+      wheelDrive: '',
+      transmissionType: '',
       status: '',
       sort: 'newest',
     });
   };
   
   const handleUpdateModel = (groupId: string, brand: string, model: string, trim: string, fuelType: string) => {
-    setVehicles(prevVehicles => {
-      return prevVehicles.map(vehicle => {
-        const vehicleGroupId = `${vehicle.brand}-${vehicle.model}-${vehicle.trim}-${vehicle.fuelType}`;
-        
-        if (vehicleGroupId === groupId) {
+    setVehicles(prevVehicles => 
+      prevVehicles.map(vehicle => {
+        if (vehicle.id === groupId) {
           return {
             ...vehicle,
             brand,
             model,
             trim,
-            fuelType,
+            fuelType
           };
         }
-        
         return vehicle;
-      });
-    });
+      })
+    );
     
     toast({
-      title: "Model updated",
-      description: `${brand} ${model} has been updated successfully.`,
+      title: "Vehicle Updated",
+      description: `Updated ${brand} ${model} ${trim}`,
     });
   };
   
   const handleUpdateVehicle = (updatedUnit: VehicleUnit) => {
-    setVehicles(prevVehicles => {
-      return prevVehicles.map(vehicle => {
-        const hasUnit = vehicle.units.some(unit => unit.id === updatedUnit.id);
+    setVehicles(prevVehicles => 
+      prevVehicles.map(vehicle => {
+        // Find the vehicle that contains this unit
+        const foundUnit = vehicle.units.find(unit => unit.id === updatedUnit.id);
         
-        if (hasUnit) {
+        if (foundUnit) {
+          // Update the unit within this vehicle
           return {
             ...vehicle,
             units: vehicle.units.map(unit => 
@@ -391,106 +452,97 @@ const Dashboard = () => {
         }
         
         return vehicle;
-      });
-    });
+      })
+    );
     
     toast({
-      title: "Unit updated",
-      description: `Unit #${updatedUnit.unitNumber} status has been updated.`,
+      title: "Unit Updated",
+      description: `Updated unit ${updatedUnit.id} status to ${updatedUnit.status}`,
     });
   };
   
   const handleAddUnits = (groupId: string, color: string, quantity: number, status: VehicleStatus) => {
-    setVehicles(prevVehicles => {
-      return prevVehicles.map(vehicle => {
+    setVehicles(prevVehicles => 
+      prevVehicles.map(vehicle => {
         if (vehicle.id === groupId) {
-          // Generate new units
-          const newUnits = Array.from({ length: quantity }, (_, i) => ({
-            id: `${vehicle.id}-${String(vehicle.units.length + i + 1).padStart(3, '0')}`,
-            unitNumber: vehicle.units.length + i + 1,
-            status,
-            color,
-            lastUpdated: new Date().toISOString(),
-            updatedBy: 'admin@motors.com'
-          }));
-
+          const newUnits: VehicleUnit[] = [];
+          const baseCount = vehicle.units.length;
+          
+          for (let i = 1; i <= quantity; i++) {
+            newUnits.push({
+              id: `${vehicle.id}-${String(baseCount + i).padStart(3, '0')}`,
+              unitNumber: baseCount + i,
+              status,
+              color,
+              lastUpdated: new Date().toISOString(),
+              updatedBy: 'admin@motors.com'
+            });
+          }
+          
           return {
             ...vehicle,
             units: [...vehicle.units, ...newUnits]
           };
         }
         return vehicle;
-      });
-    });
-
+      })
+    );
+    
     toast({
-      title: "Units added",
-      description: `Added ${quantity} ${color} unit${quantity > 1 ? 's' : ''} to stock.`,
+      title: "Units Added",
+      description: `Added ${quantity} new ${color} units with status ${status}`,
     });
   };
-
+  
   const handleBatchUpdateStatus = (groupId: string, units: VehicleUnit[], newStatus: VehicleStatus) => {
-    setVehicles(prevVehicles => {
-      return prevVehicles.map(vehicle => {
+    setVehicles(prevVehicles => 
+      prevVehicles.map(vehicle => {
         if (vehicle.id === groupId) {
+          // Update the status of matching units
           return {
             ...vehicle,
-            units: vehicle.units.map(unit => 
-              units.some(u => u.id === unit.id)
-                ? { ...unit, status: newStatus, lastUpdated: new Date().toISOString() }
-                : unit
-            )
+            units: vehicle.units.map(unit => {
+              const shouldUpdate = units.some(u => u.id === unit.id);
+              if (shouldUpdate) {
+                return {
+                  ...unit,
+                  status: newStatus,
+                  lastUpdated: new Date().toISOString()
+                };
+              }
+              return unit;
+            })
           };
         }
         return vehicle;
-      });
-    });
-
+      })
+    );
+    
     toast({
-      title: "Status updated",
-      description: `Updated ${units.length} unit${units.length > 1 ? 's' : ''} to ${newStatus}.`,
+      title: "Units Updated",
+      description: `Updated ${units.length} units to status ${newStatus}`,
     });
   };
   
-  const isFiltered = 
-    !!filters.search || 
-    !!filters.brand || 
-    !!filters.model || 
-    !!filters.trim || 
-    !!filters.fuelType || 
-    !!filters.status;
-  
   return (
     <PageLayout>
-      <div className="container py-8 space-y-8 animate-fadeIn">
-        <DashboardHeader 
-          totalCount={vehicles.length}
-          filteredCount={filteredVehicles.length}
-          isFiltered={isFiltered}
-          onClearFilters={handleResetFilters}
+      <div className="space-y-6">
+        <DashboardHeader />
+        
+        <VehicleFilters
+          filters={filters}
+          options={filterOptions}
+          onFilterChange={handleFilterChange}
+          onResetFilters={handleResetFilters}
+          loading={isLoading}
         />
         
-        <div className="pt-6">
-          <VehicleFilters 
-            filterOptions={filterOptions}
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onResetFilters={handleResetFilters}
-          />
-        </div>
-        
         {isLoading ? (
-          <div className="w-full py-8 mt-6">
-            <div className="space-y-6">
-              {Array(3).fill(0).map((_, i) => (
-                <div 
-                  key={i} 
-                  className="w-full h-48 bg-muted/30 rounded-md animate-pulse" 
-                />
-              ))}
-            </div>
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4" />
+            <p className="text-lg">Loading vehicles...</p>
           </div>
-        ) : groupedVehicles.length === 0 ? (
+        ) : brandGroups.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center mt-6">
             <div className="rounded-full bg-muted p-4 mb-5">
               <svg
@@ -515,26 +567,18 @@ const Dashboard = () => {
             </p>
           </div>
         ) : (
-          <div className={`grid gap-6 mt-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
-            {groupedVehicles.map((group) => (
-              <GroupedVehicleCard
-                key={group.id}
-                groupId={group.id}
-                brand={group.brand}
-                model={group.model}
-                trim={group.trim}
-                fuelType={group.fuelType}
-                units={group.units}
-                totalStock={group.totalStock}
-                statusCounts={group.statusCounts}
+          <div className="mt-6 space-y-8">
+            {brandGroups.map((brandGroup) => (
+              <BrandCard
+                key={brandGroup.brand}
+                brand={brandGroup.brand}
+                vehicleGroups={brandGroup.vehicleGroups}
+                totalStock={brandGroup.totalStock}
+                statusCounts={brandGroup.statusCounts}
                 onUpdateModel={handleUpdateModel}
                 onUpdateVehicle={handleUpdateVehicle}
-                onAddUnits={(color, quantity, status) => 
-                  handleAddUnits(group.id, color, quantity, status)
-                }
-                onBatchUpdateStatus={(units, newStatus) => 
-                  handleBatchUpdateStatus(group.id, units, newStatus)
-                }
+                onAddUnits={handleAddUnits}
+                onBatchUpdateStatus={handleBatchUpdateStatus}
               />
             ))}
           </div>

@@ -9,6 +9,10 @@ export interface User {
 
 export type VehicleStatus = 'available' | 'display' | 'transit' | 'sold' | 'reserved' | 'unavailable';
 
+export type WheelDriveType = '4x4' | '4x2' | 'AWD' | '2WD';
+
+export type TransmissionType = 'Auto' | 'Manual';
+
 export interface VehicleUnit {
   id: string;
   unitNumber: number;  // Sequential number for this model/trim combination
@@ -24,6 +28,8 @@ export interface Vehicle {
   model: string;
   trim: string;
   fuelType: string;
+  wheelDrive?: WheelDriveType;  // Optional for now during transition
+  transmissionType?: TransmissionType;  // Optional for now during transition
   units: VehicleUnit[];  // Array of individual units
 }
 
@@ -33,6 +39,8 @@ export interface VehicleGroup {
   model: string;
   trim: string;
   fuelType: string;
+  wheelDrive?: WheelDriveType;
+  transmissionType?: TransmissionType;
   units: VehicleUnit[];
   totalStock: number;
   statusCounts: Record<VehicleStatus, number>;
@@ -43,6 +51,8 @@ export interface FilterOptions {
   models: string[];
   trims: string[];
   fuelTypes: string[];
+  wheelDrives?: WheelDriveType[];
+  transmissionTypes?: TransmissionType[];
   statuses: VehicleStatus[];
 }
 
@@ -54,6 +64,16 @@ export interface FilterState {
   model: string;
   trim: string;
   fuelType: string;
+  wheelDrive: WheelDriveType | '';
+  transmissionType: TransmissionType | '';
   status: VehicleStatus | '';
   sort: SortOption;
+}
+
+// Brand group for brand-first organization
+export interface BrandGroup {
+  brand: string;
+  vehicleGroups: VehicleGroup[];
+  totalStock: number;
+  statusCounts: Record<VehicleStatus, number>;
 }
