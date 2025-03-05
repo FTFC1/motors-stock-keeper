@@ -3,8 +3,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from './StatusBadge';
-import { Vehicle, VehicleStatus, VehicleUnit } from '@/types';
-import { ChevronDown, ChevronUp, Edit, Plus, AlertCircle, ChevronRight } from 'lucide-react';
+import { Vehicle, VehicleStatus, VehicleUnit, WheelDriveType, TransmissionType } from '@/types';
+import { ChevronDown, ChevronUp, Edit, Plus, AlertCircle, ChevronRight, Gauge, ChevronsRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModelEditModal } from './ModelEditModal';
 import { UnitEditModal } from './UnitEditModal';
@@ -19,6 +19,8 @@ interface GroupedVehicleCardProps {
   model: string;
   trim: string;
   fuelType: string;
+  wheelDrive?: WheelDriveType;
+  transmissionType?: TransmissionType;
   units: VehicleUnit[];
   totalStock: number;
   statusCounts: Record<VehicleStatus, number>;
@@ -34,6 +36,8 @@ export function GroupedVehicleCard({
   model,
   trim,
   fuelType,
+  wheelDrive,
+  transmissionType,
   units,
   totalStock,
   statusCounts,
@@ -81,10 +85,10 @@ export function GroupedVehicleCard({
   };
 
   return (
-    <Card className="overflow-hidden bg-background/40 hover:bg-background/60 transition-colors duration-200">
-      <div className="p-5 space-y-5">
+    <Card className="overflow-hidden bg-background/40 hover:bg-background/60 transition-colors duration-200 shadow-sm hover:shadow border-l-4 border-l-primary/40">
+      <div className="p-5 space-y-4">
         {/* Header Section */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {/* Brand Badge */}
           <div className="flex items-center justify-between">
             <Badge 
@@ -110,12 +114,33 @@ export function GroupedVehicleCard({
             <h3 className="text-xl font-semibold tracking-tight">
               {model}
             </h3>
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center flex-wrap gap-2 text-sm">
               <span className="text-muted-foreground">{trim}</span>
               <span className="text-muted-foreground/30">•</span>
               <Badge variant="outline" className="h-5 px-2 bg-background/50">
                 {fuelType}
               </Badge>
+
+              {/* Display wheel drive and transmission when available */}
+              {wheelDrive && (
+                <>
+                  <span className="text-muted-foreground/30">•</span>
+                  <div className="flex items-center gap-1">
+                    <ChevronsRight className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs font-medium">{wheelDrive}</span>
+                  </div>
+                </>
+              )}
+              
+              {transmissionType && (
+                <>
+                  <span className="text-muted-foreground/30">•</span>
+                  <div className="flex items-center gap-1">
+                    <Gauge className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs font-medium">{transmissionType}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

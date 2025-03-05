@@ -214,6 +214,7 @@ const Dashboard = () => {
         const mockVehicles = generateMockVehicles();
         console.log('Generated mock vehicles:', mockVehicles);
         setVehicles(mockVehicles);
+        setFilteredVehicles(mockVehicles); // Initialize filtered vehicles with all vehicles
         
         // Extract filter options from data
         const options: FilterOptions = {
@@ -245,6 +246,12 @@ const Dashboard = () => {
   
   // Apply filters and sorting
   useEffect(() => {
+    console.log('Applying filters:', filters);
+    if (vehicles.length === 0) {
+      setFilteredVehicles([]);
+      return;
+    }
+
     let result = [...vehicles];
     
     // Apply search filter
@@ -319,6 +326,7 @@ const Dashboard = () => {
         break;
     }
     
+    console.log('Filtered vehicles:', result.length);
     setFilteredVehicles(result);
   }, [vehicles, filters]);
   
@@ -524,10 +532,29 @@ const Dashboard = () => {
     });
   };
   
+  // Calculate totalCount and filteredCount for potential use in header
+  const totalCount = vehicles.length;
+  const filteredCount = filteredVehicles.length;
+  const isFiltered = (
+    !!filters.search || 
+    !!filters.brand || 
+    !!filters.model || 
+    !!filters.trim || 
+    !!filters.fuelType || 
+    !!filters.wheelDrive || 
+    !!filters.transmissionType || 
+    !!filters.status
+  );
+  
   return (
     <PageLayout>
       <div className="space-y-6">
-        <DashboardHeader />
+        <DashboardHeader 
+          totalCount={totalCount}
+          filteredCount={filteredCount}
+          isFiltered={isFiltered}
+          onClearFilters={handleResetFilters}
+        />
         
         <VehicleFilters
           filters={filters}
@@ -542,7 +569,7 @@ const Dashboard = () => {
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4" />
             <p className="text-lg">Loading vehicles...</p>
           </div>
-        ) : brandGroups.length === 0 ? (
+        ) : filteredVehicles.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center mt-6">
             <div className="rounded-full bg-muted p-4 mb-5">
               <svg
@@ -563,7 +590,9 @@ const Dashboard = () => {
             </div>
             <h3 className="text-xl font-semibold">No Vehicles Available</h3>
             <p className="text-muted-foreground text-base max-w-sm mt-2">
-              Try adjusting your search or filter criteria to find what you're looking for.
+              {isFiltered 
+                ? "Try adjusting your filter criteria to see more results."
+                : "There are no vehicles in the inventory. Add some vehicles to get started."}
             </p>
           </div>
         ) : (
