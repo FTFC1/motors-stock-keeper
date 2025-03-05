@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { GroupedVehicleCard } from './GroupedVehicleCard';
 import { VehicleGroup, VehicleStatus, VehicleUnit } from '@/types';
 
@@ -40,7 +40,6 @@ export function BrandCard({
       case 'available': return "default";
       case 'display': return "secondary";
       case 'transit': return "outline";
-      case 'sold': return "destructive";
       case 'reserved': 
       case 'unavailable':
       default: return "outline";
@@ -66,12 +65,6 @@ export function BrandCard({
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold">{brand}</h2>
               <Badge className="h-7 px-3">{totalStock} Units</Badge>
-
-              {/* Vehicle count trend indicator - future enhancement */}
-              <span className="text-xs text-muted-foreground flex items-center">
-                <ArrowUpDown className="h-3 w-3 mr-1" />
-                Last 7 days
-              </span>
             </div>
             
             <div className="flex flex-wrap gap-2">

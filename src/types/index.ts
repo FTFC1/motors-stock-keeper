@@ -7,7 +7,7 @@ export interface User {
   role: Role;
 }
 
-export type VehicleStatus = 'available' | 'display' | 'transit' | 'sold' | 'reserved' | 'unavailable';
+export type VehicleStatus = 'available' | 'display' | 'transit' | 'reserved' | 'unavailable';
 
 export type WheelDriveType = '4x4' | '4x2' | 'AWD' | '2WD';
 

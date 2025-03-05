@@ -11,7 +11,7 @@ import { useMobile } from '@/hooks/use-mobile';
 // Helper function to generate a random number of units for a vehicle
 const generateRandomUnits = (baseId: string, numUnits: number): VehicleUnit[] => {
   const units: VehicleUnit[] = [];
-  const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'sold', 'reserved', 'unavailable'];
+  const statuses: VehicleStatus[] = ['available', 'display', 'transit', 'reserved', 'unavailable'];
   const colors = [
     'White', 'Black', 'Silver', 'Grey', 'Blue', 'Red', 'Green', 
     'Titanium Grey', 'Andes Grey', 'Porsche Grey', 'Dark Grey'
@@ -37,7 +37,6 @@ const calculateStatusCounts = (units: VehicleUnit[]): Record<VehicleStatus, numb
     available: 0,
     display: 0,
     transit: 0,
-    sold: 0,
     reserved: 0,
     unavailable: 0
   };
@@ -246,88 +245,103 @@ const Dashboard = () => {
   
   // Apply filters and sorting
   useEffect(() => {
-    console.log('Applying filters:', filters);
+    console.log('Applying filters. Current vehicles count:', vehicles.length);
+    
     if (vehicles.length === 0) {
       setFilteredVehicles([]);
       return;
     }
-
-    let result = [...vehicles];
     
-    // Apply search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(
-        vehicle =>
-          vehicle.brand.toLowerCase().includes(searchLower) ||
-          vehicle.model.toLowerCase().includes(searchLower) ||
-          vehicle.trim.toLowerCase().includes(searchLower)
-      );
+    try {
+      // Create a fresh copy of vehicles to filter
+      let result = [...vehicles];
+      
+      // Apply search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        result = result.filter(
+          vehicle =>
+            vehicle.brand.toLowerCase().includes(searchLower) ||
+            vehicle.model.toLowerCase().includes(searchLower) ||
+            vehicle.trim.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      // Apply other filters one by one, with logging to track what's happening
+      if (filters.brand) {
+        result = result.filter(vehicle => vehicle.brand === filters.brand);
+        console.log('After brand filter:', result.length);
+      }
+      
+      if (filters.model) {
+        result = result.filter(vehicle => vehicle.model === filters.model);
+        console.log('After model filter:', result.length);
+      }
+      
+      if (filters.trim) {
+        result = result.filter(vehicle => vehicle.trim === filters.trim);
+        console.log('After trim filter:', result.length);
+      }
+      
+      if (filters.fuelType) {
+        result = result.filter(vehicle => vehicle.fuelType === filters.fuelType);
+        console.log('After fuelType filter:', result.length);
+      }
+      
+      if (filters.wheelDrive) {
+        result = result.filter(vehicle => vehicle.wheelDrive === filters.wheelDrive);
+        console.log('After wheelDrive filter:', result.length);
+      }
+      
+      if (filters.transmissionType) {
+        result = result.filter(vehicle => vehicle.transmissionType === filters.transmissionType);
+        console.log('After transmissionType filter:', result.length);
+      }
+      
+      if (filters.status) {
+        result = result.filter(vehicle => 
+          vehicle.units.some(unit => unit.status === filters.status)
+        );
+        console.log('After status filter:', result.length);
+      }
+      
+      // Apply sorting
+      switch (filters.sort) {
+        case 'newest':
+          result.sort((a, b) => {
+            const aLatest = Math.max(...a.units.map(u => new Date(u.lastUpdated).getTime()));
+            const bLatest = Math.max(...b.units.map(u => new Date(u.lastUpdated).getTime()));
+            return bLatest - aLatest;
+          });
+          break;
+        case 'oldest':
+          result.sort((a, b) => {
+            const aOldest = Math.min(...a.units.map(u => new Date(u.lastUpdated).getTime()));
+            const bOldest = Math.min(...b.units.map(u => new Date(u.lastUpdated).getTime()));
+            return aOldest - bOldest;
+          });
+          break;
+        case 'az':
+          result.sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
+          break;
+        case 'za':
+          result.sort((a, b) => `${b.brand} ${b.model}`.localeCompare(`${a.brand} ${a.model}`));
+          break;
+        case 'quantity-asc':
+          result.sort((a, b) => a.units.length - b.units.length);
+          break;
+        case 'quantity-desc':
+          result.sort((a, b) => b.units.length - a.units.length);
+          break;
+      }
+      
+      console.log('Final filtered vehicles:', result.length);
+      setFilteredVehicles(result);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+      // If there's an error, at least show the original vehicles
+      setFilteredVehicles(vehicles);
     }
-    
-    // Apply other filters
-    if (filters.brand) {
-      result = result.filter(vehicle => vehicle.brand === filters.brand);
-    }
-    
-    if (filters.model) {
-      result = result.filter(vehicle => vehicle.model === filters.model);
-    }
-    
-    if (filters.trim) {
-      result = result.filter(vehicle => vehicle.trim === filters.trim);
-    }
-    
-    if (filters.fuelType) {
-      result = result.filter(vehicle => vehicle.fuelType === filters.fuelType);
-    }
-    
-    if (filters.wheelDrive) {
-      result = result.filter(vehicle => vehicle.wheelDrive === filters.wheelDrive);
-    }
-    
-    if (filters.transmissionType) {
-      result = result.filter(vehicle => vehicle.transmissionType === filters.transmissionType);
-    }
-    
-    if (filters.status) {
-      result = result.filter(vehicle => 
-        vehicle.units.some(unit => unit.status === filters.status)
-      );
-    }
-    
-    // Apply sorting
-    switch (filters.sort) {
-      case 'newest':
-        result.sort((a, b) => {
-          const aLatest = Math.max(...a.units.map(u => new Date(u.lastUpdated).getTime()));
-          const bLatest = Math.max(...b.units.map(u => new Date(u.lastUpdated).getTime()));
-          return bLatest - aLatest;
-        });
-        break;
-      case 'oldest':
-        result.sort((a, b) => {
-          const aOldest = Math.min(...a.units.map(u => new Date(u.lastUpdated).getTime()));
-          const bOldest = Math.min(...b.units.map(u => new Date(u.lastUpdated).getTime()));
-          return aOldest - bOldest;
-        });
-        break;
-      case 'az':
-        result.sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
-        break;
-      case 'za':
-        result.sort((a, b) => `${b.brand} ${b.model}`.localeCompare(`${a.brand} ${a.model}`));
-        break;
-      case 'quantity-asc':
-        result.sort((a, b) => a.units.length - b.units.length);
-        break;
-      case 'quantity-desc':
-        result.sort((a, b) => b.units.length - a.units.length);
-        break;
-    }
-    
-    console.log('Filtered vehicles:', result.length);
-    setFilteredVehicles(result);
   }, [vehicles, filters]);
   
   // Group vehicles by model, trim, and fuel type

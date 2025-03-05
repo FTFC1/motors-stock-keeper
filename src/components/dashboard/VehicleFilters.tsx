@@ -39,6 +39,7 @@ export function VehicleFilters({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchValue !== filters.search) {
+        console.log('Search value changed:', searchValue);
         onFilterChange({ search: searchValue });
       }
     }, 300);
@@ -58,8 +59,15 @@ export function VehicleFilters({
     if (filters.status) count++;
     if (filters.search) count++;
     
+    console.log('Active filters count:', count);
     setActiveFiltersCount(count);
   }, [filters]);
+
+  // Handler for more reliable filter changes
+  const handleFilterChange = (key: string, value: string) => {
+    console.log(`Changing filter ${key} to:`, value);
+    onFilterChange({ [key]: value });
+  };
   
   const sortOptions: { label: string; value: SortOption }[] = [
     { label: 'Newest First', value: 'newest' },
@@ -105,7 +113,7 @@ export function VehicleFilters({
                   <label className="text-sm font-medium">Brand</label>
                   <Select
                     value={filters.brand}
-                    onValueChange={(value) => onFilterChange({ brand: value })}
+                    onValueChange={(value) => handleFilterChange('brand', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Brands" />
@@ -125,7 +133,7 @@ export function VehicleFilters({
                   <label className="text-sm font-medium">Model</label>
                   <Select
                     value={filters.model}
-                    onValueChange={(value) => onFilterChange({ model: value })}
+                    onValueChange={(value) => handleFilterChange('model', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Models" />
@@ -145,7 +153,7 @@ export function VehicleFilters({
                   <label className="text-sm font-medium">Trim</label>
                   <Select
                     value={filters.trim}
-                    onValueChange={(value) => onFilterChange({ trim: value })}
+                    onValueChange={(value) => handleFilterChange('trim', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Trims" />
@@ -165,7 +173,7 @@ export function VehicleFilters({
                   <label className="text-sm font-medium">Fuel Type</label>
                   <Select
                     value={filters.fuelType}
-                    onValueChange={(value) => onFilterChange({ fuelType: value })}
+                    onValueChange={(value) => handleFilterChange('fuelType', value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All Fuel Types" />
@@ -187,7 +195,7 @@ export function VehicleFilters({
                     <Select
                       value={filters.wheelDrive}
                       onValueChange={(value) => 
-                        onFilterChange({ wheelDrive: value as WheelDriveType | '' })
+                        handleFilterChange('wheelDrive', value)
                       }
                     >
                       <SelectTrigger>
@@ -211,7 +219,7 @@ export function VehicleFilters({
                     <Select
                       value={filters.transmissionType}
                       onValueChange={(value) => 
-                        onFilterChange({ transmissionType: value as TransmissionType | '' })
+                        handleFilterChange('transmissionType', value)
                       }
                     >
                       <SelectTrigger>
@@ -234,7 +242,7 @@ export function VehicleFilters({
                   <Select
                     value={filters.status}
                     onValueChange={(value) => 
-                      onFilterChange({ status: value as VehicleStatus | '' })
+                      handleFilterChange('status', value)
                     }
                   >
                     <SelectTrigger>
@@ -260,7 +268,7 @@ export function VehicleFilters({
           
           <Select
             value={filters.sort}
-            onValueChange={(value) => onFilterChange({ sort: value as SortOption })}
+            onValueChange={(value) => handleFilterChange('sort', value as SortOption)}
             disabled={loading}
           >
             <SelectTrigger className="w-full sm:w-[180px]">
@@ -286,56 +294,56 @@ export function VehicleFilters({
           {filters.search && (
             <FilterChip
               label={`Search: ${filters.search}`}
-              onRemove={() => onFilterChange({ search: '' })}
+              onRemove={() => handleFilterChange('search', '')}
             />
           )}
           
           {filters.brand && (
             <FilterChip
               label={`Brand: ${filters.brand}`}
-              onRemove={() => onFilterChange({ brand: '' })}
+              onRemove={() => handleFilterChange('brand', '')}
             />
           )}
           
           {filters.model && (
             <FilterChip
               label={`Model: ${filters.model}`}
-              onRemove={() => onFilterChange({ model: '' })}
+              onRemove={() => handleFilterChange('model', '')}
             />
           )}
           
           {filters.trim && (
             <FilterChip
               label={`Trim: ${filters.trim}`}
-              onRemove={() => onFilterChange({ trim: '' })}
+              onRemove={() => handleFilterChange('trim', '')}
             />
           )}
           
           {filters.fuelType && (
             <FilterChip
               label={`Fuel: ${filters.fuelType}`}
-              onRemove={() => onFilterChange({ fuelType: '' })}
+              onRemove={() => handleFilterChange('fuelType', '')}
             />
           )}
           
           {filters.wheelDrive && (
             <FilterChip
               label={`Drive: ${filters.wheelDrive}`}
-              onRemove={() => onFilterChange({ wheelDrive: '' })}
+              onRemove={() => handleFilterChange('wheelDrive', '')}
             />
           )}
           
           {filters.transmissionType && (
             <FilterChip
               label={`Transmission: ${filters.transmissionType}`}
-              onRemove={() => onFilterChange({ transmissionType: '' })}
+              onRemove={() => handleFilterChange('transmissionType', '')}
             />
           )}
           
           {filters.status && (
             <FilterChip
               label={`Status: ${filters.status}`}
-              onRemove={() => onFilterChange({ status: '' })}
+              onRemove={() => handleFilterChange('status', '')}
             />
           )}
         </div>
