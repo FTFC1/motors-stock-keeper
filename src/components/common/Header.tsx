@@ -11,7 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function Header() {
+interface HeaderProps {
+  title?: string;
+}
+
+export function Header({ title = "Motors Stock Manager" }: HeaderProps) {
   const { user, logout } = useAuth();
 
   if (!user) return null;
@@ -30,7 +34,7 @@ export function Header() {
             className="font-medium text-base tracking-tight"
             data-oid="b06ajgz"
           >
-            Motors Stock Manager
+            {title}
           </div>
         </div>
 

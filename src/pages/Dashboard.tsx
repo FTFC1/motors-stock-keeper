@@ -770,16 +770,13 @@ const Dashboard = () => {
     !!filters.status;
 
   return (
-    <PageLayout title="Vehicles Inventory" data-oid="r54kiiy">
+    <PageLayout title="Vehicles Inventory" data-oid="wz:pm:3">
       <div
         className="space-y-4 max-w-full overflow-x-hidden"
-        data-oid="orz9od7"
+        data-oid="n.57bof"
       >
-        <div className="flex flex-col space-y-4" data-oid="2w-ln-a">
-          <h1 className="text-2xl font-bold" data-oid="xa__202">
-            Vehicles Inventory
-          </h1>
-          <p className="text-muted-foreground" data-oid="sg0dp44">
+        <div className="flex flex-col space-y-4" data-oid="osf-8g8">
+          <p className="text-muted-foreground" data-oid="3w365ot">
             {vehicles.length} vehicles in inventory
           </p>
 
@@ -790,9 +787,9 @@ const Dashboard = () => {
             onClick={() => {
               /* Add vehicle handler */
             }}
-            data-oid="t0_31m2"
+            data-oid="jrz8h3j"
           >
-            <Plus className="h-4 w-4" data-oid="y3dkji-" />
+            <Plus className="h-4 w-4" data-oid="b0uicfr" />
             Add Vehicle
           </Button>
         </div>
@@ -803,7 +800,7 @@ const Dashboard = () => {
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
           loading={isLoading}
-          data-oid="pwbks3d"
+          data-oid="xp2iea4"
         />
 
         {isLoading ? (
