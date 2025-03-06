@@ -1,12 +1,18 @@
-import React from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { StatusBadge } from './StatusBadge';
-import { Vehicle, VehicleStatus, VehicleUnit } from '@/types';
-import { X, Edit, Plus } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useMediaQuery } from '@/hooks/use-media-query';
+import React from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "./StatusBadge";
+import { VehicleUnit, VehicleStatus } from "@/types";
+import { Edit, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface InventorySheetProps {
   isOpen: boolean;
@@ -21,6 +27,11 @@ interface InventorySheetProps {
   onBatchEdit: (units: VehicleUnit[]) => void;
 }
 
+type GroupedUnits = Record<
+  string,
+  Partial<Record<VehicleStatus, VehicleUnit[]>>
+>;
+
 export function InventorySheet({
   isOpen,
   onClose,
@@ -31,157 +42,189 @@ export function InventorySheet({
   units,
   onEditUnit,
   onAddUnits,
-  onBatchEdit
+  onBatchEdit,
 }: InventorySheetProps) {
-  const isMobile = useMediaQuery('(max-width: 640px)');
+  // Group units by color and status
+  const groupedUnits = units.reduce((acc, unit) => {
+    const color = unit.color || "No Color";
+    if (!acc[color]) {
+      acc[color] = {};
+    }
+    if (!acc[color][unit.status]) {
+      acc[color][unit.status] = [];
+    }
+    acc[color][unit.status]?.push(unit);
+    return acc;
+  }, {} as GroupedUnits);
 
-  // Group units by color
-  const groupByColor = (units: VehicleUnit[]) => {
-    return units.reduce((acc, unit) => {
-      const color = unit.color || 'No Color';
-      if (!acc[color]) {
-        acc[color] = [];
-      }
-      acc[color].push(unit);
-      return acc;
-    }, {} as Record<string, VehicleUnit[]>);
-  };
-
-  // Group units by status within a color group
-  const groupByStatus = (units: VehicleUnit[]) => {
-    return units.reduce((acc, unit) => {
-      if (!acc[unit.status]) {
-        acc[unit.status] = [];
-      }
-      acc[unit.status].push(unit);
-      return acc;
-    }, {} as Record<VehicleStatus, VehicleUnit[]>);
-  };
-
-  const colorGroups = groupByColor(units);
-  const colors = Object.keys(colorGroups);
+  const colors = Object.keys(groupedUnits);
+  const defaultColor = colors[0] || "No Color";
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent 
-        side={isMobile ? "bottom" : "right"}
-        className={cn(
-          "flex flex-col",
-          isMobile ? [
-            "h-[94vh]",
-            "w-full",
-            "rounded-t-xl",
-            "pt-4"
-          ] : [
-            "w-[520px]",
-            "max-w-[90vw]",
-            "h-screen"
-          ]
-        )}
+    <Sheet open={isOpen} onOpenChange={onClose} data-oid="176._8y">
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-xl p-0"
+        data-oid="rzz9ypy"
       >
-        {/* Header */}
-        <div className="sticky top-0 bg-background/80 backdrop-blur-sm z-30 pb-4">
-          <SheetHeader className="px-6">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1.5">
-                <SheetTitle className="text-xl font-semibold">
-                  {brand} {model}
-                </SheetTitle>
-                <SheetDescription className="text-sm">
-                  {trim} • {fuelType}
-                </SheetDescription>
+        <SheetHeader className="p-4 border-b" data-oid="ookq.mc">
+          <div className="flex items-center gap-2" data-oid="164:1n9">
+            <Badge variant="secondary" className="h-6 px-2" data-oid="gjywxt-">
+              {brand}
+            </Badge>
+            <SheetTitle className="text-lg font-semibold" data-oid=":xntysn">
+              {model}
+            </SheetTitle>
+          </div>
+          <div className="text-sm text-muted-foreground" data-oid="43hhs_6">
+            {trim} • {fuelType}
+          </div>
+        </SheetHeader>
+
+        <div className="flex flex-col h-[calc(100vh-8rem)]" data-oid="wt6:vmn">
+          <Tabs
+            defaultValue={defaultColor}
+            className="flex-1"
+            data-oid="jl_u-y0"
+          >
+            <div className="border-b" data-oid="eb7hzxv">
+              <div className="px-4 py-2" data-oid="yejohrm">
+                <TabsList
+                  className="w-full h-auto p-1 bg-muted/50 gap-1"
+                  data-oid="u.uqo0-"
+                >
+                  {colors.map((color) => (
+                    <TabsTrigger
+                      key={color}
+                      value={color}
+                      className="flex-1 h-11 data-[state=active]:bg-background"
+                      data-oid="frpq-2c"
+                    >
+                      {color}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose}>
-                <X className="h-4 w-4" />
-              </Button>
             </div>
-          </SheetHeader>
 
-          {/* Color Navigation */}
-          <div className="mt-6 px-6">
-            <Tabs defaultValue={colors[0]} className="w-full">
-              <TabsList className="w-full justify-start gap-2 h-9 p-1 bg-muted/30">
-                {colors.map(color => (
-                  <TabsTrigger 
-                    key={color}
-                    value={color}
-                    className="px-3 text-sm data-[state=active]:bg-primary/10"
-                  >
-                    {color}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {colors.map(color => (
-                <TabsContent key={color} value={color} className="mt-4">
-                  <div className="space-y-6">
-                    {Object.entries(groupByStatus(colorGroups[color])).map(([status, statusUnits]) => (
-                      <div key={status} className="rounded-lg border border-border/60 overflow-hidden">
-                        {/* Status Header */}
-                        <div className="flex items-center justify-between p-3 bg-muted/30">
-                          <div className="flex items-center gap-3">
-                            <StatusBadge status={status as VehicleStatus} count={statusUnits.length} />
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm"
-                            onClick={() => onBatchEdit(statusUnits)}
-                          >
-                            Edit All
-                          </Button>
-                        </div>
-
-                        {/* Units Grid */}
-                        <div className={cn(
-                          "grid gap-px bg-border p-px",
-                          isMobile ? "grid-cols-2" : "grid-cols-3"
-                        )}>
-                          {statusUnits.map(unit => (
-                            <button
-                              key={unit.unitNumber}
-                              className={cn(
-                                "flex items-center justify-between",
-                                "p-2.5 bg-background",
-                                "hover:bg-muted/50 transition-colors",
-                                "text-sm"
-                              )}
-                              onClick={() => onEditUnit(unit)}
-                            >
-                              <span className="font-mono">#{unit.unitNumber}</span>
-                              <Edit className="h-3.5 w-3.5 text-muted-foreground/50" />
-                            </button>
-                          ))}
-                        </div>
+            <ScrollArea className="flex-1" data-oid="mzt7sa2">
+              {colors.map((color) => (
+                <TabsContent
+                  key={color}
+                  value={color}
+                  className="mt-0 p-4"
+                  data-oid="mkgj86_"
+                >
+                  <div className="space-y-4" data-oid="ao_sj4s">
+                    <div
+                      className="flex items-center justify-between"
+                      data-oid="b3lorg4"
+                    >
+                      <div
+                        className="flex items-center gap-2"
+                        data-oid=".6gfgq."
+                      >
+                        <h3 className="font-medium" data-oid="s09be8o">
+                          {color}
+                        </h3>
+                        <Badge
+                          variant="outline"
+                          className="h-6 px-3"
+                          data-oid="813kie9"
+                        >
+                          {
+                            Object.values(groupedUnits[color])
+                              .filter(
+                                (group): group is VehicleUnit[] => !!group,
+                              )
+                              .flat().length
+                          }{" "}
+                          units
+                        </Badge>
                       </div>
-                    ))}
+                      <Button
+                        variant="ghost"
+                        className="h-11 px-4"
+                        onClick={() =>
+                          onAddUnits(color === "No Color" ? "" : color)
+                        }
+                        data-oid="mn.rxjf"
+                      >
+                        <Plus className="h-4 w-4 mr-2" data-oid="ky:7au6" />
+                        Add More
+                      </Button>
+                    </div>
+
+                    <div className="grid gap-3" data-oid="wzll9b.">
+                      {Object.entries(groupedUnits[color]).map(
+                        ([status, units]) =>
+                          units && (
+                            <div
+                              key={status}
+                              className="relative p-3 rounded-lg border bg-card"
+                              data-oid="u-m2:h."
+                            >
+                              <div
+                                className="flex items-center justify-between mb-2"
+                                data-oid="xlu37vl"
+                              >
+                                <StatusBadge
+                                  status={status as VehicleStatus}
+                                  count={units.length}
+                                  data-oid="sbzm6-_"
+                                />
+
+                                <Button
+                                  variant="ghost"
+                                  className="h-11"
+                                  onClick={() => onBatchEdit(units)}
+                                  data-oid="0y:4dfd"
+                                >
+                                  <Edit
+                                    className="h-4 w-4 mr-1"
+                                    data-oid="bhh6bov"
+                                  />
+                                  Batch Edit
+                                </Button>
+                              </div>
+
+                              <div
+                                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
+                                data-oid="709smw6"
+                              >
+                                {units.map((unit) => (
+                                  <Button
+                                    key={unit.id}
+                                    variant="ghost"
+                                    className="h-11 px-4 justify-between w-full hover:bg-muted/50 font-mono text-sm"
+                                    onClick={() => onEditUnit(unit)}
+                                    data-oid="n53ybep"
+                                  >
+                                    <span data-oid=".7tcqhu">{unit.id}</span>
+                                    <span
+                                      className="text-xs text-muted-foreground"
+                                      data-oid="otbi5qs"
+                                    >
+                                      {unit.lastUpdated
+                                        ? new Date(
+                                            unit.lastUpdated,
+                                          ).toLocaleDateString()
+                                        : "No date"}
+                                    </span>
+                                  </Button>
+                                ))}
+                              </div>
+                            </div>
+                          ),
+                      )}
+                    </div>
                   </div>
                 </TabsContent>
               ))}
-            </Tabs>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className={cn(
-          "sticky bottom-0 mt-auto",
-          "bg-background/80 backdrop-blur-sm",
-          "border-t border-border/50",
-          "p-4 px-6"
-        )}>
-          <div className="flex items-center gap-3">
-            <Button 
-              className="flex-1"
-              onClick={() => onAddUnits(colors[0])}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Units
-            </Button>
-            <Button variant="outline" onClick={onClose}>
-              Close
-            </Button>
-          </div>
+            </ScrollArea>
+          </Tabs>
         </div>
       </SheetContent>
     </Sheet>
   );
-} 
+}
