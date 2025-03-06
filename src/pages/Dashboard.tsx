@@ -756,6 +756,11 @@ const Dashboard = () => {
     });
   };
 
+  // Calculate total units across all vehicles
+  const totalUnits = useMemo(() => {
+    return vehicles.reduce((total, vehicle) => total + vehicle.units.length, 0);
+  }, [vehicles]);
+
   // Calculate totalCount and filteredCount for potential use in header
   const totalCount = vehicles.length;
   const filteredCount = filteredVehicles.length;
@@ -780,7 +785,7 @@ const Dashboard = () => {
             Vehicles Inventory
           </h1>
           <p className="text-muted-foreground" data-oid="sg0dp44">
-            {totalCount} vehicles in inventory
+            {totalUnits} units in inventory
           </p>
 
           <Button
