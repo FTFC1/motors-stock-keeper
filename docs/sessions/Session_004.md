@@ -84,6 +84,8 @@ March 6th 2025 13:07 Lagos Nigeria Mikano VI Office
    - Implemented collapsible sections with transitions
    - Enhanced mobile responsiveness
    - Added proper touch targets
+   - Moved chevron to right side for better visual hierarchy
+   - Added smooth rotation animation for chevron on expand/collapse
 
 ### Next Steps
 1. Continue refining brand card animations
