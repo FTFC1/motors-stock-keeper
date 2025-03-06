@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { GroupedVehicleCard } from './GroupedVehicleCard';
 import { VehicleGroup, VehicleStatus, VehicleUnit } from '@/types';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface BrandCardProps {
   brand: string;
@@ -17,6 +19,18 @@ interface BrandCardProps {
   onBatchUpdateStatus: (groupId: string, units: VehicleUnit[], newStatus: VehicleStatus) => void;
 }
 
+// Status abbreviations for small screens
+const getShortStatusName = (status: VehicleStatus): string => {
+  switch (status) {
+    case 'available': return 'Avail';
+    case 'unavailable': return 'Unavail';
+    case 'reserved': return 'Res';
+    case 'transit': return 'Trans';
+    case 'display': return 'Disp';
+    default: return status;
+  }
+};
+
 export function BrandCard({
   brand,
   vehicleGroups,
@@ -28,108 +42,100 @@ export function BrandCard({
   onBatchUpdateStatus
 }: BrandCardProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
-  // Get non-zero status counts
-  const activeStatuses = Object.entries(statusCounts)
-    .filter(([_, count]) => count > 0)
-    .map(([status, count]) => ({ status: status as VehicleStatus, count }));
-
-  // Function to get status badge styling
-  const getStatusBadgeVariant = (status: VehicleStatus) => {
-    switch (status) {
-      case 'available': return "default";
-      case 'display': return "secondary";
-      case 'transit': return "outline";
-      case 'reserved': 
-      case 'unavailable':
-      default: return "outline";
-    }
-  };
-
-  const getStatusBadgeClass = (status: VehicleStatus) => {
-    return status === 'reserved' ? "h-6 px-2 bg-yellow-200 text-yellow-800" : "h-6 px-2";
-  };
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  // Get available units count
+  const availableUnits = statusCounts['available'] || 0;
 
   return (
-    <Card className="overflow-hidden bg-background/40 transition-colors duration-200 mb-8 shadow-sm hover:shadow-md">
-      <CardHeader 
-        className="p-0 cursor-pointer transition-colors hover:bg-muted/20"
-        onClick={toggleExpand}
+    <Card className="w-full overflow-hidden bg-card shadow-sm hover:shadow-md transition-shadow duration-200">
+      <motion.div
+        className={cn(
+          "min-h-[48px] w-full cursor-pointer",
+          "flex flex-col sm:flex-row sm:items-center sm:justify-between",
+          "p-4 bg-muted/30 hover:bg-muted/50 transition-colors duration-200"
+        )}
+        onClick={() => setIsExpanded(!isExpanded)}
+        initial={false}
       >
-        <div className="p-5 flex flex-row items-center justify-between bg-muted/10 w-full">
-          <div className="space-y-2">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold">{brand}</h2>
-              <Badge className="h-7 px-3">{totalStock} Units</Badge>
-            </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {activeStatuses.map(({ status, count }) => (
-                <Badge 
-                  key={status} 
-                  variant={getStatusBadgeVariant(status)}
-                  className={getStatusBadgeClass(status)}
-                >
-                  {status}: {count}
-                </Badge>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 flex-shrink-0 ml-2"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent the header click handler from firing
-                setIsExpanded(!isExpanded);
-              }}
-              aria-label={isExpanded ? "Collapse section" : "Expand section"}
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-5 w-5" />
-              ) : (
-                <ChevronDown className="h-5 w-5" />
-              )}
-            </Button>
+        {/* Brand and Units Info */}
+        <div className={cn(
+          "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
+          "mb-2 sm:mb-0"
+        )}>
+          <h3 className="text-lg font-semibold tracking-tight">
+            {brand}
+          </h3>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{totalStock} units</span>
+            {availableUnits > 0 && (
+              <>
+                <span className="text-muted-foreground/30">•</span>
+                <span>{availableUnits} Available</span>
+              </>
+            )}
           </div>
         </div>
-      </CardHeader>
 
-      {isExpanded && (
-        <CardContent className="p-5 pt-5">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {vehicleGroups.map((group) => (
-              <GroupedVehicleCard
-                key={group.id}
-                groupId={group.id}
-                brand={group.brand}
-                model={group.model}
-                trim={group.trim}
-                fuelType={group.fuelType}
-                wheelDrive={group.wheelDrive}
-                transmissionType={group.transmissionType}
-                units={group.units}
-                totalStock={group.totalStock}
-                statusCounts={group.statusCounts}
-                onUpdateModel={onUpdateModel}
-                onUpdateVehicle={onUpdateVehicle}
-                onAddUnits={(color, quantity, status) => 
-                  onAddUnits(group.id, color, quantity, status)
-                }
-                onBatchUpdateStatus={(units, newStatus) => 
-                  onBatchUpdateStatus(group.id, units, newStatus)
-                }
-              />
-            ))}
-          </div>
-        </CardContent>
-      )}
+        {/* Expand Arrow */}
+        <div className="flex items-center">
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="h-5 w-5 text-muted-foreground" />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {vehicleGroups.map((group) => (
+                  <GroupedVehicleCard
+                    key={group.id}
+                    groupId={group.id}
+                    brand={group.brand}
+                    model={group.model}
+                    trim={group.trim}
+                    fuelType={group.fuelType}
+                    wheelDrive={group.wheelDrive}
+                    transmissionType={group.transmissionType}
+                    units={group.units}
+                    totalStock={group.totalStock}
+                    statusCounts={group.statusCounts}
+                    onUpdateModel={onUpdateModel}
+                    onUpdateVehicle={onUpdateVehicle}
+                    onAddUnits={(color, quantity, status) => 
+                      onAddUnits(group.id, color, quantity, status)
+                    }
+                    onBatchUpdateStatus={(units, newStatus) => 
+                      onBatchUpdateStatus(group.id, units, newStatus)
+                    }
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 } 
