@@ -64,6 +64,33 @@ March 6th 2025 13:07 Lagos Nigeria Mikano VI Office
    - Clear visual feedback
    - Performance optimisation
 
+### Progress Update
+
+#### Completed Tasks
+1. **Header Cleanup**
+   - Removed redundant "Motors Stock Manager" title from desktop header
+   - Removed title from mobile header
+   - Maintained proper spacing and alignment
+   - Preserved all header functionality
+
+2. **Inventory Count Accuracy**
+   - Updated dashboard to show total units instead of vehicle models
+   - Added `totalUnits` calculation using `useMemo`
+   - Changed display text to "X units in inventory"
+   - Ensured count updates dynamically with inventory changes
+
+3. **Brand Card Improvements**
+   - Added Framer Motion for smooth animations
+   - Implemented collapsible sections with transitions
+   - Enhanced mobile responsiveness
+   - Added proper touch targets
+
+### Next Steps
+1. Continue refining brand card animations
+2. Implement remaining mobile optimisations
+3. Test and optimize performance
+4. Add any missing accessibility features
+
 ### Technical Considerations
 - Maintain mobile-first approach
 - Keep performance optimised
