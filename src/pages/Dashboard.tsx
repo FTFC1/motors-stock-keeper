@@ -19,6 +19,7 @@ import { BrandCard } from "@/components/dashboard/BrandCard";
 import { useMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { AddVehicleModal } from "@/components/dashboard/AddVehicleModal";
 
 // Helper function to generate a random number of units for a vehicle
 const generateRandomUnits = (
@@ -352,6 +353,7 @@ const Dashboard = () => {
     status: "",
     sort: "newest",
   });
+  const [showAddVehicleModal, setShowAddVehicleModal] = useState(false);
 
   const isMobile = useMobile();
 
@@ -774,6 +776,11 @@ const Dashboard = () => {
     !!filters.transmissionType ||
     !!filters.status;
 
+  const handleAddVehicle = (newVehicle: Vehicle) => {
+    setVehicles((prev) => [...prev, newVehicle]);
+    setShowAddVehicleModal(false);
+  };
+
   return (
     <PageLayout title="Vehicles Inventory" data-oid="r54kiiy">
       <div
@@ -792,9 +799,7 @@ const Dashboard = () => {
             variant="default"
             size="lg"
             className="w-full sm:w-auto flex items-center gap-2 h-11"
-            onClick={() => {
-              /* Add vehicle handler */
-            }}
+            onClick={() => setShowAddVehicleModal(true)}
             data-oid="t0_31m2"
           >
             <Plus className="h-4 w-4" data-oid="y3dkji-" />
@@ -881,6 +886,14 @@ const Dashboard = () => {
             ))}
           </div>
         )}
+
+        {/* Add Vehicle Modal */}
+        <AddVehicleModal
+          isOpen={showAddVehicleModal}
+          onClose={() => setShowAddVehicleModal(false)}
+          onSave={handleAddVehicle}
+          data-oid="hs5-4._"
+        />
       </div>
     </PageLayout>
   );
