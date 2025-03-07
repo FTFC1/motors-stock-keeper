@@ -79,7 +79,7 @@ export function PageLayout({
             data-oid="i7y-xrl"
           />
         ) : (
-          <Header title={title} data-oid="f:f4ykm" />
+          <Header data-oid="f:f4ykm" />
         )}
         <div className="flex flex-1 relative" data-oid="8n08-od">
           <Sidebar

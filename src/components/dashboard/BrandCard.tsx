@@ -81,76 +81,78 @@ export function BrandCard({
   return (
     <Card
       className="w-full overflow-hidden bg-card shadow-sm hover:shadow-md transition-shadow duration-200"
-      data-oid="pcksv6s"
+      data-oid="tkgb4fg"
     >
       <motion.div
         className={cn(
           "min-h-[48px] w-full cursor-pointer",
-          "flex flex-col sm:flex-row sm:items-center sm:justify-between",
+          "flex flex-row items-center",
           "p-4 bg-muted/30 hover:bg-muted/50 transition-colors duration-200",
         )}
         onClick={() => setIsExpanded(!isExpanded)}
         initial={false}
-        data-oid="2793ter"
+        data-oid="fdnbpeq"
       >
         {/* Brand and Units Info */}
-        <div
-          className={cn(
-            "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
-            "mb-2 sm:mb-0",
-          )}
-          data-oid="f-ehzpl"
-        >
-          <h3
-            className="text-lg font-semibold tracking-tight"
-            data-oid="87-3-vb"
-          >
-            {brand}
-          </h3>
+        <div className="flex flex-grow items-center" data-oid="ug5lpug">
           <div
-            className="flex items-center gap-2 text-sm text-muted-foreground"
-            data-oid="sbbes0v"
-          >
-            <span data-oid="0ew9:s:">{totalStock} units</span>
-            {availableUnits > 0 && (
-              <>
-                <span className="text-muted-foreground/30" data-oid="no-kaj0">
-                  •
-                </span>
-                <span data-oid="o48wtp4">{availableUnits} Available</span>
-              </>
+            className={cn(
+              "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
+              "mb-2 sm:mb-0",
             )}
+            data-oid="tofikhx"
+          >
+            <h3
+              className="text-lg font-semibold tracking-tight"
+              data-oid="2hjnff-"
+            >
+              {brand}
+            </h3>
+            <div
+              className="flex items-center gap-2 text-sm text-muted-foreground"
+              data-oid="2csht0n"
+            >
+              <span data-oid="iy5egje">{totalStock} units</span>
+              {availableUnits > 0 && (
+                <>
+                  <span className="text-muted-foreground/30" data-oid="9_gogu.">
+                    •
+                  </span>
+                  <span data-oid="taooxe2">{availableUnits} Available</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Expand Arrow */}
-        <div className="flex items-center" data-oid="ojo1yeb">
+        <div className="flex items-center ml-auto" data-oid=".rqm3dk">
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="e-4ajkz"
+            data-oid=".zyxzns"
           >
             <ChevronDown
               className="h-5 w-5 text-muted-foreground"
-              data-oid="am1tkv7"
+              data-oid="imd:abi"
             />
           </motion.div>
         </div>
       </motion.div>
 
-      <AnimatePresence initial={false} data-oid="fjmxl3d">
+      <AnimatePresence initial={false} data-oid="6dgdpcr">
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="z9t6:oj"
+            data-oid="-wbcygr"
           >
-            <CardContent className="p-4" data-oid="z-9f8l5">
+            <CardContent className="p-4" data-oid="48tbcfq">
               <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                data-oid="9-o4z8g"
+                data-oid="tyx:yg4"
               >
                 {vehicleGroups.map((group) => (
                   <GroupedVehicleCard
@@ -173,7 +175,7 @@ export function BrandCard({
                     onBatchUpdateStatus={(units, newStatus) =>
                       onBatchUpdateStatus(group.id, units, newStatus)
                     }
-                    data-oid="v76tdja"
+                    data-oid="p.ugg4."
                   />
                 ))}
               </div>
