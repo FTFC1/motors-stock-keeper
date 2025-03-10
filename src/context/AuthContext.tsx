@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         isAuthenticated: !!user,
       }}
-      data-oid="d3mzy5z"
+      data-oid="hr.:5xv"
     >
       {children}
     </AuthContext.Provider>

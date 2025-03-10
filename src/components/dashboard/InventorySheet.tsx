@@ -61,44 +61,44 @@ export function InventorySheet({
   const defaultColor = colors[0] || "No Color";
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose} data-oid="176._8y">
+    <Sheet open={isOpen} onOpenChange={onClose} data-oid="7o_3w2m">
       <SheetContent
         side="right"
         className="w-full sm:max-w-xl p-0"
-        data-oid="rzz9ypy"
+        data-oid="mb0:qbo"
       >
-        <SheetHeader className="p-4 border-b" data-oid="ookq.mc">
-          <div className="flex items-center gap-2" data-oid="164:1n9">
-            <Badge variant="secondary" className="h-6 px-2" data-oid="gjywxt-">
+        <SheetHeader className="p-4 border-b" data-oid="mkp66p:">
+          <div className="flex items-center gap-2" data-oid="d6uedo4">
+            <Badge variant="secondary" className="h-6 px-2" data-oid="-40th35">
               {brand}
             </Badge>
-            <SheetTitle className="text-lg font-semibold" data-oid=":xntysn">
+            <SheetTitle className="text-lg font-semibold" data-oid="x7va13a">
               {model}
             </SheetTitle>
           </div>
-          <div className="text-sm text-muted-foreground" data-oid="43hhs_6">
+          <div className="text-sm text-muted-foreground" data-oid=":o9btbv">
             {trim} • {fuelType}
           </div>
         </SheetHeader>
 
-        <div className="flex flex-col h-[calc(100vh-8rem)]" data-oid="wt6:vmn">
+        <div className="flex flex-col h-[calc(100vh-8rem)]" data-oid="f1nvr1l">
           <Tabs
             defaultValue={defaultColor}
             className="flex-1"
-            data-oid="jl_u-y0"
+            data-oid="56o:h0s"
           >
-            <div className="border-b" data-oid="eb7hzxv">
-              <div className="px-4 py-2" data-oid="yejohrm">
+            <div className="border-b" data-oid="8jfcbrp">
+              <div className="px-4 py-2" data-oid="a8lb36_">
                 <TabsList
                   className="w-full h-auto p-1 bg-muted/50 gap-1"
-                  data-oid="u.uqo0-"
+                  data-oid="2hxjn5i"
                 >
                   {colors.map((color) => (
                     <TabsTrigger
                       key={color}
                       value={color}
                       className="flex-1 h-11 data-[state=active]:bg-background"
-                      data-oid="frpq-2c"
+                      data-oid="k7s3p1."
                     >
                       {color}
                     </TabsTrigger>
@@ -107,30 +107,30 @@ export function InventorySheet({
               </div>
             </div>
 
-            <ScrollArea className="flex-1" data-oid="mzt7sa2">
+            <ScrollArea className="flex-1" data-oid="_u_oq:a">
               {colors.map((color) => (
                 <TabsContent
                   key={color}
                   value={color}
                   className="mt-0 p-4"
-                  data-oid="mkgj86_"
+                  data-oid="8285k:0"
                 >
-                  <div className="space-y-4" data-oid="ao_sj4s">
+                  <div className="space-y-4" data-oid="c9qc-x.">
                     <div
                       className="flex items-center justify-between"
-                      data-oid="b3lorg4"
+                      data-oid="hihu316"
                     >
                       <div
                         className="flex items-center gap-2"
-                        data-oid=".6gfgq."
+                        data-oid="b.hf9ki"
                       >
-                        <h3 className="font-medium" data-oid="s09be8o">
+                        <h3 className="font-medium" data-oid="1s5mjko">
                           {color}
                         </h3>
                         <Badge
                           variant="outline"
                           className="h-6 px-3"
-                          data-oid="813kie9"
+                          data-oid="q:tf1x3"
                         >
                           {
                             Object.values(groupedUnits[color])
@@ -148,41 +148,41 @@ export function InventorySheet({
                         onClick={() =>
                           onAddUnits(color === "No Color" ? "" : color)
                         }
-                        data-oid="mn.rxjf"
+                        data-oid="c90qr9w"
                       >
-                        <Plus className="h-4 w-4 mr-2" data-oid="ky:7au6" />
+                        <Plus className="h-4 w-4 mr-2" data-oid="d62irsa" />
                         Add More
                       </Button>
                     </div>
 
-                    <div className="grid gap-3" data-oid="wzll9b.">
+                    <div className="grid gap-3" data-oid="aaipf3c">
                       {Object.entries(groupedUnits[color]).map(
                         ([status, units]) =>
                           units && (
                             <div
                               key={status}
                               className="relative p-3 rounded-lg border bg-card"
-                              data-oid="u-m2:h."
+                              data-oid="lmjt1dt"
                             >
                               <div
                                 className="flex items-center justify-between mb-2"
-                                data-oid="xlu37vl"
+                                data-oid="8yabg_q"
                               >
                                 <StatusBadge
                                   status={status as VehicleStatus}
                                   count={units.length}
-                                  data-oid="sbzm6-_"
+                                  data-oid="1n5z36g"
                                 />
 
                                 <Button
                                   variant="ghost"
                                   className="h-11"
                                   onClick={() => onBatchEdit(units)}
-                                  data-oid="0y:4dfd"
+                                  data-oid="oay468l"
                                 >
                                   <Edit
                                     className="h-4 w-4 mr-1"
-                                    data-oid="bhh6bov"
+                                    data-oid="yu5x16_"
                                   />
                                   Batch Edit
                                 </Button>
@@ -190,7 +190,7 @@ export function InventorySheet({
 
                               <div
                                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
-                                data-oid="709smw6"
+                                data-oid="ud2qszp"
                               >
                                 {units.map((unit) => (
                                   <Button
@@ -198,12 +198,12 @@ export function InventorySheet({
                                     variant="ghost"
                                     className="h-11 px-4 justify-between w-full hover:bg-muted/50 font-mono text-sm"
                                     onClick={() => onEditUnit(unit)}
-                                    data-oid="n53ybep"
+                                    data-oid="x1xxntz"
                                   >
-                                    <span data-oid=".7tcqhu">{unit.id}</span>
+                                    <span data-oid="m8qtic2">{unit.id}</span>
                                     <span
                                       className="text-xs text-muted-foreground"
-                                      data-oid="otbi5qs"
+                                      data-oid="gah:0pw"
                                     >
                                       {unit.lastUpdated
                                         ? new Date(

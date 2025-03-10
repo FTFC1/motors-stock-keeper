@@ -37,16 +37,16 @@ export function DashboardHeader({
   return (
     <div
       className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0"
-      data-oid="3irwn8r"
+      data-oid="1pzr3yj"
     >
-      <div data-oid="d8msu.s">
-        <h2 className="text-[18px] font-bold tracking-tight" data-oid="ereuec.">
+      <div data-oid="bu94ia7">
+        <h2 className="text-[18px] font-bold tracking-tight" data-oid="a69bk4h">
           Vehicles Inventory
         </h2>
         {totalCount !== undefined && (
           <p
             className="text-[14px] text-muted-foreground mt-2"
-            data-oid="r1g.klm"
+            data-oid="5utklhl"
           >
             {isFiltered && typeof filteredCount === "number"
               ? `Showing ${filteredCount} of ${totalCount} vehicles`
@@ -55,15 +55,15 @@ export function DashboardHeader({
         )}
       </div>
 
-      <div className="flex gap-2" data-oid="b0:m_ft">
+      <div className="flex gap-2" data-oid="mt6rsr1">
         {isFiltered && onClearFilters && (
           <Button
             variant="outline"
             onClick={onClearFilters}
             className="min-h-[48px]"
-            data-oid="m3iq.m1"
+            data-oid="ex_ir_h"
           >
-            <FilterX className="mr-2 h-4 w-4" data-oid="bq0rqpy" />
+            <FilterX className="mr-2 h-4 w-4" data-oid="14kvlvt" />
             Clear Filters
           </Button>
         )}
@@ -72,9 +72,9 @@ export function DashboardHeader({
           <Button
             onClick={handleAddVehicle}
             className="min-h-[48px]"
-            data-oid="zz4cqrh"
+            data-oid="0k.w.zd"
           >
-            <PlusCircle className="mr-2 h-4 w-4" data-oid="ndbj6tx" />
+            <PlusCircle className="mr-2 h-4 w-4" data-oid="bn3aqd7" />
             Add Vehicle
           </Button>
         )}

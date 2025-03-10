@@ -103,34 +103,34 @@ export function VehicleFilters({
     options: string[],
     currentValue: string,
   ) => (
-    <div className="space-y-2" data-oid="rw6.bls">
-      <label className="text-sm font-medium" data-oid="xphpqfm">
+    <div className="space-y-2" data-oid="elzb3qq">
+      <label className="text-sm font-medium" data-oid="45a4eqc">
         {label}
       </label>
-      <div className="relative" data-dropdown data-oid="8op44m6">
+      <div className="relative" data-dropdown data-oid="s_hwiyu">
         <Button
           variant="outline"
           className="w-full justify-between h-11"
           onClick={() => setActiveDropdown(activeDropdown === key ? null : key)}
-          data-oid="tvp:a:y"
+          data-oid="fk.ky.8"
         >
           {currentValue || `All ${label}s`}
           {activeDropdown === key ? (
-            <ChevronUp className="h-4 w-4 ml-2" data-oid="7kfm0tp" />
+            <ChevronUp className="h-4 w-4 ml-2" data-oid="vt0kkor" />
           ) : (
-            <ChevronDown className="h-4 w-4 ml-2" data-oid="v76zbvb" />
+            <ChevronDown className="h-4 w-4 ml-2" data-oid="vyf-txe" />
           )}
         </Button>
         {activeDropdown === key && (
           <Card
             className="absolute w-full mt-1 p-1 shadow-md z-50"
-            data-oid="68po.8i"
+            data-oid="_3jof-y"
           >
             <Button
               variant="ghost"
               className="w-full justify-start font-normal h-11"
               onClick={() => handleFilterChange(key, "")}
-              data-oid="sa4o4s."
+              data-oid="a4x-as-"
             >
               {`All ${label}s`}
             </Button>
@@ -140,7 +140,7 @@ export function VehicleFilters({
                 variant={currentValue === option ? "secondary" : "ghost"}
                 className="w-full justify-start font-normal h-11"
                 onClick={() => handleFilterChange(key, option)}
-                data-oid="jmbx65n"
+                data-oid=":e5ug45"
               >
                 {option}
               </Button>
@@ -152,15 +152,15 @@ export function VehicleFilters({
   );
 
   return (
-    <div className="space-y-4" data-oid="k0shqq3">
+    <div className="space-y-4" data-oid="b722wmd">
       <div
         className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between"
-        data-oid="8-g4t0g"
+        data-oid="ak4o4:8"
       >
-        <div className="relative w-full sm:max-w-md" data-oid="qtj3aqm">
+        <div className="relative w-full sm:max-w-md" data-oid="vdtfsby">
           <Search
             className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground"
-            data-oid=":dw17m9"
+            data-oid="kqgdp04"
           />
 
           <Input
@@ -169,11 +169,11 @@ export function VehicleFilters({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             disabled={loading}
-            data-oid="pxk0mmo"
+            data-oid="zwugeme"
           />
         </div>
 
-        <div className="flex gap-3" data-oid="rxy_dki">
+        <div className="flex gap-3" data-oid="tnlxij1">
           <Button
             variant="outline"
             className="h-11 gap-2 flex-1 sm:flex-none"
@@ -181,14 +181,14 @@ export function VehicleFilters({
             disabled={loading}
             aria-expanded={showFilters}
             aria-controls="filters-panel"
-            data-oid="u11ov8v"
+            data-oid=":6m5xx:"
           >
-            <Filter className="h-4 w-4" data-oid="-ypa:k:" />
-            <span data-oid="5hwcvpr">Filters</span>
+            <Filter className="h-4 w-4" data-oid="9k4lren" />
+            <span data-oid="c3d277j">Filters</span>
             {activeFiltersCount > 0 && (
               <span
                 className="ml-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground"
-                data-oid="aykq-76"
+                data-oid="zpbw:8t"
               >
                 {activeFiltersCount}
               </span>
@@ -198,7 +198,7 @@ export function VehicleFilters({
           <div
             className="relative flex-1 sm:flex-none"
             data-dropdown
-            data-oid="2qre.if"
+            data-oid=":oofxh7"
           >
             <Button
               variant="outline"
@@ -207,16 +207,16 @@ export function VehicleFilters({
               disabled={loading}
               aria-expanded={showSort}
               aria-haspopup="true"
-              data-oid="_bt.8gm"
+              data-oid="vp8xo3."
             >
-              <span data-oid="zfpqjhz">{currentSortLabel}</span>
-              <ChevronDown className="h-4 w-4 ml-auto" data-oid="4r61f30" />
+              <span data-oid="xmez03z">{currentSortLabel}</span>
+              <ChevronDown className="h-4 w-4 ml-auto" data-oid="71r:k2g" />
             </Button>
 
             {showSort && (
               <Card
                 className="absolute right-0 top-[calc(100%+4px)] w-[240px] p-1 shadow-md z-50"
-                data-oid="s2s58v5"
+                data-oid="k6.2ypf"
               >
                 {sortOptions.map((option) => (
                   <Button
@@ -229,7 +229,7 @@ export function VehicleFilters({
                       handleFilterChange("sort", option.value);
                       setShowSort(false);
                     }}
-                    data-oid="tar09:i"
+                    data-oid=":y0e1z8"
                   >
                     {option.label}
                   </Button>
@@ -245,14 +245,14 @@ export function VehicleFilters({
         <Card
           className="p-4 mt-2 border shadow-sm"
           id="filters-panel"
-          data-oid="kc4r2ew"
+          data-oid="9donkf4"
         >
-          <h3 className="font-medium mb-4" data-oid="enq2cat">
+          <h3 className="font-medium mb-4" data-oid="t4gci8b">
             Filter Vehicles
           </h3>
           <div
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
-            data-oid="ktha5ui"
+            data-oid="p-pujzm"
           >
             {renderFilterDropdown(
               "brand",
@@ -300,12 +300,12 @@ export function VehicleFilters({
             )}
           </div>
 
-          <div className="mt-4 flex justify-end" data-oid="1oxklr3">
+          <div className="mt-4 flex justify-end" data-oid="-hzaat-">
             <Button
               onClick={onResetFilters}
               variant="outline"
               className="mr-2 h-11"
-              data-oid="exmgben"
+              data-oid="f.:rcjv"
             >
               Reset Filters
             </Button>
@@ -313,7 +313,7 @@ export function VehicleFilters({
               onClick={toggleFilters}
               variant="default"
               className="h-11"
-              data-oid="f8m901-"
+              data-oid="upko.7r"
             >
               Done
             </Button>
@@ -323,12 +323,12 @@ export function VehicleFilters({
 
       {/* Active filters */}
       {activeFiltersCount > 0 && (
-        <div className="flex flex-wrap gap-2" data-oid="ypj8vhb">
+        <div className="flex flex-wrap gap-2" data-oid="9eq-.0w">
           {filters.search && (
             <FilterChip
               label={`Search: ${filters.search}`}
               onRemove={() => handleFilterChange("search", "")}
-              data-oid="0kdewky"
+              data-oid="irtkg.4"
             />
           )}
 
@@ -336,7 +336,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Brand: ${filters.brand}`}
               onRemove={() => handleFilterChange("brand", "")}
-              data-oid="2ghyvwo"
+              data-oid=".aygu76"
             />
           )}
 
@@ -344,7 +344,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Model: ${filters.model}`}
               onRemove={() => handleFilterChange("model", "")}
-              data-oid="e:jg_ta"
+              data-oid="6tznb-s"
             />
           )}
 
@@ -352,7 +352,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Trim: ${filters.trim}`}
               onRemove={() => handleFilterChange("trim", "")}
-              data-oid="9z-2e5d"
+              data-oid="2_ss66l"
             />
           )}
 
@@ -360,7 +360,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Fuel: ${filters.fuelType}`}
               onRemove={() => handleFilterChange("fuelType", "")}
-              data-oid="0ryr4pn"
+              data-oid="a6.97cf"
             />
           )}
 
@@ -368,7 +368,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Drive: ${filters.wheelDrive}`}
               onRemove={() => handleFilterChange("wheelDrive", "")}
-              data-oid="6w.97wa"
+              data-oid="96wea9w"
             />
           )}
 
@@ -376,7 +376,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Transmission: ${filters.transmissionType}`}
               onRemove={() => handleFilterChange("transmissionType", "")}
-              data-oid="z3p0y7j"
+              data-oid="1ggnfge"
             />
           )}
 
@@ -384,7 +384,7 @@ export function VehicleFilters({
             <FilterChip
               label={`Status: ${filters.status}`}
               onRemove={() => handleFilterChange("status", "")}
-              data-oid="5j.x51e"
+              data-oid=":vysro."
             />
           )}
         </div>

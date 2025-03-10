@@ -98,16 +98,16 @@ export function GroupedVehicleCard({
   return (
     <Card
       className="w-full bg-background/40 hover:bg-background/60 transition-colors duration-200 shadow-sm hover:shadow border-l-4 border-l-primary/40 overflow-hidden"
-      data-oid="zj4i8.i"
+      data-oid="m0xpq3f"
     >
-      <CardContent className="p-4 space-y-4" data-oid="4q-9_b.">
+      <CardContent className="p-4 space-y-4" data-oid="nuyr2pf">
         {/* Header Section */}
-        <div className="flex flex-col space-y-4" data-oid="fz488me">
-          <div className="flex items-center justify-between" data-oid="oirhi4w">
+        <div className="flex flex-col space-y-4" data-oid="iex-8ox">
+          <div className="flex items-center justify-between" data-oid="im_uc79">
             <Badge
               variant="secondary"
               className="h-6 px-2 bg-muted/50 text-foreground/70 hover:bg-muted/70"
-              data-oid="6dj5d4:"
+              data-oid="0mu6to0"
             >
               {brand}
             </Badge>
@@ -117,49 +117,49 @@ export function GroupedVehicleCard({
               size="icon"
               className="h-8 w-8"
               onClick={() => setShowModelEdit(true)}
-              data-oid="0t2h.vt"
+              data-oid="9p.j4ou"
             >
-              <Edit className="h-4 w-4" data-oid="2q3frvk" />
+              <Edit className="h-4 w-4" data-oid="k9f_d.:" />
             </Button>
           </div>
 
-          <div className="space-y-2" data-oid="xhpje4p">
+          <div className="space-y-2" data-oid="9pq0xlv">
             <h3
               className="text-lg font-semibold tracking-tight"
-              data-oid="2k1:5ze"
+              data-oid="4cs3464"
             >
               {model}
             </h3>
             <div
               className="flex flex-wrap items-center gap-1.5 text-sm"
-              data-oid=".vsjthw"
+              data-oid="yfaa_cr"
             >
-              <span className="text-muted-foreground" data-oid="ezrq0co">
+              <span className="text-muted-foreground" data-oid="zv2lcak">
                 {trim}
               </span>
-              <span className="text-muted-foreground/30" data-oid="7tw6soz">
+              <span className="text-muted-foreground/30" data-oid="0w70xjj">
                 •
               </span>
               <Badge
                 variant="outline"
                 className="h-5 px-2 bg-background/50"
-                data-oid="ml2hlgs"
+                data-oid="56fy9xb"
               >
                 {fuelType}
               </Badge>
 
               {wheelDrive && (
                 <>
-                  <span className="text-muted-foreground/30" data-oid="o.h8:y3">
+                  <span className="text-muted-foreground/30" data-oid="3wvp54a">
                     •
                   </span>
-                  <div className="flex items-center gap-1" data-oid="0k.lwuy">
+                  <div className="flex items-center gap-1" data-oid="wsdu:98">
                     <ChevronsRight
                       className="h-3 w-3 text-muted-foreground"
-                      data-oid="mpfb5fh"
+                      data-oid="wjzitj:"
                     />
 
-                    <span className="text-xs font-medium" data-oid="bjmj5:z">
+                    <span className="text-xs font-medium" data-oid="mj727-p">
                       {wheelDrive}
                     </span>
                   </div>
@@ -168,16 +168,16 @@ export function GroupedVehicleCard({
 
               {transmissionType && (
                 <>
-                  <span className="text-muted-foreground/30" data-oid="97jvcte">
+                  <span className="text-muted-foreground/30" data-oid="mjhivfg">
                     •
                   </span>
-                  <div className="flex items-center gap-1" data-oid="g9qjtzw">
+                  <div className="flex items-center gap-1" data-oid="fvuwy7h">
                     <Gauge
                       className="h-3 w-3 text-muted-foreground"
-                      data-oid=":s_r4nb"
+                      data-oid="s29_.qo"
                     />
 
-                    <span className="text-xs font-medium" data-oid="eweunrx">
+                    <span className="text-xs font-medium" data-oid="s7e854x">
                       {transmissionType}
                     </span>
                   </div>
@@ -188,42 +188,42 @@ export function GroupedVehicleCard({
         </div>
 
         {/* Stats Section */}
-        <div className="flex items-center gap-4" data-oid="6d49e68">
-          <div className="space-y-1" data-oid="e1qg8v4">
-            <span className="text-sm text-muted-foreground" data-oid="8car9wc">
+        <div className="flex items-center gap-4" data-oid="e6z8.t7">
+          <div className="space-y-1" data-oid="_ywx0k7">
+            <span className="text-sm text-muted-foreground" data-oid="wjxpreb">
               Total Stock
             </span>
-            <div className="text-xl font-semibold" data-oid="xn5rayb">
+            <div className="text-xl font-semibold" data-oid=".tu_6jy">
               {totalStock}
             </div>
           </div>
 
-          <div className="h-10 w-px bg-border/50" data-oid="a.wqj32" />
+          <div className="h-10 w-px bg-border/50" data-oid="huor81b" />
 
           <div
             className="flex-1 flex flex-wrap gap-1.5 overflow-hidden"
-            data-oid="_q28ejq"
+            data-oid="6cb:_hh"
           >
             {activeStatuses.map(({ status, count }) => (
               <StatusBadge
                 key={status}
                 status={status}
                 count={count}
-                data-oid="pe-rgjb"
+                data-oid="uxh5ntq"
               />
             ))}
           </div>
         </div>
 
         {/* Actions Section */}
-        <div className="grid grid-cols-2 gap-2" data-oid="xzzwn:c">
+        <div className="grid grid-cols-2 gap-2" data-oid="m1:pjbg">
           <Button
             variant="outline"
             className="h-9"
             onClick={() => setShowAddUnits(true)}
-            data-oid="3m95ffo"
+            data-oid="bplfnyk"
           >
-            <Plus className="h-4 w-4 mr-2" data-oid="l:ri-xh" />
+            <Plus className="h-4 w-4 mr-2" data-oid="wvj8.73" />
             Add Units
           </Button>
 
@@ -231,10 +231,10 @@ export function GroupedVehicleCard({
             variant="default"
             className="h-9"
             onClick={() => setShowInventory(true)}
-            data-oid="mu8np3h"
+            data-oid="j7xj.va"
           >
             View Inventory
-            <ChevronRight className="h-4 w-4 ml-2" data-oid="3oz9lhg" />
+            <ChevronRight className="h-4 w-4 ml-2" data-oid="zotppyv" />
           </Button>
         </div>
       </CardContent>
@@ -249,7 +249,7 @@ export function GroupedVehicleCard({
         trim={trim}
         fuelType={fuelType}
         onUpdate={onUpdateModel}
-        data-oid=":_746g1"
+        data-oid="y61f:dc"
       />
 
       {selectedUnit && (
@@ -262,7 +262,7 @@ export function GroupedVehicleCard({
           trim={trim}
           fuelType={fuelType}
           onUpdate={onUpdateVehicle}
-          data-oid="238ir_k"
+          data-oid="3v6bwaj"
         />
       )}
 
@@ -270,12 +270,12 @@ export function GroupedVehicleCard({
         <Dialog
           open={!!selectedConfig}
           onOpenChange={() => setSelectedConfig(null)}
-          data-oid="hjxk5x3"
+          data-oid="e.52k74"
         >
-          <DialogContent data-oid="dnei8ts">
-            <DialogHeader data-oid="pq:o8sn">
-              <DialogTitle data-oid="rrpsp.l">Batch Edit Units</DialogTitle>
-              <DialogDescription data-oid="gtkts8o">
+          <DialogContent data-oid="-m3pwdc">
+            <DialogHeader data-oid="8d1wd68">
+              <DialogTitle data-oid="ynxlqg7">Batch Edit Units</DialogTitle>
+              <DialogDescription data-oid="soe5gr_">
                 Update status for {selectedConfig.units.length}{" "}
                 {selectedConfig.color || "No Color"} units
               </DialogDescription>
@@ -286,7 +286,7 @@ export function GroupedVehicleCard({
               color={selectedConfig.color}
               onSubmit={handleBatchUpdate}
               onCancel={() => setSelectedConfig(null)}
-              data-oid="zoum15i"
+              data-oid="frp1qq:"
             />
           </DialogContent>
         </Dialog>
@@ -295,19 +295,19 @@ export function GroupedVehicleCard({
       <Dialog
         open={showAddUnits}
         onOpenChange={setShowAddUnits}
-        data-oid="ro8ub.y"
+        data-oid="chd7rk_"
       >
-        <DialogContent data-oid="7y8b824">
-          <DialogHeader data-oid="7-dd42v">
-            <DialogTitle data-oid="8h9ac:m">Add New Units</DialogTitle>
-            <DialogDescription data-oid="q:ncddl">
+        <DialogContent data-oid="c3cf:53">
+          <DialogHeader data-oid="5l10d:l">
+            <DialogTitle data-oid="c1f25eq">Add New Units</DialogTitle>
+            <DialogDescription data-oid="mqe:yom">
               Add multiple units with the same configuration
             </DialogDescription>
           </DialogHeader>
           <AddUnitsForm
             onSubmit={handleAddUnits}
             onCancel={() => setShowAddUnits(false)}
-            data-oid="9.phhky"
+            data-oid="x30hp3r"
           />
         </DialogContent>
       </Dialog>
@@ -336,7 +336,7 @@ export function GroupedVehicleCard({
           });
           setShowInventory(false);
         }}
-        data-oid="hoxjvrz"
+        data-oid="gvolrvk"
       />
     </Card>
   );

@@ -10,7 +10,7 @@ const Breadcrumb = React.forwardRef<
     separator?: React.ReactNode;
   }
 >(({ ...props }, ref) => (
-  <nav ref={ref} aria-label="breadcrumb" {...props} data-oid="ztdrqdo" />
+  <nav ref={ref} aria-label="breadcrumb" {...props} data-oid="eiw:lpm" />
 ));
 Breadcrumb.displayName = "Breadcrumb";
 
@@ -25,7 +25,7 @@ const BreadcrumbList = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid="9.qj_zl"
+    data-oid="eunhhwc"
   />
 ));
 BreadcrumbList.displayName = "BreadcrumbList";
@@ -38,7 +38,7 @@ const BreadcrumbItem = React.forwardRef<
     ref={ref}
     className={cn("inline-flex items-center gap-1.5", className)}
     {...props}
-    data-oid="im_q1am"
+    data-oid="j4_t8r4"
   />
 ));
 BreadcrumbItem.displayName = "BreadcrumbItem";
@@ -56,7 +56,7 @@ const BreadcrumbLink = React.forwardRef<
       ref={ref}
       className={cn("transition-colors hover:text-foreground", className)}
       {...props}
-      data-oid="mcv5mgd"
+      data-oid="8mmmf-a"
     />
   );
 });
@@ -73,7 +73,7 @@ const BreadcrumbPage = React.forwardRef<
     aria-current="page"
     className={cn("font-normal text-foreground", className)}
     {...props}
-    data-oid="qmi9qw0"
+    data-oid="0o20x6e"
   />
 ));
 BreadcrumbPage.displayName = "BreadcrumbPage";
@@ -88,9 +88,9 @@ const BreadcrumbSeparator = ({
     aria-hidden="true"
     className={cn("[&>svg]:size-3.5", className)}
     {...props}
-    data-oid="cc:m1ig"
+    data-oid="s5lo.3h"
   >
-    {children ?? <ChevronRight data-oid="1k0wvyb" />}
+    {children ?? <ChevronRight data-oid="0vemub0" />}
   </li>
 );
 
@@ -105,10 +105,10 @@ const BreadcrumbEllipsis = ({
     aria-hidden="true"
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
-    data-oid="8ocab1s"
+    data-oid="uhbc:ve"
   >
-    <MoreHorizontal className="h-4 w-4" data-oid="xp81u-5" />
-    <span className="sr-only" data-oid="272hnf5">
+    <MoreHorizontal className="h-4 w-4" data-oid="xxdzsha" />
+    <span className="sr-only" data-oid="6y6vgl2">
       More
     </span>
   </span>

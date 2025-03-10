@@ -22,33 +22,43 @@ export function ButtonModalUsage() {
 
   return (
     <ButtonModal
-      trigger={<Button variant="default">Open Form</Button>}
+      trigger={
+        <Button variant="default" data-oid="pnfunzf">
+          Open Form
+        </Button>
+      }
       title="User Information"
       description="Please fill out your information below."
       footerContent={
         <>
-          <Button variant="outline" onClick={() => {}}>
+          <Button variant="outline" onClick={() => {}} data-oid="83mm56m">
             Cancel
           </Button>
-          <Button variant="default" onClick={handleSubmit}>
+          <Button variant="default" onClick={handleSubmit} data-oid="3c4kv:w">
             Submit
           </Button>
         </>
       }
+      data-oid="tm7fv.."
     >
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
+      <div className="space-y-4" data-oid="tubj0p7">
+        <div className="space-y-2" data-oid="fuxh52v">
+          <Label htmlFor="name" data-oid="k97mpfw">
+            Name
+          </Label>
           <Input
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="Enter your name"
+            data-oid="h_krq.i"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+        <div className="space-y-2" data-oid="_hl.0n4">
+          <Label htmlFor="email" data-oid="h_g37me">
+            Email
+          </Label>
           <Input
             id="email"
             name="email"
@@ -56,6 +66,7 @@ export function ButtonModalUsage() {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter your email"
+            data-oid="9o5:nn2"
           />
         </div>
       </div>

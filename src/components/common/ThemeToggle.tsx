@@ -34,14 +34,14 @@ export function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       className="w-9 h-9 transition-all duration-300 hover:bg-muted"
-      data-oid="msouve1"
+      data-oid="e9qz_is"
     >
       {theme === "light" ? (
-        <Moon className="h-5 w-5 transition-all" data-oid="c45yqef" />
+        <Moon className="h-5 w-5 transition-all" data-oid="j-cj3e7" />
       ) : (
-        <Sun className="h-5 w-5 transition-all" data-oid="l4m3hp." />
+        <Sun className="h-5 w-5 transition-all" data-oid="sg43:4v" />
       )}
-      <span className="sr-only" data-oid="fp7unat">
+      <span className="sr-only" data-oid="2rt0i03">
         Toggle theme
       </span>
     </Button>

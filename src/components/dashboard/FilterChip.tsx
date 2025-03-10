@@ -20,17 +20,17 @@ export function FilterChip({
           ? "bg-primary/10 text-primary border border-primary/20"
           : "bg-muted text-muted-foreground border border-muted",
       )}
-      data-oid="aihdxvo"
+      data-oid="zbf9l2i"
     >
       {label}
       <button
         type="button"
         onClick={onRemove}
         className="ml-1 rounded-full p-0.5 hover:bg-background/70"
-        data-oid="c149kik"
+        data-oid="l:ou5mc"
       >
-        <X className="h-3 w-3" data-oid="h_v8lku" />
-        <span className="sr-only" data-oid="o1y:fsk">
+        <X className="h-3 w-3" data-oid="fjg_d75" />
+        <span className="sr-only" data-oid="otrm1is">
           Remove filter
         </span>
       </button>

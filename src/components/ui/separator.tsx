@@ -21,7 +21,7 @@ const Separator = React.forwardRef<
         className,
       )}
       {...props}
-      data-oid="4xk2nxh"
+      data-oid="17i0.o6"
     />
   ),
 );

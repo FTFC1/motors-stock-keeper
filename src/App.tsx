@@ -13,36 +13,36 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient} data-oid="a0v-ln:">
-    <TooltipProvider data-oid="g3iqy9r">
-      <AuthProvider data-oid="s3vr8bq">
-        <Toaster data-oid="s9.wpbt" />
-        <Sonner data-oid="u3:leo9" />
-        <BrowserRouter data-oid="-be_cg5">
-          <Routes data-oid="bbu3eyi">
+  <QueryClientProvider client={queryClient} data-oid="hrh_mm-">
+    <TooltipProvider data-oid="7vagj.:">
+      <AuthProvider data-oid="2r8uyi2">
+        <Toaster data-oid="3p2ehhz" />
+        <Sonner data-oid="m3h_29i" />
+        <BrowserRouter data-oid="0q1.8oz">
+          <Routes data-oid="vo5hd3f">
             <Route
               path="/"
-              element={<Index data-oid="wo-wu02" />}
-              data-oid="s79zvgc"
+              element={<Index data-oid="of-o1aq" />}
+              data-oid="iehqapk"
             />
 
             <Route
               path="/login"
-              element={<Login data-oid="qygwc9i" />}
-              data-oid="i4.sytn"
+              element={<Login data-oid="ymzazgs" />}
+              data-oid="kzh1xew"
             />
 
             <Route
               path="/dashboard"
-              element={<Dashboard data-oid="z3b-wh." />}
-              data-oid="zn7e8fi"
+              element={<Dashboard data-oid=".4.kqqt" />}
+              data-oid="puykc1e"
             />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route
               path="*"
-              element={<NotFound data-oid="7ucyd0m" />}
-              data-oid="qeb7msz"
+              element={<NotFound data-oid="szccozr" />}
+              data-oid="gcpp.64"
             />
           </Routes>
         </BrowserRouter>

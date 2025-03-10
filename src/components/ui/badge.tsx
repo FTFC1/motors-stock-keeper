@@ -32,7 +32,7 @@ function Badge({ className, variant, ...props }: BadgeProps) {
     <div
       className={cn(badgeVariants({ variant }), className)}
       {...props}
-      data-oid="ysm0srq"
+      data-oid="2:qagux"
     />
   );
 }

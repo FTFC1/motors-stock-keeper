@@ -45,10 +45,10 @@ function SidebarLink({ to, label, icon, isActive, onClick }: SidebarLinkProps) {
           : "text-muted-foreground hover:bg-muted",
       )}
       onClick={onClick}
-      data-oid="gq-h7.m"
+      data-oid="b89oq.-"
     >
       {icon}
-      <span data-oid="f:s0qy.">{label}</span>
+      <span data-oid="hjsq-wq">{label}</span>
     </Link>
   );
 }
@@ -63,7 +63,7 @@ function CollapsedSidebarLink({ to, label, icon, isActive }: SidebarLinkProps) {
           ? "bg-primary text-primary-foreground"
           : "text-muted-foreground hover:bg-muted",
       )}
-      data-oid="bi7.vh0"
+      data-oid="8:hcz.r"
     >
       {icon}
     </Link>
@@ -109,42 +109,42 @@ export function Sidebar({ isOpen, onOpenChange }: SidebarProps) {
     {
       to: "/dashboard",
       label: "Dashboard",
-      icon: <LayoutDashboard className="h-5 w-5" data-oid="k0k86xe" />,
+      icon: <LayoutDashboard className="h-5 w-5" data-oid="dfzntn3" />,
       isActive: location.pathname === "/dashboard",
       showFor: ["admin", "sales"],
     },
     {
       to: "/pending-edits",
       label: "Pending Edits",
-      icon: <PenSquare className="h-5 w-5" data-oid="-miveyr" />,
+      icon: <PenSquare className="h-5 w-5" data-oid="9iwggje" />,
       isActive: location.pathname === "/pending-edits",
       showFor: ["admin"],
     },
     {
       to: "/change-log",
       label: "Change Log",
-      icon: <Clock className="h-5 w-5" data-oid="2nf-1k8" />,
+      icon: <Clock className="h-5 w-5" data-oid="b-n85qm" />,
       isActive: location.pathname === "/change-log",
       showFor: ["admin", "sales"],
     },
     {
       to: "/reports",
       label: "Reports",
-      icon: <FileText className="h-5 w-5" data-oid="owcfhfq" />,
+      icon: <FileText className="h-5 w-5" data-oid="2ks5u-c" />,
       isActive: location.pathname === "/reports",
       showFor: ["admin", "sales"],
     },
     {
       to: "/analytics",
       label: "Analytics",
-      icon: <Activity className="h-5 w-5" data-oid="bndkm-q" />,
+      icon: <Activity className="h-5 w-5" data-oid=":42y5qt" />,
       isActive: location.pathname === "/analytics",
       showFor: ["admin"],
     },
     {
       to: "/settings",
       label: "Settings",
-      icon: <Settings className="h-5 w-5" data-oid="cy1a8jy" />,
+      icon: <Settings className="h-5 w-5" data-oid="xalz5r_" />,
       isActive: location.pathname === "/settings",
       showFor: ["admin", "sales"],
     },
@@ -162,9 +162,9 @@ export function Sidebar({ isOpen, onOpenChange }: SidebarProps) {
         size="icon"
         className="fixed left-4 top-3 z-50 lg:hidden"
         onClick={() => handleMobileOpenChange(true)}
-        data-oid="lf.6183"
+        data-oid="a7mtq6r"
       >
-        <Menu className="h-5 w-5" data-oid="ih-04rv" />
+        <Menu className="h-5 w-5" data-oid="24quof_" />
       </Button>
     );
 
@@ -173,21 +173,21 @@ export function Sidebar({ isOpen, onOpenChange }: SidebarProps) {
     <Sheet
       open={isMobileOpen}
       onOpenChange={handleMobileOpenChange}
-      data-oid="ndmxftt"
+      data-oid="..stabq"
     >
-      <SheetContent side="left" className="w-[280px] p-0" data-oid="11d3i-c">
-        <SheetHeader className="p-4 border-b" data-oid="_p3z0_2">
-          <SheetTitle className="text-lg font-medium" data-oid="nqy_b7e">
+      <SheetContent side="left" className="w-[280px] p-0" data-oid="x-ikp_j">
+        <SheetHeader className="p-4 border-b" data-oid="8.i7:g3">
+          <SheetTitle className="text-lg font-medium" data-oid="3.1a-ty">
             Navigation
           </SheetTitle>
         </SheetHeader>
-        <div className="flex flex-col gap-1 p-4" data-oid="xb4w2:6">
+        <div className="flex flex-col gap-1 p-4" data-oid="k3g4w2q">
           {filteredLinks.map((link) => (
             <SidebarLink
               key={link.to}
               {...link}
               onClick={() => handleMobileOpenChange(false)}
-              data-oid="0uu70qt"
+              data-oid="8tri:g2"
             />
           ))}
         </div>
@@ -202,30 +202,30 @@ export function Sidebar({ isOpen, onOpenChange }: SidebarProps) {
         "hidden lg:flex flex-col gap-1 border-r transition-all duration-300",
         isCollapsed ? "w-[72px]" : "w-[240px]",
       )}
-      data-oid="wmhqvvo"
+      data-oid="32as6ol"
     >
-      <div className="flex flex-col flex-1 gap-1 p-3" data-oid="vbyju.u">
+      <div className="flex flex-col flex-1 gap-1 p-3" data-oid="5yphzq2">
         {filteredLinks.map((link) =>
           isCollapsed ? (
-            <CollapsedSidebarLink key={link.to} {...link} data-oid=":jwn9ic" />
+            <CollapsedSidebarLink key={link.to} {...link} data-oid="9ibij67" />
           ) : (
-            <SidebarLink key={link.to} {...link} data-oid="kes8ef4" />
+            <SidebarLink key={link.to} {...link} data-oid="-zao9aj" />
           ),
         )}
       </div>
 
-      <div className="p-3 mt-auto" data-oid="2g4w874">
+      <div className="p-3 mt-auto" data-oid="ztv2r-7">
         <Button
           variant="ghost"
           size="sm"
           className="w-full justify-center"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          data-oid="tq5ruf5"
+          data-oid="-e0b2.u"
         >
           {isCollapsed ? (
-            <ChevronRight className="h-5 w-5" data-oid="k56eslh" />
+            <ChevronRight className="h-5 w-5" data-oid="hol0rn1" />
           ) : (
-            <ChevronLeft className="h-5 w-5" data-oid="q72_8el" />
+            <ChevronLeft className="h-5 w-5" data-oid="y4ehu6w" />
           )}
         </Button>
       </div>
@@ -234,9 +234,9 @@ export function Sidebar({ isOpen, onOpenChange }: SidebarProps) {
 
   return (
     <>
-      <MobileMenuButton data-oid="fj:_l.r" />
-      <MobileSidebar data-oid="1ydyvs2" />
-      <DesktopSidebar data-oid="-wc.6x_" />
+      <MobileMenuButton data-oid=".0b5yda" />
+      <MobileSidebar data-oid="t5cte_e" />
+      <DesktopSidebar data-oid="mnk2p1w" />
     </>
   );
 }

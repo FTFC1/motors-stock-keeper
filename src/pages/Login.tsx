@@ -15,8 +15,8 @@ const Login = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <PageLayout requireAuth={false} title="Login" data-oid="lzf50.5">
-      <LoginForm data-oid="ghc5:jp" />
+    <PageLayout requireAuth={false} title="Login" data-oid="tp7ke3w">
+      <LoginForm data-oid="j65sq1f" />
     </PageLayout>
   );
 };

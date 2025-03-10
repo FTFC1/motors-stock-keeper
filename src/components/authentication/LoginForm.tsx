@@ -46,27 +46,27 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex flex-col h-screen" data-oid="3g_h.n3">
-      <div className="flex justify-end p-4" data-oid="bq-jlmv">
-        <ThemeToggle data-oid="e3ajq9s" />
+    <div className="flex flex-col h-screen" data-oid="1_22yx0">
+      <div className="flex justify-end p-4" data-oid="7_vjrpl">
+        <ThemeToggle data-oid="axr.74g" />
       </div>
 
       <div
         className="flex flex-1 items-center justify-center px-6"
-        data-oid="1khx9yw"
+        data-oid="lw9dieu"
       >
         <div
           className="w-full max-w-md space-y-8 animate-fadeIn"
-          data-oid="tr528q."
+          data-oid="y6xk4nm"
         >
-          <div className="text-center" data-oid="vad56em">
+          <div className="text-center" data-oid="xu009me">
             <h1
               className="text-3xl font-bold tracking-tight"
-              data-oid="fuxwxfy"
+              data-oid="4bwvk0."
             >
               Motors Stock Manager
             </h1>
-            <p className="mt-2 text-muted-foreground" data-oid="i7j3bee">
+            <p className="mt-2 text-muted-foreground" data-oid="9ybox0z">
               Sign in to your account to manage vehicle inventory
             </p>
           </div>
@@ -74,14 +74,14 @@ export function LoginForm() {
           <form
             onSubmit={handleSubmit}
             className="space-y-6"
-            data-oid=":w2c1dk"
+            data-oid="-e7-v3v"
           >
-            <div className="space-y-4" data-oid="t.z486_">
-              <div className="space-y-2" data-oid="p2ybs-d">
+            <div className="space-y-4" data-oid="bns63:c">
+              <div className="space-y-2" data-oid="r6irdrc">
                 <label
                   htmlFor="email"
                   className="text-sm font-medium"
-                  data-oid="w8:01eh"
+                  data-oid="y9uucn1"
                 >
                   Email
                 </label>
@@ -94,19 +94,19 @@ export function LoginForm() {
                   autoComplete="email"
                   required
                   className="h-11"
-                  data-oid="84c3jfa"
+                  data-oid="hu7ctp6"
                 />
               </div>
 
-              <div className="space-y-2" data-oid="ry:nva0">
+              <div className="space-y-2" data-oid="q35riur">
                 <div
                   className="flex items-center justify-between"
-                  data-oid="co9-9mm"
+                  data-oid="q6e84io"
                 >
                   <label
                     htmlFor="password"
                     className="text-sm font-medium"
-                    data-oid="tt3qgt1"
+                    data-oid="g3prrxv"
                   >
                     Password
                   </label>
@@ -118,12 +118,12 @@ export function LoginForm() {
                         "Password reset feature would be here in production",
                       )
                     }
-                    data-oid=".8h3ium"
+                    data-oid=".612t92"
                   >
                     Forgot password?
                   </button>
                 </div>
-                <div className="relative" data-oid="ufsckj:">
+                <div className="relative" data-oid="9a_ehbd">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -133,19 +133,19 @@ export function LoginForm() {
                     autoComplete="current-password"
                     required
                     className="h-11 pr-10"
-                    data-oid="jpfv7o:"
+                    data-oid="-m_t-lv"
                   />
 
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                     onClick={() => setShowPassword(!showPassword)}
-                    data-oid="67do2tj"
+                    data-oid="12znno."
                   >
                     {showPassword ? (
-                      <EyeOffIcon className="h-4 w-4" data-oid="3pxnwxu" />
+                      <EyeOffIcon className="h-4 w-4" data-oid="::8520." />
                     ) : (
-                      <EyeIcon className="h-4 w-4" data-oid="mohq:v_" />
+                      <EyeIcon className="h-4 w-4" data-oid="or324id" />
                     )}
                   </button>
                 </div>
@@ -156,13 +156,13 @@ export function LoginForm() {
               type="submit"
               className="w-full h-11 text-sm"
               disabled={isLoggingIn}
-              data-oid="q76cf96"
+              data-oid="tbdpj38"
             >
               {isLoggingIn ? (
                 <>
                   <div
                     className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-background border-t-transparent"
-                    data-oid="fl5jt75"
+                    data-oid="mwhmktf"
                   ></div>
                   Signing in...
                 </>
@@ -173,9 +173,9 @@ export function LoginForm() {
 
             <div
               className="mt-4 text-center text-sm text-muted-foreground"
-              data-oid="z-r-q81"
+              data-oid="hkwp2v2"
             >
-              <p data-oid="sep8d.b">
+              <p data-oid="7aac792">
                 For demo: use admin@motors.com or sales@motors.com with any 6+
                 character password
               </p>

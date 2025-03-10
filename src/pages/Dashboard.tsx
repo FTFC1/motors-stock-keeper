@@ -782,16 +782,16 @@ const Dashboard = () => {
   };
 
   return (
-    <PageLayout title="Vehicles Inventory" data-oid="r54kiiy">
+    <PageLayout title="Vehicles Inventory" data-oid="wd.rp0k">
       <div
         className="space-y-4 max-w-full overflow-x-hidden"
-        data-oid="orz9od7"
+        data-oid="190bsfq"
       >
-        <div className="flex flex-col space-y-4" data-oid="2w-ln-a">
-          <h1 className="text-2xl font-bold" data-oid="xa__202">
+        <div className="flex flex-col space-y-4" data-oid="uylf8r4">
+          <h1 className="text-2xl font-bold" data-oid="q-zd9ld">
             Vehicles Inventory
           </h1>
-          <p className="text-muted-foreground" data-oid="sg0dp44">
+          <p className="text-muted-foreground" data-oid="k0x5pkh">
             {totalUnits} units in inventory
           </p>
 
@@ -800,9 +800,9 @@ const Dashboard = () => {
             size="lg"
             className="w-full sm:w-auto flex items-center gap-2 h-11"
             onClick={() => setShowAddVehicleModal(true)}
-            data-oid="t0_31m2"
+            data-oid="fs9wb91"
           >
-            <Plus className="h-4 w-4" data-oid="y3dkji-" />
+            <Plus className="h-4 w-4" data-oid="c:cs6ov" />
             Add Vehicle
           </Button>
         </div>
@@ -813,29 +813,29 @@ const Dashboard = () => {
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
           loading={isLoading}
-          data-oid="pwbks3d"
+          data-oid="5juabks"
         />
 
         {isLoading ? (
           <div
             className="flex flex-col items-center justify-center py-16"
-            data-oid="zg.5yrt"
+            data-oid="e-ymuf-"
           >
             <div
               className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent mb-4"
-              data-oid="t2e20ip"
+              data-oid="h9e:mx:"
             />
 
-            <p className="text-lg" data-oid="r6mu3dz">
+            <p className="text-lg" data-oid="od25jnk">
               Loading vehicles...
             </p>
           </div>
         ) : filteredVehicles.length === 0 ? (
           <div
             className="flex flex-col items-center justify-center py-16 text-center mt-6"
-            data-oid="fc71y9m"
+            data-oid="ebacprz"
           >
-            <div className="rounded-full bg-muted p-4 mb-5" data-oid="s7vvg3l">
+            <div className="rounded-full bg-muted p-4 mb-5" data-oid="ndv3cs4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -847,21 +847,21 @@ const Dashboard = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="h-8 w-8 text-muted-foreground"
-                data-oid="bo5w6c5"
+                data-oid="5usyeog"
               >
                 <path
                   d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
-                  data-oid="1gz03l9"
+                  data-oid="11g6dev"
                 ></path>
-                <circle cx="12" cy="7" r="4" data-oid="ilcxr_f"></circle>
+                <circle cx="12" cy="7" r="4" data-oid="mhijz.0"></circle>
               </svg>
             </div>
-            <h3 className="text-xl font-semibold" data-oid="68rawjb">
+            <h3 className="text-xl font-semibold" data-oid="v1a4u8b">
               No Vehicles Available
             </h3>
             <p
               className="text-muted-foreground text-base max-w-sm mt-2"
-              data-oid="zm8czu:"
+              data-oid=".x4k8yo"
             >
               {isFiltered
                 ? "Try adjusting your filter criteria to see more results."
@@ -869,7 +869,7 @@ const Dashboard = () => {
             </p>
           </div>
         ) : (
-          <div className="mt-6 space-y-4 w-full" data-oid="ff35ktm">
+          <div className="mt-6 space-y-4 w-full" data-oid="ilbxrl1">
             {brandGroups.map((brandGroup) => (
               <BrandCard
                 key={brandGroup.brand}
@@ -881,7 +881,7 @@ const Dashboard = () => {
                 onUpdateVehicle={handleUpdateVehicle}
                 onAddUnits={handleAddUnits}
                 onBatchUpdateStatus={handleBatchUpdateStatus}
-                data-oid="rm-jsgr"
+                data-oid="lpn-67k"
               />
             ))}
           </div>
@@ -892,7 +892,7 @@ const Dashboard = () => {
           isOpen={showAddVehicleModal}
           onClose={() => setShowAddVehicleModal(false)}
           onSave={handleAddVehicle}
-          data-oid="hs5-4._"
+          data-oid="shrlh3x"
         />
       </div>
     </PageLayout>

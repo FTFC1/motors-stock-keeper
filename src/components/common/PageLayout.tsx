@@ -47,14 +47,14 @@ export function PageLayout({
     return (
       <div
         className="flex h-screen w-full items-center justify-center"
-        data-oid="8.rp_s8"
+        data-oid="k5unp83"
       >
-        <div className="flex flex-col items-center gap-2" data-oid="9yasamw">
+        <div className="flex flex-col items-center gap-2" data-oid="m.5_t4-">
           <div
             className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"
-            data-oid="g2a2hv-"
+            data-oid="rjn7yvh"
           ></div>
-          <p className="text-sm text-muted-foreground" data-oid="yrmt2e9">
+          <p className="text-sm text-muted-foreground" data-oid="-cpdzhs">
             Loading...
           </p>
         </div>
@@ -64,35 +64,35 @@ export function PageLayout({
 
   // Redirect to login if auth is required but user is not authenticated
   if (requireAuth && !isAuthenticated) {
-    return <Navigate to="/login" replace data-oid=":_frpa-" />;
+    return <Navigate to="/login" replace data-oid="fhhsegy" />;
   }
 
   // Render page with header and sidebar if authenticated
   if (isAuthenticated) {
     return (
-      <div className="flex min-h-screen flex-col" data-oid="j01ls69">
+      <div className="flex min-h-screen flex-col" data-oid="ante.br">
         {isMobile ? (
           <MobileHeader
             title={title}
             onMenuClick={() => setIsSidebarOpen(true)}
             isScrolled={isScrolled}
-            data-oid="i7y-xrl"
+            data-oid="z2jomhj"
           />
         ) : (
-          <Header data-oid="f:f4ykm" />
+          <Header data-oid="alcacha" />
         )}
-        <div className="flex flex-1 relative" data-oid="8n08-od">
+        <div className="flex flex-1 relative" data-oid="pg1d4l-">
           <Sidebar
             isOpen={isSidebarOpen}
             onOpenChange={setIsSidebarOpen}
-            data-oid="l.zzitx"
+            data-oid="dn78-0p"
           />
 
           <main
             className="flex-1 overflow-y-auto p-4 lg:p-6"
-            data-oid="4:5yfga"
+            data-oid="7l4f30n"
           >
-            <div className="mx-auto max-w-6xl" data-oid="sh.ai5c">
+            <div className="mx-auto max-w-6xl" data-oid=".0x23qm">
               {children}
             </div>
           </main>

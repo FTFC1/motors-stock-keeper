@@ -36,13 +36,13 @@ export function AddUnitsForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" data-oid="cl:f2xa">
-      <div className="space-y-2" data-oid="_.ul1g9">
-        <Label htmlFor="color" data-oid="j75.mg-">
+    <form onSubmit={handleSubmit} className="space-y-4" data-oid=".p-uc0l">
+      <div className="space-y-2" data-oid="8b1yggg">
+        <Label htmlFor="color" data-oid="_dlb43-">
           Color
         </Label>
         {existingColor ? (
-          <Input id="color" value={existingColor} disabled data-oid="k122d.o" />
+          <Input id="color" value={existingColor} disabled data-oid="i_62re-" />
         ) : (
           <Input
             id="color"
@@ -50,13 +50,13 @@ export function AddUnitsForm({
             value={color}
             onChange={(e) => setColor(e.target.value)}
             required
-            data-oid="rblyp9z"
+            data-oid="gtnnf1a"
           />
         )}
       </div>
 
-      <div className="space-y-2" data-oid="dap9yb9">
-        <Label htmlFor="quantity" data-oid="809n_yp">
+      <div className="space-y-2" data-oid="_2cllbv">
+        <Label htmlFor="quantity" data-oid="p8m-9nz">
           Quantity
         </Label>
         <Input
@@ -66,55 +66,55 @@ export function AddUnitsForm({
           value={quantity}
           onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
           required
-          data-oid="cno2nuf"
+          data-oid="9f-c:_t"
         />
       </div>
 
-      <div className="space-y-2" data-oid="by3t9kn">
-        <Label htmlFor="status" data-oid="4l8toj.">
+      <div className="space-y-2" data-oid="8:v0dec">
+        <Label htmlFor="status" data-oid="_37zn_4">
           Initial Status
         </Label>
         <Select
           value={status}
           onValueChange={(value) => setStatus(value as VehicleStatus)}
-          data-oid=".9um13e"
+          data-oid="kplyxfc"
         >
-          <SelectTrigger id="status" data-oid="pnrr9f-">
-            <SelectValue placeholder="Select status" data-oid="43676yt" />
+          <SelectTrigger id="status" data-oid="vg95xi3">
+            <SelectValue placeholder="Select status" data-oid="k7.t7v1" />
           </SelectTrigger>
-          <SelectContent data-oid="vy8c.ad">
-            <SelectItem value="available" data-oid="hpl0vw1">
+          <SelectContent data-oid="sfqso7k">
+            <SelectItem value="available" data-oid="dg_f0s.">
               Available
             </SelectItem>
-            <SelectItem value="display" data-oid="5m2.:ny">
+            <SelectItem value="display" data-oid="pg0uctg">
               Display
             </SelectItem>
-            <SelectItem value="transit" data-oid="saeu9r.">
+            <SelectItem value="transit" data-oid="9_icrea">
               In Transit
             </SelectItem>
-            <SelectItem value="sold" data-oid="ngucogr">
+            <SelectItem value="sold" data-oid="eqf-w3y">
               Sold
             </SelectItem>
-            <SelectItem value="reserved" data-oid="..4zq:o">
+            <SelectItem value="reserved" data-oid="3:6w32p">
               Reserved
             </SelectItem>
-            <SelectItem value="unavailable" data-oid="v.t7wv0">
+            <SelectItem value="unavailable" data-oid="2t9:u.u">
               Unavailable
             </SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="flex justify-end gap-2 pt-4" data-oid=".k5k9f1">
+      <div className="flex justify-end gap-2 pt-4" data-oid="t5z-mtd">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          data-oid="1z9.7xw"
+          data-oid="rt2trne"
         >
           Cancel
         </Button>
-        <Button type="submit" data-oid="xgfgrdg">
+        <Button type="submit" data-oid="xowypny">
           Add Units
         </Button>
       </div>
