@@ -81,7 +81,7 @@ export function BrandCard({
   return (
     <Card
       className="w-full overflow-hidden bg-card shadow-sm hover:shadow-md transition-shadow duration-200"
-      data-oid="1oemfy3"
+      data-oid="k8_cfu."
     >
       <motion.div
         className={cn(
@@ -91,65 +91,65 @@ export function BrandCard({
         )}
         onClick={() => setIsExpanded(!isExpanded)}
         initial={false}
-        data-oid="egr5xx2"
+        data-oid="fru9pg5"
       >
         {/* Brand and Units Info */}
         <div
           className={cn(
             "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
           )}
-          data-oid="jj_xm74"
+          data-oid="2215el2"
         >
           <h3
             className="text-lg font-semibold tracking-tight"
-            data-oid="t134egs"
+            data-oid="gqmz_n7"
           >
             {brand}
           </h3>
           <div
             className="flex items-center gap-2 text-sm text-muted-foreground"
-            data-oid="hkilo6z"
+            data-oid="9qb-kia"
           >
-            <span data-oid="z8460l9">{totalStock} units</span>
+            <span data-oid=":zq.m.s">{totalStock} units</span>
             {availableUnits > 0 && (
               <>
-                <span className="text-muted-foreground/30" data-oid="fh6y0r3">
+                <span className="text-muted-foreground/30" data-oid="d7i1ut8">
                   •
                 </span>
-                <span data-oid="9fivl1u">{availableUnits} Available</span>
+                <span data-oid="052k5jc">{availableUnits} Available</span>
               </>
             )}
           </div>
         </div>
 
         {/* Expand Arrow - Now positioned on the right */}
-        <div className="flex items-center ml-auto" data-oid="udk83ao">
+        <div className="flex items-center ml-auto" data-oid="zxmx:6p">
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="u9guc4_"
+            data-oid="380-bl4"
           >
             <ChevronDown
               className="h-5 w-5 text-muted-foreground"
-              data-oid="ew8dsms"
+              data-oid="g80xcxj"
             />
           </motion.div>
         </div>
       </motion.div>
 
-      <AnimatePresence initial={false} data-oid="oq6sa06">
+      <AnimatePresence initial={false} data-oid="gtyn.b6">
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="b8738sg"
+            data-oid="nw-2wqn"
           >
-            <CardContent className="p-4" data-oid="noc8td:">
+            <CardContent className="p-4" data-oid="jc31au2">
               <div
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                data-oid="3vbnkkk"
+                data-oid="9gp8xy2"
               >
                 {vehicleGroups.map((group) => (
                   <GroupedVehicleCard
@@ -172,7 +172,7 @@ export function BrandCard({
                     onBatchUpdateStatus={(units, newStatus) =>
                       onBatchUpdateStatus(group.id, units, newStatus)
                     }
-                    data-oid="cchfjq4"
+                    data-oid="ezxdky."
                   />
                 ))}
               </div>
