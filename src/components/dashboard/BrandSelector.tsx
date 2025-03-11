@@ -50,11 +50,19 @@ export function BrandSelector({
   }, [availableBrands, fetchBrands]);
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2", className)} data-oid="d.syuag">
       {label && (
-        <Label htmlFor="brand-selector" className="text-sm font-medium">
+        <Label
+          htmlFor="brand-selector"
+          className="text-sm font-medium"
+          data-oid=":jm6c7p"
+        >
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && (
+            <span className="text-destructive ml-1" data-oid="it.i4uo">
+              *
+            </span>
+          )}
         </Label>
       )}
       <BrandCombobox
@@ -65,6 +73,7 @@ export function BrandSelector({
         emptyMessage={isLoading ? "Loading..." : "No brands found."}
         disabled={disabled || isLoading}
         className="w-full"
+        data-oid="v-4v:ff"
       />
     </div>
   );
