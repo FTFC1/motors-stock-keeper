@@ -27,6 +27,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMobile } from "@/hooks/use-mobile";
 import { v4 as uuidv4 } from "uuid";
 import { Label } from "@/components/ui/label";
+import { BrandCombobox } from "@/components/ui/combobox";
+import { cn } from "@/lib/utils";
+import { ModelCombobox } from "@/components/ui/model-combobox";
+import { TrimCombobox } from "@/components/ui/trim-combobox";
+import { ColorCombobox } from "@/components/ui/color-combobox";
+import { vehicleData } from "@/data/vehicle-models";
 
 interface ColorUnit {
   color: string;
@@ -73,6 +79,70 @@ export function AddVehicleModal({
       | ColorUnit[]
       | undefined,
   ) => {
+    if (field === "brand") {
+      // Clear model and trim when brand changes
+      setFormData((prev) => ({
+        ...prev,
+        brand: value as string,
+        model: "", // Reset model
+        trim: "", // Reset trim
+      }));
+      return;
+    }
+
+    if (field === "model") {
+      const selectedBrand = formData.brand;
+      const modelValue = value as string;
+
+      // Validate if model belongs to selected brand
+      const isValidModel = selectedBrand && vehicleData[selectedBrand]?.models.some(
+        (model) => model.value === modelValue
+      );
+
+      if (!isValidModel && modelValue) {
+        toast({
+          title: "Invalid Model",
+          description: `This model is not available for ${selectedBrand}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Clear trim when model changes
+      setFormData((prev) => ({
+        ...prev,
+        model: modelValue,
+        trim: "", // Reset trim
+      }));
+      return;
+    }
+
+    if (field === "trim") {
+      const trimValue = value as string;
+      const brandId = formData.brand;
+      const modelValue = formData.model;
+      
+      if (trimValue && brandId && modelValue) {
+        // Find the selected trim to get default values
+        const selectedTrim = vehicleData[brandId]?.trims[modelValue]?.find(
+          trim => trim.value === trimValue
+        );
+        
+        if (selectedTrim) {
+          // Auto-populate fields based on the selected trim
+          setFormData(prev => ({
+            ...prev,
+            trim: trimValue,
+            // Only set these if they have default values and current values are empty
+            fuelType: selectedTrim.defaultFuelType || prev.fuelType,
+            wheelDrive: selectedTrim.defaultWheelDrive || prev.wheelDrive,
+            transmissionType: selectedTrim.defaultTransmission || prev.transmissionType,
+          }));
+          return;
+        }
+      }
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -207,9 +277,10 @@ export function AddVehicleModal({
       data-oid="5y5oqrr"
     >
       <DialogContent
-        className={`${
+        className={cn(
+          "flex flex-col",
           isMobile ? "w-[100vw] h-[100vh] p-0" : "max-w-2xl h-[90vh]"
-        }`}
+        )}
         data-oid="hui-its"
       >
         <form
@@ -231,22 +302,20 @@ export function AddVehicleModal({
                 data-oid="vy2p8hz"
               >
                 {/* Brand */}
-                <div className="space-y-2" data-oid="ftjukuh">
+                <div className="space-y-2 relative">
                   <Label
                     htmlFor="brand"
                     className="text-sm font-medium"
-                    data-oid="0u.y77p"
+                    data-oid="xs.qxes"
                   >
                     Brand *
                   </Label>
-                  <Input
-                    id="brand"
-                    value={formData.brand}
-                    onChange={(e) => handleChange("brand", e.target.value)}
-                    className="min-h-[44px]"
-                    required
-                    placeholder="e.g. Changan"
-                    data-oid="q7rug4b"
+                  <BrandCombobox
+                    value={formData.brand.toLowerCase()}
+                    onChange={(value) =>
+                      handleChange("brand", value.toUpperCase())
+                    }
+                    data-oid="baim3_g"
                   />
                 </div>
 
@@ -259,14 +328,13 @@ export function AddVehicleModal({
                   >
                     Model *
                   </Label>
-                  <Input
-                    id="model"
+                  <ModelCombobox
                     value={formData.model}
-                    onChange={(e) => handleChange("model", e.target.value)}
-                    className="min-h-[44px]"
-                    required
+                    onChange={(value) => handleChange("model", value)}
+                    brandId={formData.brand}
+                    models={formData.brand ? vehicleData[formData.brand]?.models || [] : []}
+                    disabled={!formData.brand}
                     placeholder="e.g. Hunter"
-                    data-oid="ukf.e.0"
                   />
                 </div>
 
@@ -279,14 +347,13 @@ export function AddVehicleModal({
                   >
                     Trim *
                   </Label>
-                  <Input
-                    id="trim"
+                  <TrimCombobox
                     value={formData.trim}
-                    onChange={(e) => handleChange("trim", e.target.value)}
-                    className="min-h-[44px]"
-                    required
+                    onChange={(value) => handleChange("trim", value)}
+                    brandId={formData.brand}
+                    modelValue={formData.model}
+                    disabled={!formData.model}
                     placeholder="e.g. Luxury"
-                    data-oid=":5t_ql7"
                   />
                 </div>
 
@@ -449,20 +516,16 @@ export function AddVehicleModal({
                         >
                           Color
                         </Label>
-                        <Input
-                          id={`color-${index}`}
+                        <ColorCombobox
                           value={colorUnit.color}
-                          onChange={(e) =>
-                            handleColorUnitChange(
-                              index,
-                              "color",
-                              e.target.value,
-                            )
+                          onChange={(value) => 
+                            handleColorUnitChange(index, "color", value)
                           }
-                          className="min-h-[44px]"
+                          brandId={formData.brand}
+                          modelValue={formData.model}
+                          trimValue={formData.trim}
+                          disabled={!formData.trim}
                           placeholder="e.g. White"
-                          required={index === 0}
-                          data-oid="6n_67kf"
                         />
                       </div>
                       <div className="space-y-2" data-oid="w1zgmmz">

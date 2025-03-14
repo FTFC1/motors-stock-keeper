@@ -16,6 +16,24 @@ When a new user comes to the system, they are first greeted by a landing page th
 
 Upon signing in, users arrive at the main dashboard, which serves as the central hub of the application. The landing page immediately presents a clean and data-focused layout. In the header, there are options for navigation, including access to settings, notifications, and logout. A sidebar or a top navigation bar allows users to move between different modules such as stock management, pending edits, and change logs. The content area displays a detailed table of vehicle inventory data that is dynamic and updates in real time. The interface adjusts based on whether the logged-in user is an Admin, Operations Staff, or Sales Staff. Admin users see additional tools for modifying stock, performing bulk updates, and reviewing pending changes. Operations team members see the complete inventory including reserved, cannibalized, and workshop vehicles, along with reservation management tools. Sales Staff see a simplified version that focuses on filtering, sorting, and viewing available stock and incoming inventory (pre-sale) without making any modifications to the underlying data.
 
+### Inventory Management Interface
+
+The inventory management interface has been enhanced with an accordion-style view for brand sections, allowing users to easily expand and collapse different vehicle brands. Each brand section displays a summary of available models and units, with a mobile-optimized layout for brand cards. The interface includes a "Add Vehicle" button that opens a modal form for adding new vehicles to the inventory.
+
+The Add Vehicle Modal includes several key components:
+- A BrandCombobox component with search functionality, allowing users to quickly find and select from existing brands or add new ones
+- Model and trim input fields for specifying vehicle details
+- Form validation to ensure all required information is provided
+- A responsive design that works well on both desktop and mobile devices
+
+The BrandCombobox component specifically features:
+- A searchable dropdown that filters brand options as the user types
+- An "Add New Brand" option that appears when no matching brands are found
+- Proper keyboard navigation and accessibility features
+- Event handling that works correctly within the modal context
+
+This interface provides a streamlined workflow for inventory management, allowing staff to quickly add new vehicles to the system while maintaining data integrity.
+
 ## Reservation Management System
 
 A cornerstone of the application is the Reservation Management System, which allows for efficient tracking of vehicle reservations throughout the customer journey. When a customer expresses interest and pays at least 50% of the vehicle cost, the sales person initiates the reservation process within the system. This begins with the sales person viewing the real-time inventory to confirm availability. They then use the Reservation Form to capture key information: customer name, branch, reservation date, vehicle details (brand, model, color), sales person information, and any special remarks. Upon form submission, the system marks the vehicle as "pending reservation" and automatically generates a notification email that includes reservation details. This email is sent to the accounts team, operations team, and any other relevant stakeholders.
@@ -39,6 +57,26 @@ After the login process, the user's role determines their journey within the app
 For Operations team members, the interface provides comprehensive tools for reservation management, stock reconciliation, and reporting. They can view all inventory regardless of status, manage reservations, and access administrative functions for overriding standard workflows when necessary. Each reservation can be tracked from initial request through payment confirmation to final delivery, with a complete audit trail of all actions taken.
 
 For Sales Staff, the flow after login leads to an interface optimized for data viewing. They are not given options to modify the records. Instead, their view is focused on extensive filtering options to search by brand, model, trim, or fuel type, and a sorting feature which organizes data by criteria such as alphabetical order or stock quantity. Sales staff can also see incoming inventory (pre-sale) to inform customers about future availability. When they need to reserve a vehicle, they use a streamlined reservation form that initiates the approval workflow described earlier. Navigation between these pages is streamlined by clear buttons and labels, ensuring that all pages are connected and that the user can always return to the main dashboard with ease.
+
+### Add Vehicle Workflow
+
+The Add Vehicle workflow has been implemented with a focus on user efficiency and data accuracy. When a user clicks the "Add Vehicle" button, a modal opens with a form containing the following key components:
+
+1. **Brand Selection**: The BrandCombobox component allows users to:
+   - Search through existing brands with real-time filtering
+   - Select a brand from the dropdown list
+   - Add a new brand if the desired one doesn't exist
+   - Clear their selection if needed
+
+2. **Model Input**: After selecting a brand, users can specify the vehicle model.
+
+3. **Trim Selection**: Users can select or specify the trim level for the vehicle.
+
+4. **Additional Details**: Fields for other vehicle specifications such as color, year, and features.
+
+5. **Submit Controls**: Buttons to submit the form or cancel the operation.
+
+The form includes validation to ensure all required fields are completed before submission. When the form is submitted, the system creates a new vehicle entry in the inventory database, making it available for the Add Units workflow where specific unit quantities can be specified.
 
 ## Email Integration and Notification System
 
@@ -65,3 +103,15 @@ The application carefully manages data across various sources and destinations. 
 ## Conclusion and Overall App Journey
 
 From the moment a staff member accesses the application via a landing page, they experience a well-organized and secure workflow. The journey begins with a simple sign-up or login process that strictly enforces company domain restrictions. Depending on whether the user is an Admin, Operations Staff, or Sales Staff, they are directed to an interface that enhances their specific needs, whether it is in-depth inventory management and editing for Admin users, comprehensive reservation management for Operations team members, or a detailed, filterable view of available inventory for Sales Staff. The reservation system streamlines what was previously a manual process, using email integration to maintain familiar workflows while adding structure and automation. Every action from bulk updates and real-time data synchronization to error handling and undo capabilities has been thoughtfully integrated into the overall design. The system's ease of navigation, combined with clear notification and settings options, ensures that internal staff can manage vehicle inventory with confidence, clarity, and efficiency.
+
+## Implementation Progress (March 2025)
+
+As of March 2025, significant progress has been made on the inventory management interface:
+
+- The dashboard with brand filtering and accordion view has been completed
+- The BrandCombobox component has been fully implemented with search functionality and "Add New Brand" capability
+- Work is underway on the Add Vehicle Modal form fields, with the brand selection component completed
+- Next steps include implementing the Model and Trim input fields, followed by the Add Units Modal
+- The system is being prepared for MCP database integration to store and retrieve inventory data
+
+The implementation follows a component-first approach, ensuring that each UI element is thoroughly tested and documented before integration into the larger system. This approach has already yielded benefits in terms of code quality and maintainability, particularly with complex components like the BrandCombobox that require sophisticated event handling and state management.

@@ -6,14 +6,26 @@ This document serves as a single source of truth for all pending tasks and featu
 
 ## Core Inventory Management (Current Focus)
 
+### Completed
+- [x] Implement mobile-responsive inventory dashboard
+- [x] Create basic vehicle list view
+- [x] Build brand accordion component
+- [x] Implement brand filtering functionality
+- [x] Create BrandCombobox component with search & filtering
+- [x] Add "Add New Brand" capability to combobox
+
 ### In Progress
-- [ ] Complete real-time inventory dashboard
-- [ ] Finalize basic vehicle add/edit flows
-- [ ] Implement MCP database integration
+- [ ] Complete the Add Vehicle Modal form fields
+  - [x] Brand field with search and "add new" capability
+  - [ ] Model field with similar UX patterns
+  - [ ] Trim input component refinement
+  - [ ] Fuel type input component
+  - [ ] Other vehicle specification inputs
+- [ ] Implement Add Units modal
+- [ ] Finalize MCP database integration
 - [ ] Refine UI components with Onlook
 
 ### Pending
-- [ ] Color dropdown with add/delete functionality
 - [ ] Stock level notifications
 - [ ] Differentiate available vs reserved vehicles
 - [ ] Vehicle detail page enhancements

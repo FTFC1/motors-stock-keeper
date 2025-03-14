@@ -2,10 +2,10 @@
 
 This roadmap outlines the planned development phases for the RT Inventory System, with a focus on incremental delivery of value.
 
-## Current Status (March 2024)
+## Current Status (March 2025)
 
 - **UI Development**: Using Onlook (https://onlook.com/) for visual React interface development
-- **Frontend**: Basic inventory dashboard and components implemented
+- **Frontend**: Inventory dashboard with brand filtering complete, BrandCombobox component finalized
 - **Database**: Planning MCP implementation with future Supabase migration path
 - **Backend**: Initial API endpoints established for inventory data
 
@@ -14,6 +14,9 @@ This roadmap outlines the planned development phases for the RT Inventory System
 - [x] Basic inventory database schema design
 - [x] Import/export functionality for ERP data
 - [x] Basic UI components in Onlook
+- [x] BrandCombobox component with search and "Add New" functionality
+- [ ] Complete Add Vehicle Modal form components
+- [ ] Implement Add Units Modal functionality
 - [ ] MCP database integration via Cursor
 - [ ] Complete real-time inventory dashboard
 - [ ] Stock level notifications
@@ -58,8 +61,12 @@ This roadmap outlines the planned development phases for the RT Inventory System
 Based on our app_flow_document.md, we're implementing these key user journeys:
 
 - [ ] **Onboarding & Authentication**: Sign-in, sign-up, and password recovery
-- [ ] **Dashboard View**: Role-specific interfaces for admin vs sales staff
+- [x] **Dashboard View**: Role-specific interfaces for admin vs sales staff
 - [ ] **Inventory Management**: Filtering, sorting, and viewing detailed inventory
+    - [x] Brand filtering
+    - [x] Accordion view for brands
+    - [ ] Add vehicle form
+    - [ ] Add units form
 - [ ] **Reservation Management**: Creating, tracking, and updating reservations
 - [ ] **Admin Operations**: Approval workflows and override capabilities
 - [ ] **Reporting & Analytics**: Data visualization for executive management
@@ -81,12 +88,20 @@ Following our supabase_thoughts.md strategy:
 - End of Week 16: Ready for national rollout planning
 - End of Week 20: System fully deployed with all features
 
-## Current Focus (March 2024)
+## Current Focus (March 2025)
 
 We are currently focusing on:
-- Completing the UI development with Onlook
-- Implementing MCP database integration
+- Completing the Add Vehicle Modal form fields
+- Implementing the Add Units Modal
+- MCP database integration
 - Finalizing the inventory dashboard functionality
+
+## Recent Achievements
+
+- Completed BrandCombobox component with search and "Add New" functionality
+- Resolved complex event handling issues in modal context
+- Created detailed component documentation
+- Fixed dropdown positioning and focus management
 
 ## Notes for Implementation
 

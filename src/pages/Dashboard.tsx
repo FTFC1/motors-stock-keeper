@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { PageLayout } from "@/components/common/PageLayout";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { VehicleFilters } from "@/components/dashboard/VehicleFilters";
@@ -18,8 +18,9 @@ import { GroupedVehicleCard } from "@/components/dashboard/GroupedVehicleCard";
 import { BrandCard } from "@/components/dashboard/BrandCard";
 import { useMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Check, AlertCircle, X } from "lucide-react";
 import { AddVehicleModal } from "@/components/dashboard/AddVehicleModal";
+import React from "react";
 
 // Helper function to generate a random number of units for a vehicle
 const generateRandomUnits = (
@@ -85,6 +86,8 @@ const calculateStatusCounts = (
 };
 
 const generateMockVehicles = (): Vehicle[] => {
+  // This object defines the available vehicle configurations by brand, model, and trim
+  // Each configuration will become a separate "Vehicle" object with multiple "VehicleUnit" items
   const vehicleOptions = {
     Changan: {
       "Alsvin V3": [
@@ -189,7 +192,7 @@ const generateMockVehicles = (): Vehicle[] => {
         },
       ],
     },
-    Maxus: {
+    MAXUS: {
       D90: [
         {
           trim: "Executive",
@@ -265,8 +268,11 @@ const generateMockVehicles = (): Vehicle[] => {
 
   const brands = Object.keys(vehicleOptions);
   const vehicles: Vehicle[] = [];
+  let totalUnits = 0;
 
   // Create vehicles with individual units
+  // Each vehicle represents a unique brand-model-trim configuration
+  // Each unit represents an individual physical vehicle of that configuration
   brands.forEach((brand) => {
     const models = Object.keys(vehicleOptions[brand]);
     models.forEach((model) => {
@@ -293,7 +299,13 @@ const generateMockVehicles = (): Vehicle[] => {
 
         const baseId = `${brand}-${model}-${config.trim}`
           .toLowerCase()
-          .replace(/\s+/g, "-");
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, ""); // Remove any special characters
+
+        // Generate 1-5 random units for this vehicle configuration
+        const unitCount = Math.floor(Math.random() * 5) + 1;
+        const units = generateRandomUnits(baseId, unitCount);
+        totalUnits += unitCount;
 
         const vehicle: Vehicle = {
           id: baseId,
@@ -303,14 +315,17 @@ const generateMockVehicles = (): Vehicle[] => {
           fuelType,
           wheelDrive: config.wheelDrive,
           transmissionType: config.transmission,
-          units: generateRandomUnits(baseId, Math.floor(Math.random() * 5) + 1),
+          units,
         };
+
+        console.log(`Generated vehicle config: ${brand} ${model} ${config.trim} with ${unitCount} units`);
 
         vehicles.push(vehicle);
       });
     });
   });
 
+  console.log(`Total: ${vehicles.length} vehicle configurations with ${totalUnits} total units`);
   return vehicles;
 };
 
@@ -357,6 +372,47 @@ const Dashboard = () => {
 
   const isMobile = useMobile();
 
+  // Instead of a simple state for openInventorySheet, use a more stable approach
+  const [inventoryState, setInventoryState] = useState<Record<string, boolean>>({});
+  
+  // Create a memoized getter for sheet visibility to ensure stable references
+  const isInventorySheetOpen = useCallback((vehicleId: string) => {
+    return inventoryState[vehicleId] || persistentOpenSheetsRef.current[vehicleId] || false;
+  }, [inventoryState]);
+  
+  // Create a memoized setter for sheet visibility to ensure stable references
+  const setInventorySheetOpen = useCallback((vehicleId: string, isOpen: boolean) => {
+    console.log(`Dashboard: Setting inventory sheet visibility for ${vehicleId} to ${isOpen}`);
+    
+    // Don't close the sheet if we're in the middle of an operation
+    if (!isOpen && isAddingUnitsRef.current) {
+      console.log(`Dashboard: Prevented closing inventory sheet for ${vehicleId} during add operation`);
+      return;
+    }
+    
+    setInventoryState(prev => ({
+      ...prev,
+      [vehicleId]: isOpen
+    }));
+    
+    if (isOpen) {
+      persistentOpenSheetsRef.current[vehicleId] = true;
+      console.log(`Dashboard: Marked sheet ${vehicleId} as persistently open`);
+    } else {
+      delete persistentOpenSheetsRef.current[vehicleId];
+      console.log(`Dashboard: Removed persistent marker for sheet ${vehicleId}`);
+    }
+  }, []);
+
+  // Add state to track active color tab for each vehicle
+  const [activeColorTabs, setActiveColorTabs] = useState<Record<string, string>>({});
+  
+  // Add a ref to track if we're currently processing an add units operation
+  const isAddingUnitsRef = React.useRef(false);
+  
+  // Add a ref to track which sheets should persistently stay open, avoiding reopening
+  const persistentOpenSheetsRef = React.useRef<Record<string, boolean>>({});
+
   // Initialize data - in a real app, this would fetch from an API
   useEffect(() => {
     const loadData = async () => {
@@ -400,7 +456,12 @@ const Dashboard = () => {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to load vehicles data. Please try again.",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>Failed to load vehicles data. Please try again.</span>
+            </div>
+          ),
         });
       } finally {
         setIsLoading(false);
@@ -412,7 +473,13 @@ const Dashboard = () => {
 
   // Apply filters and sorting
   useEffect(() => {
-    console.log("Applying filters. Current vehicles count:", vehicles.length);
+    // Count total units before filtering
+    const totalUnitsBeforeFilter = vehicles.reduce((total, vehicle) => total + vehicle.units.length, 0);
+    
+    console.log(
+      "Applying filters:",
+      `${vehicles.length} vehicle configurations (${totalUnitsBeforeFilter} total units)`
+    );
 
     if (vehicles.length === 0) {
       setFilteredVehicles([]);
@@ -426,12 +493,24 @@ const Dashboard = () => {
       // Apply search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        result = result.filter(
-          (vehicle) =>
-            vehicle.brand.toLowerCase().includes(searchLower) ||
-            vehicle.model.toLowerCase().includes(searchLower) ||
-            vehicle.trim.toLowerCase().includes(searchLower),
-        );
+        // Normalize search term by removing spaces and special characters
+        const normalizedSearch = searchLower.replace(/[\s-_]+/g, '');
+        
+        result = result.filter((vehicle) => {
+          // Normalize vehicle data for comparison
+          const normalizedBrand = vehicle.brand.toLowerCase().replace(/[\s-_]+/g, '');
+          const normalizedModel = vehicle.model.toLowerCase().replace(/[\s-_]+/g, '');
+          const normalizedTrim = vehicle.trim.toLowerCase().replace(/[\s-_]+/g, '');
+          
+          // Check if normalized search is included in any of the normalized fields
+          return normalizedBrand.includes(normalizedSearch) || 
+                 normalizedModel.includes(normalizedSearch) || 
+                 normalizedTrim.includes(normalizedSearch) ||
+                 // Keep original search logic as well for better matches
+                 vehicle.brand.toLowerCase().includes(searchLower) ||
+                 vehicle.model.toLowerCase().includes(searchLower) ||
+                 vehicle.trim.toLowerCase().includes(searchLower);
+        });
       }
 
       // Apply other filters one by one, with logging to track what's happening
@@ -520,7 +599,14 @@ const Dashboard = () => {
           break;
       }
 
-      console.log("Final filtered vehicles:", result.length);
+      // Count total units after filtering
+      const totalUnitsAfterFilter = result.reduce((total, vehicle) => total + vehicle.units.length, 0);
+      
+      console.log(
+        "After filtering:",
+        `${result.length} vehicle configurations (${totalUnitsAfterFilter} total units)`
+      );
+      
       setFilteredVehicles(result);
     } catch (error) {
       console.error("Error applying filters:", error);
@@ -653,8 +739,14 @@ const Dashboard = () => {
     );
 
     toast({
+      variant: "default",
       title: "Vehicle Updated",
-      description: `Updated ${brand} ${model} ${trim}`,
+      description: (
+        <div className="flex items-center gap-2 text-emerald-600">
+          <Check className="h-4 w-4" />
+          <span>Updated {brand} {model} {trim}</span>
+        </div>
+      ),
     });
   };
 
@@ -681,48 +773,315 @@ const Dashboard = () => {
     );
 
     toast({
+      variant: "default",
       title: "Unit Updated",
-      description: `Updated unit ${updatedUnit.id} status to ${updatedUnit.status}`,
+      description: (
+        <div className="flex items-center gap-2 text-emerald-600">
+          <Check className="h-4 w-4" />
+          <span>Updated unit {updatedUnit.id} status to {updatedUnit.status}</span>
+        </div>
+      ),
     });
   };
 
-  const handleAddUnits = (
+  const handleAddUnits = useCallback(async (
     groupId: string,
     color: string,
     quantity: number,
     status: VehicleStatus,
   ) => {
-    setVehicles((prevVehicles) =>
-      prevVehicles.map((vehicle) => {
-        if (vehicle.id === groupId) {
-          const newUnits: VehicleUnit[] = [];
-          const baseCount = vehicle.units.length;
+    console.log("Adding units:", { groupId, color, quantity, status });
+    
+    // Flag that we're adding units - this will prevent sheet from closing
+    isAddingUnitsRef.current = true;
+    
+    // Important: We want to avoid remounting the sheet, instead keep it open and just update content
+    // Check if the sheet is already open first
+    const sheetIsCurrentlyOpen = isInventorySheetOpen(groupId);
+    console.log(`Dashboard: handleAddUnits - sheet for ${groupId} is currently ${sheetIsCurrentlyOpen ? 'open' : 'closed'}`);
+    
+    // Mark this sheet as persistently open to prevent remounting
+    persistentOpenSheetsRef.current[groupId] = true;
+    
+    // Immediately set the color as active for this vehicle to ensure tab selection
+    setActiveColorTabs(prev => ({
+      ...prev,
+      [groupId]: color
+    }));
+    
+    // If the sheet wasn't already open, now we can open it
+    // If it was already open, we don't need to toggle its state (which would cause a rerender)
+    if (!sheetIsCurrentlyOpen) {
+      console.log(`Dashboard: Opening sheet for ${groupId} that wasn't previously open`);
+      setInventoryState(prev => ({
+        ...prev,
+        [groupId]: true
+      }));
+    } else {
+      console.log(`Dashboard: Sheet for ${groupId} was already open, not toggling state`);
+    }
+    
+    try {
+      // Validate parameters to ensure they are of the correct type
+      if (typeof quantity !== 'number') {
+        console.error("Invalid quantity type:", quantity);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>Invalid quantity value</span>
+            </div>
+          ),
+        });
+        return;
+      }
 
-          for (let i = 1; i <= quantity; i++) {
-            newUnits.push({
-              id: `${vehicle.id}-${String(baseCount + i).padStart(3, "0")}`,
-              unitNumber: baseCount + i,
-              status,
-              color,
-              lastUpdated: new Date().toISOString(),
-              updatedBy: "admin@motors.com",
+      // Create new units
+      const createNewUnits = (baseId: string, baseCount: number): VehicleUnit[] => {
+        const units: VehicleUnit[] = [];
+        for (let i = 1; i <= quantity; i++) {
+          units.push({
+            id: `${baseId}-${String(baseCount + i).padStart(3, "0")}`,
+            unitNumber: baseCount + i,
+            status,
+            color,
+            lastUpdated: new Date().toISOString(),
+            updatedBy: "admin@motors.com",
+          });
+        }
+        return units;
+      };
+
+      // Use a functional update pattern to avoid any potential state issues
+      const updateVehicleState = (prevVehicles: Vehicle[]) => {
+        // Try to extract brand, model, and trim from groupId
+        const extractProperties = (id: string) => {
+          console.log(`Extracting properties from ID: ${id}`);
+          
+          // First try an exact match
+          const exactMatch = prevVehicles.find(v => v.id === id);
+          if (exactMatch) {
+            console.log(`Found exact match for ID: ${id}`);
+            return {
+              brand: exactMatch.brand,
+              model: exactMatch.model,
+              trim: exactMatch.trim,
+              id: exactMatch.id
+            };
+          }
+          
+          // If no exact match, try to parse the ID
+          // We need to handle format like "Changan-UNI-T-Black Edition-Petrol-4x2-Auto"
+          try {
+            const parts = id.split('-');
+            if (parts.length >= 3) {
+              // For model names with hyphens like "UNI-T", we need to be smarter
+              // First part is brand
+              const brand = parts[0];
+              
+              // Try to identify which parts belong to the model vs. trim
+              // Search for vehicles with this brand
+              const brandVehicles = prevVehicles.filter(v => 
+                v.brand.toLowerCase() === brand.toLowerCase()
+              );
+              
+              if (brandVehicles.length > 0) {
+                // Look for models that would match the remaining parts
+                for (const vehicle of brandVehicles) {
+                  // Check if the ID contains the model (case insensitive)
+                  if (id.toLowerCase().includes(vehicle.model.toLowerCase())) {
+                    console.log(`Found model match: ${vehicle.model} in ID: ${id}`);
+                    
+                    // Check if the ID contains the trim (case insensitive)
+                    if (id.toLowerCase().includes(vehicle.trim.toLowerCase())) {
+                      console.log(`Found trim match: ${vehicle.trim} in ID: ${id}`);
+                      
+                      // We have a good match
+                      return {
+                        brand: vehicle.brand,
+                        model: vehicle.model,
+                        trim: vehicle.trim,
+                        id: vehicle.id
+                      };
+                    }
+                  }
+                }
+              }
+              
+              // If we didn't find a match through intelligent search, 
+              // fall back to basic splitting (likely won't be accurate for complex names)
+              console.log("Falling back to basic splitting of ID parts");
+              return {
+                brand: parts[0],
+                model: parts[1],
+                trim: parts[2]
+              };
+            }
+          } catch (error) {
+            console.error("Error parsing ID:", error);
+          }
+          
+          // If all else fails
+          return null;
+        };
+
+        // First check for an exact ID match
+        const exactVehicle = prevVehicles.find(v => v.id === groupId);
+        if (exactVehicle) {
+          console.log(`Found exact vehicle match by ID: ${groupId}`);
+          const newUnits = createNewUnits(exactVehicle.id, exactVehicle.units.length);
+          
+          return prevVehicles.map(vehicle => {
+            if (vehicle.id === exactVehicle.id) {
+              return {
+                ...vehicle,
+                units: [...vehicle.units, ...newUnits],
+              };
+            }
+            return vehicle;
+          });
+        }
+        
+        // If no exact match, try matching by properties
+        const props = extractProperties(groupId);
+        if (props) {
+          console.log("Properties extracted:", props);
+          
+          // If we have an ID from the property extraction, use that directly
+          if (props.id) {
+            console.log(`Using vehicle ID from properties: ${props.id}`);
+            const newUnits = createNewUnits(props.id, 
+              prevVehicles.find(v => v.id === props.id)?.units.length || 0);
+            
+            return prevVehicles.map(vehicle => {
+              if (vehicle.id === props.id) {
+                return {
+                  ...vehicle,
+                  units: [...vehicle.units, ...newUnits],
+                };
+              }
+              return vehicle;
             });
           }
-
-          return {
-            ...vehicle,
-            units: [...vehicle.units, ...newUnits],
-          };
+          
+          // Otherwise try to find a vehicle that matches all properties
+          const strictMatch = prevVehicles.find(v => 
+            v.brand === props.brand && 
+            v.model === props.model && 
+            v.trim === props.trim
+          );
+          
+          if (strictMatch) {
+            console.log("Found strict match by all properties:", strictMatch.id);
+            const newUnits = createNewUnits(strictMatch.id, strictMatch.units.length);
+            
+            return prevVehicles.map(vehicle => {
+              if (vehicle.id === strictMatch.id) {
+                return {
+                  ...vehicle,
+                  units: [...vehicle.units, ...newUnits],
+                };
+              }
+              return vehicle;
+            });
+          }
+          
+          // Try a more flexible match based on similar properties
+          const fuzzyMatch = prevVehicles.find(v => 
+            v.brand.toLowerCase() === props.brand.toLowerCase() && 
+            (
+              // For model, handle hyphenated names properly
+              v.model.toLowerCase() === props.model.toLowerCase() ||
+              v.model.toLowerCase().replace(/-/g, '') === props.model.toLowerCase().replace(/-/g, '')
+            ) && 
+            v.trim.toLowerCase() === props.trim.toLowerCase()
+          );
+          
+          if (fuzzyMatch) {
+            console.log("Found fuzzy match by similar properties:", fuzzyMatch.id);
+            const newUnits = createNewUnits(fuzzyMatch.id, fuzzyMatch.units.length);
+            
+            return prevVehicles.map(vehicle => {
+              if (vehicle.id === fuzzyMatch.id) {
+                return {
+                  ...vehicle,
+                  units: [...vehicle.units, ...newUnits],
+                };
+              }
+              return vehicle;
+            });
+          }
         }
-        return vehicle;
-      }),
-    );
+        
+        // If we're still here without a match, log the problem and possible matches
+        console.error("Could not find matching vehicle for groupId:", groupId);
+        console.log("Available vehicles:", prevVehicles.map(v => ({ 
+          id: v.id, 
+          brand: v.brand, 
+          model: v.model, 
+          trim: v.trim 
+        })));
+        
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: (
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4" />
+              <span>Could not find matching vehicle for: {groupId}</span>
+            </div>
+          ),
+        });
+        
+        // Return unchanged
+        return prevVehicles;
+      };
 
-    toast({
-      title: "Units Added",
-      description: `Added ${quantity} new ${color} units with status ${status}`,
-    });
-  };
+      // Batch state updates to reduce render cycles
+      const batchUpdate = () => {
+        setVehicles(updateVehicleState);
+        setFilteredVehicles(updateVehicleState);
+        
+        // After the state updates, re-ensure the active color tab is set
+        // This handles cases where a completely new color was added
+        setActiveColorTabs(prev => ({
+          ...prev,
+          [groupId]: color // Explicitly set again after the update
+        }));
+      };
+      
+      // Perform the update
+      batchUpdate();
+      
+      // Show success toast
+      toast({
+        title: "Units Added",
+        description: (
+          <div className="flex items-center gap-2 text-emerald-600">
+            <Check className="h-4 w-4" />
+            <span>Added {quantity} {color} units in {status} status</span>
+          </div>
+        ),
+      });
+      
+    } catch (error) {
+      console.error("Error adding units:", error);
+    } finally {
+      // Clear the flag after a short delay to ensure everything has settled
+      setTimeout(() => {
+        console.log("Finished add units operation for groupId:", groupId);
+        isAddingUnitsRef.current = false;
+        
+        // Update the color tab one final time without affecting sheet visibility
+        setActiveColorTabs(prev => ({
+          ...prev,
+          [groupId]: color
+        }));
+      }, 500);
+    }
+  }, [isInventorySheetOpen]);
 
   const handleBatchUpdateStatus = (
     groupId: string,
@@ -753,8 +1112,14 @@ const Dashboard = () => {
     );
 
     toast({
+      variant: "default",
       title: "Units Updated",
-      description: `Updated ${units.length} units to status ${newStatus}`,
+      description: (
+        <div className="flex items-center gap-2 text-emerald-600">
+          <Check className="h-4 w-4" />
+          <span>Updated {units.length} units to status {newStatus}</span>
+        </div>
+      ),
     });
   };
 
@@ -762,6 +1127,11 @@ const Dashboard = () => {
   const totalUnits = useMemo(() => {
     return vehicles.reduce((total, vehicle) => total + vehicle.units.length, 0);
   }, [vehicles]);
+
+  // Calculate filtered units for proper display when filters are applied
+  const filteredUnits = useMemo(() => {
+    return filteredVehicles.reduce((total, vehicle) => total + vehicle.units.length, 0);
+  }, [filteredVehicles]);
 
   // Calculate totalCount and filteredCount for potential use in header
   const totalCount = vehicles.length;
@@ -792,7 +1162,8 @@ const Dashboard = () => {
             Vehicles Inventory
           </h1>
           <p className="text-muted-foreground" data-oid="k0x5pkh">
-            {totalUnits} units in inventory
+            {isFiltered ? filteredUnits : totalUnits} units in inventory
+            {isFiltered && ` (filtered from ${totalUnits} total)`}
           </p>
 
           <Button
@@ -872,9 +1243,29 @@ const Dashboard = () => {
           <div className="mt-6 space-y-4 w-full" data-oid="ilbxrl1">
             {brandGroups.map((brandGroup) => (
               <BrandCard
-                key={brandGroup.brand}
+                key={`${brandGroup.brand}-${brandGroup.totalStock}`}
                 brand={brandGroup.brand}
-                vehicleGroups={brandGroup.vehicleGroups}
+                vehicleGroups={brandGroup.vehicleGroups.map(vehicle => ({
+                  ...vehicle,
+                  isInventoryOpen: isInventorySheetOpen(vehicle.id),
+                  activeColorTab: activeColorTabs[vehicle.id] || null,
+                  onActiveColorTabChange: (color: string) => {
+                    setActiveColorTabs(prev => ({
+                      ...prev,
+                      [vehicle.id]: color
+                    }));
+                  },
+                  onInventoryOpenChange: (open: boolean) => {
+                    // Only allow closing if we're not adding units
+                    if (!open && isAddingUnitsRef.current) {
+                      console.log("Prevented closing inventory sheet during add operation");
+                      return;
+                    }
+                    
+                    // Update visibility state without causing remounts
+                    setInventorySheetOpen(vehicle.id, open);
+                  },
+                }))}
                 totalStock={brandGroup.totalStock}
                 statusCounts={brandGroup.statusCounts}
                 onUpdateModel={handleUpdateModel}

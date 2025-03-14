@@ -57,7 +57,12 @@ export function UnitEditModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} data-oid="iujcj4:">
+    <Dialog 
+      open={isOpen} 
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent
         className={`sm:max-w-md ${isMobile ? "w-[100vw] h-[100vh]" : ""}`}
         data-oid="b-benh8"

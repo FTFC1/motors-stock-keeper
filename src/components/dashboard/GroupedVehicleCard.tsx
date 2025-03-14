@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useRef, useLayoutEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,8 +43,17 @@ interface GroupedVehicleCardProps {
     fuelType: string,
   ) => void;
   onUpdateVehicle: (unit: VehicleUnit) => void;
-  onAddUnits: (color: string, quantity: number, status: VehicleStatus) => void;
+  onAddUnits: (
+    groupId: string, 
+    color: string, 
+    quantity: number, 
+    status: VehicleStatus
+  ) => void;
   onBatchUpdateStatus: (units: VehicleUnit[], newStatus: VehicleStatus) => void;
+  isInventoryOpen?: boolean;
+  onInventoryOpenChange?: (open: boolean) => void;
+  activeColorTab?: string | null;
+  onActiveColorTabChange?: (color: string) => void;
 }
 
 export function GroupedVehicleCard({
@@ -62,6 +71,10 @@ export function GroupedVehicleCard({
   onUpdateVehicle,
   onAddUnits,
   onBatchUpdateStatus,
+  isInventoryOpen = false,
+  onInventoryOpenChange,
+  activeColorTab = null,
+  onActiveColorTabChange,
 }: GroupedVehicleCardProps) {
   const [showModelEdit, setShowModelEdit] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<VehicleUnit | null>(null);
@@ -71,7 +84,45 @@ export function GroupedVehicleCard({
     units: VehicleUnit[];
     status: VehicleStatus;
   } | null>(null);
-  const [showInventory, setShowInventory] = useState(false);
+
+  // Use memoized props to prevent re-renders
+  const memoizedProps = useMemo(() => ({
+    brand,
+    model,
+    trim,
+    fuelType,
+    units,
+    groupId,
+    activeColorTab,
+    onActiveColorTabChange,
+    onEditUnit: (unit: VehicleUnit) => {
+      setSelectedUnit(unit);
+    },
+    onAddUnits: (groupId: string, color: string, quantity: number, status: VehicleStatus) => {
+      console.log("InventorySheet onAddUnits called", { groupId, color, quantity, status });
+      if (onActiveColorTabChange) {
+        onActiveColorTabChange(color);
+      }
+      onAddUnits(groupId, color, quantity, status);
+    },
+    onBatchEdit: (units: VehicleUnit[]) => {
+      setSelectedConfig({
+        color: units[0].color || "",
+        units,
+        status: units[0].status,
+      });
+    }
+  }), [
+    brand, 
+    model, 
+    trim, 
+    fuelType, 
+    units, 
+    groupId, 
+    activeColorTab, 
+    onActiveColorTabChange, 
+    onAddUnits
+  ]);
 
   // Get non-zero status counts
   const activeStatuses = Object.entries(statusCounts)
@@ -83,7 +134,8 @@ export function GroupedVehicleCard({
     quantity: number;
     status: VehicleStatus;
   }) => {
-    onAddUnits(data.color, data.quantity, data.status);
+    console.log("GroupedVehicleCard handleAddUnits called:", { groupId, data });
+    onAddUnits(groupId, data.color, data.quantity, data.status);
     setShowAddUnits(false);
   };
 
@@ -230,11 +282,10 @@ export function GroupedVehicleCard({
           <Button
             variant="default"
             className="h-9"
-            onClick={() => setShowInventory(true)}
-            data-oid="j7xj.va"
+            onClick={() => onInventoryOpenChange?.(true)}
           >
             View Inventory
-            <ChevronRight className="h-4 w-4 ml-2" data-oid="zotppyv" />
+            <ChevronRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
       </CardContent>
@@ -261,7 +312,10 @@ export function GroupedVehicleCard({
           model={model}
           trim={trim}
           fuelType={fuelType}
-          onUpdate={onUpdateVehicle}
+          onUpdate={(updatedUnit) => {
+            onUpdateVehicle(updatedUnit);
+            setSelectedUnit(null);
+          }}
           data-oid="3v6bwaj"
         />
       )}
@@ -307,36 +361,20 @@ export function GroupedVehicleCard({
           <AddUnitsForm
             onSubmit={handleAddUnits}
             onCancel={() => setShowAddUnits(false)}
+            brandId={brand}
+            modelValue={model}
+            trimValue={trim}
             data-oid="x30hp3r"
           />
         </DialogContent>
       </Dialog>
 
-      <InventorySheet
-        isOpen={showInventory}
-        onClose={() => setShowInventory(false)}
-        brand={brand}
-        model={model}
-        trim={trim}
-        fuelType={fuelType}
-        units={units}
-        onEditUnit={(unit) => {
-          setSelectedUnit(unit);
-          setShowInventory(false);
-        }}
-        onAddUnits={(color) => {
-          setShowAddUnits(true);
-          setShowInventory(false);
-        }}
-        onBatchEdit={(units) => {
-          setSelectedConfig({
-            color: units[0].color || "",
-            units,
-            status: units[0].status,
-          });
-          setShowInventory(false);
-        }}
-        data-oid="gvolrvk"
+      {/* Inventory Sheet - directly render it without a container */}
+      <InventorySheet 
+        key={`inventory-sheet-${groupId}`}
+        isOpen={isInventoryOpen || false}
+        onClose={() => onInventoryOpenChange?.(false)}
+        {...memoizedProps}
       />
     </Card>
   );

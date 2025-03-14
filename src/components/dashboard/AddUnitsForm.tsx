@@ -10,9 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { VehicleStatus } from "@/types";
+import { ColorCombobox } from "@/components/ui/color-combobox";
 
 interface AddUnitsFormProps {
   existingColor?: string;
+  existingColors?: string[];
+  brandId: string; // Required for ColorCombobox
+  modelValue: string; // Required for ColorCombobox
+  trimValue: string; // Required for ColorCombobox
   onSubmit: (data: {
     color: string;
     quantity: number;
@@ -23,16 +28,40 @@ interface AddUnitsFormProps {
 
 export function AddUnitsForm({
   existingColor,
+  existingColors = [],
+  brandId,
+  modelValue,
+  trimValue,
   onSubmit,
   onCancel,
 }: AddUnitsFormProps) {
   const [color, setColor] = React.useState(existingColor || "");
   const [quantity, setQuantity] = React.useState(1);
   const [status, setStatus] = React.useState<VehicleStatus>("transit");
+  
+  // Log when the component mounts/unmounts to help with debugging
+  React.useEffect(() => {
+    console.log("AddUnitsForm mounted", { existingColor, brandId, modelValue, trimValue });
+    return () => {
+      console.log("AddUnitsForm unmounting");
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ color, quantity, status });
+    console.log("AddUnitsForm.handleSubmit called", { color, quantity, status });
+    
+    // Use a small delay to potentially avoid race conditions
+    setTimeout(() => {
+      onSubmit({ color, quantity, status });
+    }, 10);
+    
+    // Reset form for the next addition
+    setColor(existingColor || ""); // Keep the existing color if provided
+    setQuantity(1);
+    
+    // Return false to prevent any default behavior
+    return false;
   };
 
   return (
@@ -44,13 +73,14 @@ export function AddUnitsForm({
         {existingColor ? (
           <Input id="color" value={existingColor} disabled data-oid="i_62re-" />
         ) : (
-          <Input
-            id="color"
-            placeholder="e.g., Titanium Grey"
+          <ColorCombobox
             value={color}
-            onChange={(e) => setColor(e.target.value)}
-            required
-            data-oid="gtnnf1a"
+            onChange={setColor}
+            brandId={brandId}
+            modelValue={modelValue}
+            trimValue={trimValue}
+            placeholder="Select a color..."
+            existingColors={existingColors}
           />
         )}
       </div>
@@ -109,12 +139,22 @@ export function AddUnitsForm({
         <Button
           type="button"
           variant="outline"
-          onClick={onCancel}
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("AddUnitsForm cancel clicked");
+            onCancel();
+          }}
           data-oid="rt2trne"
         >
           Cancel
         </Button>
-        <Button type="submit" data-oid="xowypny">
+        <Button 
+          type="submit" 
+          onClick={(e) => {
+            console.log("AddUnitsForm submit button clicked");
+          }}
+          data-oid="xowypny"
+        >
           Add Units
         </Button>
       </div>

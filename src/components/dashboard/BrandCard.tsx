@@ -8,9 +8,16 @@ import { VehicleGroup, VehicleStatus, VehicleUnit } from "@/types";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface VehicleGroupWithInventoryControls extends VehicleGroup {
+  isInventoryOpen?: boolean;
+  onInventoryOpenChange?: (open: boolean) => void;
+  activeColorTab?: string | null;
+  onActiveColorTabChange?: (color: string) => void;
+}
+
 interface BrandCardProps {
   brand: string;
-  vehicleGroups: VehicleGroup[];
+  vehicleGroups: VehicleGroupWithInventoryControls[];
   totalStock: number;
   statusCounts: Record<VehicleStatus, number>;
   onUpdateModel: (
@@ -62,9 +69,20 @@ export function BrandCard({
   onAddUnits,
   onBatchUpdateStatus,
 }: BrandCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  // Track expanded state with both local state and sessionStorage
+  const storageKey = `brand-card-expanded-${brand}`;
+  const [isExpanded, setIsExpanded] = useState(() => {
+    // Try to get previous state from sessionStorage
+    const savedState = sessionStorage.getItem(storageKey);
+    return savedState ? JSON.parse(savedState) : false;
+  });
   const [isMobile, setIsMobile] = useState(false);
 
+  // Update sessionStorage when expanded state changes
+  useEffect(() => {
+    sessionStorage.setItem(storageKey, JSON.stringify(isExpanded));
+  }, [isExpanded, storageKey]);
+  
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 640);
@@ -77,11 +95,18 @@ export function BrandCard({
 
   // Get available units count
   const availableUnits = statusCounts["available"] || 0;
+  
+  // Toggle function that preserves state
+  const toggleExpanded = () => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    sessionStorage.setItem(storageKey, JSON.stringify(newState));
+  };
 
   return (
     <Card
       className="w-full overflow-hidden bg-card shadow-sm hover:shadow-md transition-shadow duration-200"
-      data-oid="k8_cfu."
+      data-oid="14v7.ge"
     >
       <motion.div
         className={cn(
@@ -89,90 +114,88 @@ export function BrandCard({
           "flex flex-row items-center justify-between",
           "p-4 bg-muted/30 hover:bg-muted/50 transition-colors duration-200",
         )}
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={toggleExpanded}
         initial={false}
-        data-oid="fru9pg5"
+        data-oid="lvr0v3-"
       >
         {/* Brand and Units Info */}
         <div
           className={cn(
             "flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4",
           )}
-          data-oid="2215el2"
+          data-oid="6uiiacq"
         >
           <h3
             className="text-lg font-semibold tracking-tight"
-            data-oid="gqmz_n7"
+            data-oid="3atp3u4"
           >
             {brand}
           </h3>
           <div
             className="flex items-center gap-2 text-sm text-muted-foreground"
-            data-oid="9qb-kia"
+            data-oid="y56wa34"
           >
-            <span data-oid=":zq.m.s">{totalStock} units</span>
+            <span data-oid="s_gzsjn">{totalStock} units</span>
             {availableUnits > 0 && (
               <>
-                <span className="text-muted-foreground/30" data-oid="d7i1ut8">
+                <span className="text-muted-foreground/30" data-oid=":ny:w:k">
                   •
                 </span>
-                <span data-oid="052k5jc">{availableUnits} Available</span>
+                <span data-oid=".puryl:">{availableUnits} Available</span>
               </>
             )}
           </div>
         </div>
 
         {/* Expand Arrow - Now positioned on the right */}
-        <div className="flex items-center ml-auto" data-oid="zxmx:6p">
+        <div className="flex items-center ml-auto" data-oid="xz-_g4_">
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="380-bl4"
+            data-oid="ahl-1gz"
           >
             <ChevronDown
               className="h-5 w-5 text-muted-foreground"
-              data-oid="g80xcxj"
+              data-oid="timrtcs"
             />
           </motion.div>
         </div>
       </motion.div>
 
-      <AnimatePresence initial={false} data-oid="gtyn.b6">
+      <AnimatePresence initial={false} data-oid="oom22-u">
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            data-oid="nw-2wqn"
+            data-oid="03ie9:8"
           >
-            <CardContent className="p-4" data-oid="jc31au2">
-              <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                data-oid="9gp8xy2"
-              >
-                {vehicleGroups.map((group) => (
+            <CardContent className="p-4" data-oid="-ufd1yu">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {vehicleGroups.map((vehicle) => (
                   <GroupedVehicleCard
-                    key={group.id}
-                    groupId={group.id}
-                    brand={group.brand}
-                    model={group.model}
-                    trim={group.trim}
-                    fuelType={group.fuelType}
-                    wheelDrive={group.wheelDrive}
-                    transmissionType={group.transmissionType}
-                    units={group.units}
-                    totalStock={group.totalStock}
-                    statusCounts={group.statusCounts}
+                    key={vehicle.id}
+                    groupId={vehicle.id}
+                    brand={vehicle.brand}
+                    model={vehicle.model}
+                    trim={vehicle.trim}
+                    fuelType={vehicle.fuelType}
+                    wheelDrive={vehicle.wheelDrive}
+                    transmissionType={vehicle.transmissionType}
+                    units={vehicle.units}
+                    totalStock={vehicle.totalStock}
+                    statusCounts={vehicle.statusCounts}
                     onUpdateModel={onUpdateModel}
                     onUpdateVehicle={onUpdateVehicle}
-                    onAddUnits={(color, quantity, status) =>
-                      onAddUnits(group.id, color, quantity, status)
-                    }
+                    onAddUnits={onAddUnits}
                     onBatchUpdateStatus={(units, newStatus) =>
-                      onBatchUpdateStatus(group.id, units, newStatus)
+                      onBatchUpdateStatus(vehicle.id, units, newStatus)
                     }
-                    data-oid="ezxdky."
+                    isInventoryOpen={vehicle.isInventoryOpen}
+                    onInventoryOpenChange={vehicle.onInventoryOpenChange}
+                    activeColorTab={vehicle.activeColorTab}
+                    onActiveColorTabChange={vehicle.onActiveColorTabChange}
                   />
                 ))}
               </div>
