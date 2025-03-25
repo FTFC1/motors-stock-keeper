@@ -93,15 +93,14 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
 
   if (isLoading) {
     return (
-      <div className="w-full py-6" data-oid="06to1to">
-        <div className="space-y-2" data-oid="noz4n96">
+      <div className="w-full py-6">
+        <div className="space-y-2">
           {Array(5)
             .fill(0)
             .map((_, i) => (
               <div
                 key={i}
                 className="w-full h-16 bg-muted/30 rounded-md animate-pulse"
-                data-oid="04q1c68"
               />
             ))}
         </div>
@@ -111,11 +110,8 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
 
   if (vehicles.length === 0) {
     return (
-      <div
-        className="flex flex-col items-center justify-center py-10 text-center"
-        data-oid="9e8kn7x"
-      >
-        <div className="rounded-full bg-muted p-3 mb-4" data-oid="46t8f6g">
+      <div className="flex flex-col items-center justify-center py-10 text-center">
+        <div className="rounded-full bg-muted p-3 mb-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -127,22 +123,13 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="h-6 w-6 text-muted-foreground"
-            data-oid="btw100x"
           >
-            <path
-              d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
-              data-oid="vrrr8br"
-            ></path>
-            <circle cx="12" cy="7" r="4" data-oid="uco4jp8"></circle>
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </div>
-        <h3 className="text-lg font-semibold" data-oid="tenapiy">
-          No Vehicles Available
-        </h3>
-        <p
-          className="text-muted-foreground text-sm max-w-sm mt-1"
-          data-oid="evbh03f"
-        >
+        <h3 className="text-lg font-semibold">No Vehicles Available</h3>
+        <p className="text-muted-foreground text-sm max-w-sm mt-1">
           Try adjusting your search or filter criteria to find what you're
           looking for.
         </p>
@@ -153,14 +140,13 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
   // Mobile layout - card view
   if (isMobile) {
     return (
-      <div className="space-y-4" data-oid="9cq7-_0">
+      <div className="space-y-4">
         {vehicles.map((vehicle) => (
           <VehicleCard
             key={vehicle.id}
             vehicle={vehicle}
             onEdit={handleEdit}
             onUpdateStock={handleUpdateStock}
-            data-oid="78ki4np"
           />
         ))}
         <VehicleDetailModal
@@ -168,7 +154,6 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
           onClose={handleCloseDetailModal}
           vehicle={selectedVehicle}
           onSave={handleSaveVehicle}
-          data-oid="0x46zcq"
         />
       </div>
     );
@@ -176,61 +161,43 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
 
   // Desktop layout - table view
   return (
-    <div className="border rounded-md" data-oid="5tf37_:">
-      <Table data-oid="akx71bt">
-        <TableHeader data-oid="35s99qw">
-          <TableRow data-oid="2ohacim">
-            <TableHead data-oid="sep:jv6">Brand</TableHead>
-            <TableHead data-oid="4a1d6dj">Model</TableHead>
-            <TableHead data-oid="toh0lpc">Trim</TableHead>
-            <TableHead data-oid="se01bsv">Fuel Type</TableHead>
-            <TableHead data-oid="39jxbg0">Status</TableHead>
-            <TableHead className="text-right" data-oid="10ilnbd">
-              Stock Level
-            </TableHead>
-            {isAdmin && (
-              <TableHead className="w-[100px]" data-oid="nyb96dz">
-                Actions
-              </TableHead>
-            )}
+    <div className="border rounded-md">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Brand</TableHead>
+            <TableHead>Model</TableHead>
+            <TableHead>Trim</TableHead>
+            <TableHead>Fuel Type</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Stock Level</TableHead>
+            {isAdmin && <TableHead className="w-[100px]">Actions</TableHead>}
           </TableRow>
         </TableHeader>
-        <TableBody data-oid="f2fs077">
+        <TableBody>
           {vehicles.map((vehicle) => (
-            <TableRow key={vehicle.id} className="group" data-oid="5fqbbpa">
-              <TableCell className="font-medium" data-oid="q.1xk1i">
-                {vehicle.brand}
+            <TableRow key={vehicle.id} className="group">
+              <TableCell className="font-medium">{vehicle.brand}</TableCell>
+              <TableCell>{vehicle.model}</TableCell>
+              <TableCell>{vehicle.trim}</TableCell>
+              <TableCell>{vehicle.fuelType}</TableCell>
+              <TableCell>
+                <StatusBadge status={vehicle.status} />
               </TableCell>
-              <TableCell data-oid="g8by0vd">{vehicle.model}</TableCell>
-              <TableCell data-oid=".szhlyq">{vehicle.trim}</TableCell>
-              <TableCell data-oid="kxvuock">{vehicle.fuelType}</TableCell>
-              <TableCell data-oid="bqthgf8">
-                <StatusBadge status={vehicle.status} data-oid="0q505kk" />
-              </TableCell>
-              <TableCell className="text-right" data-oid="1g.8-.m">
+              <TableCell className="text-right">
                 {editingId === vehicle.id ? (
-                  <div
-                    className="flex items-center justify-end"
-                    data-oid="3npkn3y"
-                  >
-                    <div
-                      className="inline-flex items-center rounded-md border overflow-hidden"
-                      data-oid="snwwk0k"
-                    >
+                  <div className="flex items-center justify-end">
+                    <div className="inline-flex items-center rounded-md border overflow-hidden">
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 rounded-none"
                         onClick={handleDecrement}
-                        data-oid=".3u2lu1"
                       >
-                        <Minus className="h-3 w-3" data-oid="-2og6p:" />
+                        <Minus className="h-3 w-3" />
                       </Button>
-                      <div
-                        className="w-12 h-8 flex items-center justify-center border-l border-r text-sm"
-                        data-oid=".66t6bb"
-                      >
+                      <div className="w-12 h-8 flex items-center justify-center border-l border-r text-sm">
                         {editValue}
                       </div>
                       <Button
@@ -239,9 +206,8 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
                         size="icon"
                         className="h-8 w-8 rounded-none"
                         onClick={handleIncrement}
-                        data-oid="vksbiy5"
                       >
-                        <Plus className="h-3 w-3" data-oid="d.z.69b" />
+                        <Plus className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>
@@ -254,25 +220,23 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
                           ? "text-amber-500 dark:text-amber-400 font-medium"
                           : ""
                     }
-                    data-oid="f07gzqu"
                   >
                     {vehicle.stockLevel}
                   </span>
                 )}
               </TableCell>
               {isAdmin && (
-                <TableCell data-oid="wa9xj1-">
+                <TableCell>
                   {editingId === vehicle.id ? (
-                    <div className="flex space-x-1" data-oid="lt_lq6o">
+                    <div className="flex space-x-1">
                       <Button
                         type="button"
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
                         onClick={() => handleSave(vehicle)}
-                        data-oid="eq3_exe"
                       >
-                        <CheckCircle className="h-4 w-4" data-oid="t5h4has" />
+                        <CheckCircle className="h-4 w-4" />
                       </Button>
                       <Button
                         type="button"
@@ -280,9 +244,8 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
                         variant="ghost"
                         className="h-8 w-8"
                         onClick={handleCancel}
-                        data-oid="e6sphvf"
                       >
-                        <X className="h-4 w-4" data-oid="t64:pof" />
+                        <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ) : (
@@ -292,9 +255,8 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
                       variant="ghost"
                       className="opacity-0 group-hover:opacity-100 h-8 w-8"
                       onClick={() => handleEdit(vehicle)}
-                      data-oid="43peu2c"
                     >
-                      <Edit className="h-4 w-4" data-oid="f_byzn4" />
+                      <Edit className="h-4 w-4" />
                     </Button>
                   )}
                 </TableCell>
@@ -309,7 +271,6 @@ export function VehicleTable({ vehicles, isLoading }: VehicleTableProps) {
         onClose={handleCloseDetailModal}
         vehicle={selectedVehicle}
         onSave={handleSaveVehicle}
-        data-oid="h4ygnkq"
       />
     </div>
   );

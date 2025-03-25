@@ -1,7 +1,7 @@
 import { Header } from "./Header";
 import { MobileHeader } from "./MobileHeader";
 import { Sidebar } from "./Sidebar";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -16,7 +16,7 @@ export function PageLayout({
   requireAuth = true,
   title = "Motors Stock Manager",
 }: PageLayoutProps) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,64 +43,48 @@ export function PageLayout({
   }, []);
 
   // Show loading state if auth is being checked
-  if (isLoading) {
+  if (!isLoaded) {
     return (
-      <div
-        className="flex h-screen w-full items-center justify-center"
-        data-oid="k5unp83"
-      >
-        <div className="flex flex-col items-center gap-2" data-oid="m.5_t4-">
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"
-            data-oid="rjn7yvh"
-          ></div>
-          <p className="text-sm text-muted-foreground" data-oid="-cpdzhs">
-            Loading...
-          </p>
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-sm text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
   }
 
-  // Redirect to login if auth is required but user is not authenticated
-  if (requireAuth && !isAuthenticated) {
-    return <Navigate to="/login" replace data-oid="fhhsegy" />;
+  // Redirect to login if auth is required but user is not signed in
+  if (requireAuth && !isSignedIn) {
+    return <Navigate to="/login" replace />;
   }
 
   // Render page with header and sidebar if authenticated
-  if (isAuthenticated) {
+  if (isSignedIn || !requireAuth) {
     return (
-      <div className="flex min-h-screen flex-col" data-oid="ante.br">
+      <div className="flex min-h-screen flex-col">
         {isMobile ? (
           <MobileHeader
             title={title}
             onMenuClick={() => setIsSidebarOpen(true)}
             isScrolled={isScrolled}
-            data-oid="z2jomhj"
           />
         ) : (
-          <Header data-oid="alcacha" />
+          <Header />
         )}
-        <div className="flex flex-1 relative" data-oid="pg1d4l-">
-          <Sidebar
-            isOpen={isSidebarOpen}
-            onOpenChange={setIsSidebarOpen}
-            data-oid="dn78-0p"
-          />
+        <div className="flex flex-1 relative">
+          {isSignedIn && (
+            <Sidebar isOpen={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
+          )}
 
-          <main
-            className="flex-1 overflow-y-auto p-4 lg:p-6"
-            data-oid="7l4f30n"
-          >
-            <div className="mx-auto max-w-6xl" data-oid=".0x23qm">
-              {children}
-            </div>
+          <main className="flex-1 overflow-y-auto p-4 lg:p-6">
+            <div className="mx-auto max-w-6xl">{children}</div>
           </main>
         </div>
       </div>
     );
   }
 
-  // Just render children if no auth required
+  // This should never happen since we're handling all cases above
   return <>{children}</>;
 }

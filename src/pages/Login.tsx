@@ -1,22 +1,30 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { SignIn } from "@clerk/clerk-react";
 import { PageLayout } from "@/components/common/PageLayout";
-import { LoginForm } from "@/components/authentication/LoginForm";
 
 const Login = () => {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
+    console.log("Login page mounted");
+    document.title = "Login | RT Inventory";
+  }, []);
 
   return (
-    <PageLayout requireAuth={false} title="Login" data-oid="tp7ke3w">
-      <LoginForm data-oid="j65sq1f" />
+    <PageLayout requireAuth={false} title="Login">
+      <div className="flex min-h-full items-center justify-center py-12">
+        <SignIn
+          appearance={{
+            elements: {
+              rootBox: "mx-auto w-full max-w-md",
+              card: "shadow-none",
+              formButtonPrimary: "bg-primary hover:bg-primary/90",
+            },
+          }}
+          path="/login"
+          routing="path"
+          signUpUrl="/signup"
+          afterSignInUrl="/dashboard"
+        />
+      </div>
     </PageLayout>
   );
 };

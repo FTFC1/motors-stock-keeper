@@ -95,9 +95,11 @@ export function AddVehicleModal({
       const modelValue = value as string;
 
       // Validate if model belongs to selected brand
-      const isValidModel = selectedBrand && vehicleData[selectedBrand]?.models.some(
-        (model) => model.value === modelValue
-      );
+      const isValidModel =
+        selectedBrand &&
+        vehicleData[selectedBrand]?.models.some(
+          (model) => model.value === modelValue,
+        );
 
       if (!isValidModel && modelValue) {
         toast({
@@ -121,22 +123,23 @@ export function AddVehicleModal({
       const trimValue = value as string;
       const brandId = formData.brand;
       const modelValue = formData.model;
-      
+
       if (trimValue && brandId && modelValue) {
         // Find the selected trim to get default values
         const selectedTrim = vehicleData[brandId]?.trims[modelValue]?.find(
-          trim => trim.value === trimValue
+          (trim) => trim.value === trimValue,
         );
-        
+
         if (selectedTrim) {
           // Auto-populate fields based on the selected trim
-          setFormData(prev => ({
+          setFormData((prev) => ({
             ...prev,
             trim: trimValue,
             // Only set these if they have default values and current values are empty
             fuelType: selectedTrim.defaultFuelType || prev.fuelType,
             wheelDrive: selectedTrim.defaultWheelDrive || prev.wheelDrive,
-            transmissionType: selectedTrim.defaultTransmission || prev.transmissionType,
+            transmissionType:
+              selectedTrim.defaultTransmission || prev.transmissionType,
           }));
           return;
         }
@@ -274,40 +277,27 @@ export function AddVehicleModal({
           onClose();
         }
       }}
-      data-oid="5y5oqrr"
     >
       <DialogContent
         className={cn(
           "flex flex-col",
-          isMobile ? "w-[100vw] h-[100vh] p-0" : "max-w-2xl h-[90vh]"
+          isMobile ? "w-[100vw] h-[100vh] p-0" : "max-w-2xl h-[90vh]",
         )}
-        data-oid="hui-its"
       >
-        <form
-          onSubmit={handleSubmit}
-          className="h-full flex flex-col"
-          data-oid="stzuit:"
-        >
-          <DialogHeader className="px-6 py-4 border-b" data-oid="eocgzo-">
-            <DialogTitle data-oid="kj-wf1g">Add New Vehicle</DialogTitle>
-            <DialogDescription data-oid="-5sneu5">
+        <form onSubmit={handleSubmit} className="h-full flex flex-col">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle>Add New Vehicle</DialogTitle>
+            <DialogDescription>
               Enter vehicle information to add to inventory
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto" data-oid="9rbazc_">
-            <div className="px-6 py-4 space-y-6" data-oid="yhzbnhx">
-              <div
-                className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                data-oid="vy2p8hz"
-              >
+          <div className="flex-1 overflow-y-auto">
+            <div className="px-6 py-4 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Brand */}
                 <div className="space-y-2 relative">
-                  <Label
-                    htmlFor="brand"
-                    className="text-sm font-medium"
-                    data-oid="xs.qxes"
-                  >
+                  <Label htmlFor="brand" className="text-sm font-medium">
                     Brand *
                   </Label>
                   <BrandCombobox
@@ -315,36 +305,31 @@ export function AddVehicleModal({
                     onChange={(value) =>
                       handleChange("brand", value.toUpperCase())
                     }
-                    data-oid="baim3_g"
                   />
                 </div>
 
                 {/* Model */}
-                <div className="space-y-2" data-oid="fbef4-1">
-                  <Label
-                    htmlFor="model"
-                    className="text-sm font-medium"
-                    data-oid="n54.igk"
-                  >
+                <div className="space-y-2">
+                  <Label htmlFor="model" className="text-sm font-medium">
                     Model *
                   </Label>
                   <ModelCombobox
                     value={formData.model}
                     onChange={(value) => handleChange("model", value)}
                     brandId={formData.brand}
-                    models={formData.brand ? vehicleData[formData.brand]?.models || [] : []}
+                    models={
+                      formData.brand
+                        ? vehicleData[formData.brand]?.models || []
+                        : []
+                    }
                     disabled={!formData.brand}
                     placeholder="e.g. Hunter"
                   />
                 </div>
 
                 {/* Trim */}
-                <div className="space-y-2" data-oid="d.3bqpp">
-                  <Label
-                    htmlFor="trim"
-                    className="text-sm font-medium"
-                    data-oid="j3zcnrf"
-                  >
+                <div className="space-y-2">
+                  <Label htmlFor="trim" className="text-sm font-medium">
                     Trim *
                   </Label>
                   <TrimCombobox
@@ -358,56 +343,30 @@ export function AddVehicleModal({
                 </div>
 
                 {/* Fuel Type */}
-                <div className="space-y-2" data-oid="grkmx1o">
-                  <Label
-                    htmlFor="fuelType"
-                    className="text-sm font-medium"
-                    data-oid="lvwdyel"
-                  >
+                <div className="space-y-2">
+                  <Label htmlFor="fuelType" className="text-sm font-medium">
                     Fuel Type *
                   </Label>
                   <Select
                     value={formData.fuelType}
                     onValueChange={(value) => handleChange("fuelType", value)}
-                    data-oid="xb1odgj"
                   >
-                    <SelectTrigger
-                      id="fuelType"
-                      className="min-h-[44px]"
-                      data-oid="1znyh08"
-                    >
-                      <SelectValue
-                        placeholder="Select fuel type"
-                        data-oid=".bis1ar"
-                      />
+                    <SelectTrigger id="fuelType" className="min-h-[44px]">
+                      <SelectValue placeholder="Select fuel type" />
                     </SelectTrigger>
-                    <SelectContent data-oid="o2mec_0">
-                      <SelectItem value="Petrol" data-oid="0_:v04e">
-                        Petrol
-                      </SelectItem>
-                      <SelectItem value="Diesel" data-oid=":olq91u">
-                        Diesel
-                      </SelectItem>
-                      <SelectItem value="Hybrid" data-oid="21.yt21">
-                        Hybrid
-                      </SelectItem>
-                      <SelectItem value="Electric" data-oid="mt._tut">
-                        Electric
-                      </SelectItem>
-                      <SelectItem value="CNG" data-oid="dqoj93b">
-                        CNG
-                      </SelectItem>
+                    <SelectContent>
+                      <SelectItem value="Petrol">Petrol</SelectItem>
+                      <SelectItem value="Diesel">Diesel</SelectItem>
+                      <SelectItem value="Hybrid">Hybrid</SelectItem>
+                      <SelectItem value="Electric">Electric</SelectItem>
+                      <SelectItem value="CNG">CNG</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Wheel Drive */}
-                <div className="space-y-2" data-oid="srkl6a0">
-                  <Label
-                    htmlFor="wheelDrive"
-                    className="text-sm font-medium"
-                    data-oid="q3s7fga"
-                  >
+                <div className="space-y-2">
+                  <Label htmlFor="wheelDrive" className="text-sm font-medium">
                     Wheel Drive
                   </Label>
                   <Select
@@ -415,35 +374,22 @@ export function AddVehicleModal({
                     onValueChange={(value) =>
                       handleChange("wheelDrive", value as WheelDriveType)
                     }
-                    data-oid="2e._3rm"
                   >
-                    <SelectTrigger
-                      id="wheelDrive"
-                      className="min-h-[44px]"
-                      data-oid="k7_e6_b"
-                    >
-                      <SelectValue
-                        placeholder="Select wheel drive"
-                        data-oid="b6iw-a_"
-                      />
+                    <SelectTrigger id="wheelDrive" className="min-h-[44px]">
+                      <SelectValue placeholder="Select wheel drive" />
                     </SelectTrigger>
-                    <SelectContent data-oid=".:91vj2">
-                      <SelectItem value="4x2" data-oid="zu2noeo">
-                        4x2
-                      </SelectItem>
-                      <SelectItem value="4x4" data-oid="xgct0qa">
-                        4x4
-                      </SelectItem>
+                    <SelectContent>
+                      <SelectItem value="4x2">4x2</SelectItem>
+                      <SelectItem value="4x4">4x4</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Transmission Type */}
-                <div className="space-y-2" data-oid="erqo:p1">
+                <div className="space-y-2">
                   <Label
                     htmlFor="transmissionType"
                     className="text-sm font-medium"
-                    data-oid="54--:4i"
                   >
                     Transmission Type
                   </Label>
@@ -455,37 +401,25 @@ export function AddVehicleModal({
                         value as TransmissionType,
                       )
                     }
-                    data-oid="4f9i6qe"
                   >
                     <SelectTrigger
                       id="transmissionType"
                       className="min-h-[44px]"
-                      data-oid="md:wc:u"
                     >
-                      <SelectValue
-                        placeholder="Select transmission type"
-                        data-oid="cdytk3c"
-                      />
+                      <SelectValue placeholder="Select transmission type" />
                     </SelectTrigger>
-                    <SelectContent data-oid="2b5w_4z">
-                      <SelectItem value="Manual" data-oid="yvm4:ob">
-                        Manual
-                      </SelectItem>
-                      <SelectItem value="Auto" data-oid=":1hkqxq">
-                        Automatic
-                      </SelectItem>
+                    <SelectContent>
+                      <SelectItem value="Manual">Manual</SelectItem>
+                      <SelectItem value="Auto">Automatic</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               {/* Colors and Quantities Section */}
-              <div className="space-y-4" data-oid="48zhvja">
-                <div
-                  className="flex items-center justify-between"
-                  data-oid="_ave_h:"
-                >
-                  <Label className="text-sm font-medium" data-oid="8:ka-fy">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">
                     Colors and Quantities *
                   </Label>
                   <Button
@@ -494,31 +428,28 @@ export function AddVehicleModal({
                     size="sm"
                     onClick={addColorUnit}
                     className="h-8"
-                    data-oid="7v33ex1"
                   >
-                    <Plus className="h-4 w-4 mr-2" data-oid="zy7zsus" />
+                    <Plus className="h-4 w-4 mr-2" />
                     Add Color
                   </Button>
                 </div>
 
-                <div className="space-y-3" data-oid="k56xemo">
+                <div className="space-y-3">
                   {formData.colorUnits.map((colorUnit, index) => (
                     <div
                       key={index}
                       className="grid grid-cols-[1fr,120px,auto] gap-3 items-start bg-muted/40 rounded-lg p-3"
-                      data-oid="qt6gl.s"
                     >
-                      <div className="space-y-2" data-oid="kt6_:yq">
+                      <div className="space-y-2">
                         <Label
                           htmlFor={`color-${index}`}
                           className="text-xs text-muted-foreground"
-                          data-oid="cv_7rlb"
                         >
                           Color
                         </Label>
                         <ColorCombobox
                           value={colorUnit.color}
-                          onChange={(value) => 
+                          onChange={(value) =>
                             handleColorUnitChange(index, "color", value)
                           }
                           brandId={formData.brand}
@@ -528,11 +459,10 @@ export function AddVehicleModal({
                           placeholder="e.g. White"
                         />
                       </div>
-                      <div className="space-y-2" data-oid="w1zgmmz">
+                      <div className="space-y-2">
                         <Label
                           htmlFor={`quantity-${index}`}
                           className="text-xs text-muted-foreground"
-                          data-oid="9u:q3zi"
                         >
                           Quantity
                         </Label>
@@ -549,10 +479,9 @@ export function AddVehicleModal({
                             )
                           }
                           className="min-h-[44px]"
-                          data-oid="mw2dil:"
                         />
                       </div>
-                      <div className="pt-8" data-oid="0r52qbd">
+                      <div className="pt-8">
                         <Button
                           type="button"
                           variant="ghost"
@@ -562,9 +491,8 @@ export function AddVehicleModal({
                             formData.colorUnits.length <= 1 && index === 0
                           }
                           className="h-11 w-11 text-muted-foreground hover:text-destructive"
-                          data-oid="8m0aum_"
                         >
-                          <Trash2 className="h-5 w-5" data-oid="hnv4:7k" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
                       </div>
                     </div>
@@ -573,12 +501,8 @@ export function AddVehicleModal({
               </div>
 
               {/* Initial Status */}
-              <div className="space-y-2" data-oid="6khg-y0">
-                <Label
-                  htmlFor="initialStatus"
-                  className="text-sm font-medium"
-                  data-oid="ohrl34u"
-                >
+              <div className="space-y-2">
+                <Label htmlFor="initialStatus" className="text-sm font-medium">
                   Initial Status
                 </Label>
                 <Select
@@ -586,41 +510,23 @@ export function AddVehicleModal({
                   onValueChange={(value) =>
                     handleChange("initialStatus", value as VehicleStatus)
                   }
-                  data-oid="8sm9:.h"
                 >
-                  <SelectTrigger
-                    id="initialStatus"
-                    className="min-h-[44px]"
-                    data-oid="i.-we0c"
-                  >
-                    <SelectValue
-                      placeholder="Select initial status"
-                      data-oid="_g.vvkh"
-                    />
+                  <SelectTrigger id="initialStatus" className="min-h-[44px]">
+                    <SelectValue placeholder="Select initial status" />
                   </SelectTrigger>
-                  <SelectContent data-oid="g-2vqnk">
-                    <SelectItem value="available" data-oid="upebbdn">
-                      Available
-                    </SelectItem>
-                    <SelectItem value="display" data-oid="b73g9em">
-                      On Display
-                    </SelectItem>
-                    <SelectItem value="transit" data-oid="p8fq36h">
-                      In Transit
-                    </SelectItem>
-                    <SelectItem value="reserved" data-oid="f_8z4h3">
-                      Reserved
-                    </SelectItem>
-                    <SelectItem value="unavailable" data-oid="ce2wvk2">
-                      Unavailable
-                    </SelectItem>
+                  <SelectContent>
+                    <SelectItem value="available">Available</SelectItem>
+                    <SelectItem value="display">On Display</SelectItem>
+                    <SelectItem value="transit">In Transit</SelectItem>
+                    <SelectItem value="reserved">Reserved</SelectItem>
+                    <SelectItem value="unavailable">Unavailable</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
 
-          <DialogFooter className="px-6 py-4 border-t" data-oid="up_erxx">
+          <DialogFooter className="px-6 py-4 border-t">
             <Button
               type="button"
               variant="outline"
@@ -628,12 +534,11 @@ export function AddVehicleModal({
                 resetForm();
                 onClose();
               }}
-              data-oid="hm.z8cn"
             >
               Cancel
             </Button>
-            <Button type="submit" className="gap-2" data-oid="d0i2k7r">
-              <Save className="h-4 w-4" data-oid="85b4dvo" />
+            <Button type="submit" className="gap-2">
+              <Save className="h-4 w-4" />
               Add Vehicle
             </Button>
           </DialogFooter>

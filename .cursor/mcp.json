@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "/Users/nicholasfeyintolafolarin-coker/.local/pipx/venvs/supabase-mcp-server/bin/supabase-mcp-server",
+      "args": []
+    }
+  }
+} 

@@ -10,7 +10,6 @@ const Drawer = ({
   <DrawerPrimitive.Root
     shouldScaleBackground={shouldScaleBackground}
     {...props}
-    data-oid="7i1pi3a"
   />
 );
 
@@ -30,7 +29,6 @@ const DrawerOverlay = React.forwardRef<
     ref={ref}
     className={cn("fixed inset-0 z-50 bg-black/80", className)}
     {...props}
-    data-oid="gg1h91r"
   />
 ));
 DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
@@ -39,8 +37,8 @@ const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
-  <DrawerPortal data-oid="asj7u3o">
-    <DrawerOverlay data-oid="9icwr._" />
+  <DrawerPortal>
+    <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
@@ -48,12 +46,8 @@ const DrawerContent = React.forwardRef<
         className,
       )}
       {...props}
-      data-oid="g7-:8xb"
     >
-      <div
-        className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted"
-        data-oid="zicw25t"
-      />
+      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
 
       {children}
     </DrawerPrimitive.Content>
@@ -68,7 +62,6 @@ const DrawerHeader = ({
   <div
     className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
     {...props}
-    data-oid="6zo0_w8"
   />
 );
 
@@ -81,7 +74,6 @@ const DrawerFooter = ({
   <div
     className={cn("mt-auto flex flex-col gap-2 p-4", className)}
     {...props}
-    data-oid="2.i:6nw"
   />
 );
 
@@ -98,7 +90,6 @@ const DrawerTitle = React.forwardRef<
       className,
     )}
     {...props}
-    data-oid="ug1_s9c"
   />
 ));
 DrawerTitle.displayName = DrawerPrimitive.Title.displayName;
@@ -111,7 +102,6 @@ const DrawerDescription = React.forwardRef<
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
-    data-oid="s.1at7v"
   />
 ));
 DrawerDescription.displayName = DrawerPrimitive.Description.displayName;

@@ -6,20 +6,20 @@ import { vehicleData } from "@/data/vehicle-models";
 
 // Map of color names to CSS color values
 const colorMap: Record<string, string> = {
-  "WHITE": "#FFFFFF",
-  "BLACK": "#000000",
-  "RED": "#FF0000",
-  "BLUE": "#0000FF",
-  "GREEN": "#008000",
-  "YELLOW": "#FFFF00",
-  "GREY": "#808080",
-  "GRAY": "#808080",
-  "SILVER": "#C0C0C0",
-  "ORANGE": "#FFA500",
-  "PURPLE": "#800080",
-  "BROWN": "#A52A2A",
-  "BEIGE": "#F5F5DC",
-  "GOLD": "#FFD700",
+  WHITE: "#FFFFFF",
+  BLACK: "#000000",
+  RED: "#FF0000",
+  BLUE: "#0000FF",
+  GREEN: "#008000",
+  YELLOW: "#FFFF00",
+  GREY: "#808080",
+  GRAY: "#808080",
+  SILVER: "#C0C0C0",
+  ORANGE: "#FFA500",
+  PURPLE: "#800080",
+  BROWN: "#A52A2A",
+  BEIGE: "#F5F5DC",
+  GOLD: "#FFD700",
   "AMBER GOLD": "#FFBF00",
   "CRYSTAL WHITE": "#FFFFFF",
   "MILAN WHITE": "#F5F5F5",
@@ -29,12 +29,18 @@ const colorMap: Record<string, string> = {
   "ORANGE & BLACK": "linear-gradient(to right, #FFA500 50%, #000000 50%)",
   "SILVER & BLACK": "linear-gradient(to right, #C0C0C0 50%, #000000 50%)",
   "WHITE & BLACK": "linear-gradient(to right, #FFFFFF 50%, #000000 50%)",
-  "RED & BLACK": "linear-gradient(to right, #FF0000 50%, #000000 50%)"
+  "RED & BLACK": "linear-gradient(to right, #FF0000 50%, #000000 50%)",
 };
 
 // Common colors to use as fallback when specific ones aren't found
 const commonColors = [
-  "WHITE", "BLACK", "RED", "BLUE", "GREEN", "SILVER", "GREY"
+  "WHITE",
+  "BLACK",
+  "RED",
+  "BLUE",
+  "GREEN",
+  "SILVER",
+  "GREY",
 ];
 
 export interface ColorComboboxProps {
@@ -67,62 +73,71 @@ export function ColorCombobox({
   // Get available colors for the selected trim
   const availableColors = React.useMemo(() => {
     // Log parameters for debugging
-    console.log("ColorCombobox params:", { brandId, modelValue, trimValue, existingColors });
-    
+    console.log("ColorCombobox params:", {
+      brandId,
+      modelValue,
+      trimValue,
+      existingColors,
+    });
+
     // If we have existing colors from the current vehicle, prioritize them
     if (existingColors && existingColors.length > 0) {
       console.log("Using existing colors from vehicle:", existingColors);
       return existingColors;
     }
-    
+
     if (!brandId || !modelValue || !trimValue) return commonColors;
 
     try {
       // Normalize the inputs to handle case differences
       const brandIdNormalized = brandId.toUpperCase();
-      const modelValueNormalized = modelValue.toLowerCase().replace(/[\s-_]+/g, '');
-      
+      const modelValueNormalized = modelValue
+        .toLowerCase()
+        .replace(/[\s-_]+/g, "");
+
       // Try to find the brand - first with exact match, then with normalized search
       const brand = vehicleData[brandId] || vehicleData[brandIdNormalized];
       if (!brand) {
         console.log("Brand not found:", brandId);
         return commonColors;
       }
-      
+
       // Find the model - using both exact and fuzzy matching
-      let model = brand.models.find(m => m.value === modelValue);
+      let model = brand.models.find((m) => m.value === modelValue);
       if (!model) {
         // Try normalized search
-        model = brand.models.find(m => 
-          m.value.toLowerCase().replace(/[\s-_]+/g, '') === modelValueNormalized
+        model = brand.models.find(
+          (m) =>
+            m.value.toLowerCase().replace(/[\s-_]+/g, "") ===
+            modelValueNormalized,
         );
       }
-      
+
       if (!model) {
         console.log("Model not found:", modelValue);
         return commonColors;
       }
-      
+
       // Find the trim with exact match
       const trims = brand.trims[model.value];
       if (!trims) {
         console.log("No trims found for model:", model.value);
         return commonColors;
       }
-      
+
       // Find the specific trim
-      const trim = trims.find(t => t.value === trimValue);
+      const trim = trims.find((t) => t.value === trimValue);
       if (!trim) {
         console.log("Trim not found:", trimValue);
         return commonColors;
       }
-      
+
       // Get colors or fall back to common colors
       if (!trim.availableColors || trim.availableColors.length === 0) {
         console.log("No colors found for trim:", trim.value);
         return commonColors;
       }
-      
+
       console.log("Found colors:", trim.availableColors);
       return trim.availableColors;
     } catch (error) {
@@ -134,10 +149,10 @@ export function ColorCombobox({
   // Filter colors based on input
   const filteredColors = React.useMemo(() => {
     if (!inputValue) return availableColors;
-    
+
     const query = inputValue.toLowerCase().trim();
-    return availableColors.filter(color => 
-      color.toLowerCase().includes(query)
+    return availableColors.filter((color) =>
+      color.toLowerCase().includes(query),
     );
   }, [inputValue, availableColors]);
 
@@ -148,7 +163,7 @@ export function ColorCombobox({
     if (filteredColors.length > 0 || !inputValue.trim()) {
       return false;
     }
-    
+
     return true;
   }, [inputValue, filteredColors]);
 
@@ -170,7 +185,7 @@ export function ColorCombobox({
       e.preventDefault();
       e.stopPropagation();
     }
-    
+
     if (selected === "add-new") {
       onChange(inputValue.trim());
     } else {
@@ -190,25 +205,25 @@ export function ColorCombobox({
 
   // Handle key navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const options = shouldShowAddNew 
+    const options = shouldShowAddNew
       ? ["add-new", ...filteredColors]
       : filteredColors;
-      
+
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setHighlightedIndex(prev => 
-          prev < options.length - 1 ? prev + 1 : 0
+        setHighlightedIndex((prev) =>
+          prev < options.length - 1 ? prev + 1 : 0,
         );
         break;
-        
+
       case "ArrowUp":
         e.preventDefault();
-        setHighlightedIndex(prev => 
-          prev > 0 ? prev - 1 : options.length - 1
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : options.length - 1,
         );
         break;
-        
+
       case "Enter":
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < options.length) {
@@ -217,7 +232,7 @@ export function ColorCombobox({
           handleSelect(inputValue);
         }
         break;
-        
+
       case "Escape":
         e.preventDefault();
         setOpen(false);
@@ -233,18 +248,28 @@ export function ColorCombobox({
   // Determine if a color needs a border
   const needsBorder = (colorName: string): boolean => {
     const color = colorName.split(" & ")[0].toUpperCase();
-    return ["WHITE", "YELLOW", "BEIGE", "CRYSTAL WHITE", "MILAN WHITE"].includes(color);
+    return [
+      "WHITE",
+      "YELLOW",
+      "BEIGE",
+      "CRYSTAL WHITE",
+      "MILAN WHITE",
+    ].includes(color);
   };
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (inputRef.current && !inputRef.current.contains(e.target as Node) && 
-          listRef.current && !listRef.current.contains(e.target as Node)) {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(e.target as Node) &&
+        listRef.current &&
+        !listRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -252,10 +277,10 @@ export function ColorCombobox({
   return (
     <div className="relative w-full">
       {/* Input field */}
-      <div 
+      <div
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring",
-          open && "ring-1 ring-ring"
+          open && "ring-1 ring-ring",
         )}
         onClick={() => {
           setOpen(true);
@@ -308,14 +333,15 @@ export function ColorCombobox({
               <div className="text-center text-sm text-muted-foreground">
                 No colors found for this trim
               </div>
-              
+
               {inputValue.trim() && (
                 <div
                   className={cn(
                     "flex cursor-pointer items-center justify-center px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground rounded-md border-dashed border-2 border-muted-foreground/20",
                     {
-                      "bg-accent text-accent-foreground": highlightedIndex === 0
-                    }
+                      "bg-accent text-accent-foreground":
+                        highlightedIndex === 0,
+                    },
                   )}
                   onClick={(e) => handleSelect(inputValue.trim(), e)}
                   onMouseEnter={() => setHighlightedIndex(0)}
@@ -332,8 +358,9 @@ export function ColorCombobox({
                   className={cn(
                     "flex cursor-pointer items-center px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground",
                     {
-                      "bg-accent text-accent-foreground": highlightedIndex === 0
-                    }
+                      "bg-accent text-accent-foreground":
+                        highlightedIndex === 0,
+                    },
                   )}
                   onClick={(e) => handleSelect("add-new", e)}
                   onMouseEnter={() => setHighlightedIndex(0)}
@@ -342,33 +369,36 @@ export function ColorCombobox({
                   <span>Add "{inputValue.trim()}"</span>
                 </div>
               )}
-              
+
               {filteredColors.map((color, index) => (
                 <div
                   key={color}
                   className={cn(
                     "flex cursor-pointer items-center justify-between px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground",
                     {
-                      "bg-accent text-accent-foreground": shouldShowAddNew 
-                        ? highlightedIndex === index + 1 
+                      "bg-accent text-accent-foreground": shouldShowAddNew
+                        ? highlightedIndex === index + 1
                         : highlightedIndex === index,
-                      "font-medium": value === color
-                    }
+                      "font-medium": value === color,
+                    },
                   )}
                   onClick={(e) => handleSelect(color, e)}
-                  onMouseEnter={() => setHighlightedIndex(shouldShowAddNew ? index + 1 : index)}
+                  onMouseEnter={() =>
+                    setHighlightedIndex(shouldShowAddNew ? index + 1 : index)
+                  }
                 >
                   <div className="flex items-center">
-                    <div 
+                    <div
                       className={cn(
                         "mr-2 h-4 w-4 rounded-full",
-                        needsBorder(color) && "border border-gray-300"
+                        needsBorder(color) && "border border-gray-300",
                       )}
-                      style={{ 
+                      style={{
                         background: getColorValue(color),
-                        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.1)"
+                        boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.1)",
                       }}
                     />
+
                     <span>{color}</span>
                   </div>
                   {value === color && <Check className="h-4 w-4 opacity-70" />}
@@ -380,4 +410,4 @@ export function ColorCombobox({
       )}
     </div>
   );
-} 
+}

@@ -63,126 +63,94 @@ export function ModelEditModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} data-oid="gplg69k">
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className={`sm:max-w-md ${isMobile ? "w-[100vw] h-[100vh]" : ""}`}
-        data-oid="jv2e4cb"
       >
-        <form onSubmit={handleSubmit} data-oid="lwmcoqy">
-          <DialogHeader data-oid="oj8oqz-">
-            <DialogTitle className="text-[18px] font-bold" data-oid="tk1dlvw">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle className="text-[18px] font-bold">
               Edit Model
             </DialogTitle>
-            <DialogDescription className="text-[14px] mt-2" data-oid="rs2rhr3">
+            <DialogDescription className="text-[14px] mt-2">
               Update model information
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4" data-oid="zji0-cb">
-            <Alert
-              className="bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30"
-              data-oid="83cwb_5"
-            >
-              <InfoIcon className="h-4 w-4" data-oid="9k665ew" />
-              <AlertDescription className="text-[14px]" data-oid="3b1ktpv">
+          <div className="space-y-6 py-4">
+            <Alert className="bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/30">
+              <InfoIcon className="h-4 w-4" />
+              <AlertDescription className="text-[14px]">
                 Changes will apply to all units of this model
               </AlertDescription>
             </Alert>
 
-            <div className="grid grid-cols-1 gap-6" data-oid="3ogdon-">
-              <div className="space-y-2" data-oid="su916sa">
-                <Label htmlFor="brand" data-oid="miv-9p_">
-                  Brand
-                </Label>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand</Label>
                 <Input
                   id="brand"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                   className="min-h-[48px]"
                   required
-                  data-oid="z7517bj"
                 />
               </div>
 
-              <div className="space-y-2" data-oid=":-3.bvt">
-                <Label htmlFor="model" data-oid="nf75ncl">
-                  Model
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="model">Model</Label>
                 <Input
                   id="model"
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   className="min-h-[48px]"
                   required
-                  data-oid="o2m3atv"
                 />
               </div>
 
-              <div className="space-y-2" data-oid="wjy6dib">
-                <Label htmlFor="trim" data-oid="pv1-r57">
-                  Trim
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="trim">Trim</Label>
                 <Input
                   id="trim"
                   value={trim}
                   onChange={(e) => setTrim(e.target.value)}
                   className="min-h-[48px]"
                   required
-                  data-oid="b5208mx"
                 />
               </div>
 
-              <div className="space-y-2" data-oid="ml2fjq.">
-                <Label htmlFor="fuelType" data-oid="8vw1sus">
-                  Fuel Type
-                </Label>
+              <div className="space-y-2">
+                <Label htmlFor="fuelType">Fuel Type</Label>
                 <Select
                   value={fuelType}
                   onValueChange={(value) => setFuelType(value)}
-                  data-oid="18kvqg8"
                 >
-                  <SelectTrigger
-                    id="fuelType"
-                    className="min-h-[48px]"
-                    data-oid="emua38-"
-                  >
-                    <SelectValue
-                      placeholder="Select fuel type"
-                      data-oid=":5cugd9"
-                    />
+                  <SelectTrigger id="fuelType" className="min-h-[48px]">
+                    <SelectValue placeholder="Select fuel type" />
                   </SelectTrigger>
-                  <SelectContent data-oid="8tmlc_8">
-                    <SelectItem value="Petrol" data-oid=".2a9hr7">
-                      Petrol
-                    </SelectItem>
-                    <SelectItem value="Diesel" data-oid="d_2u3zu">
-                      Diesel
-                    </SelectItem>
-                    <SelectItem value="Hybrid" data-oid="m.8w26l">
-                      Hybrid
-                    </SelectItem>
-                    <SelectItem value="Electric" data-oid="4bhbyth">
-                      Electric
-                    </SelectItem>
+                  <SelectContent>
+                    <SelectItem value="Petrol">Petrol</SelectItem>
+                    <SelectItem value="Diesel">Diesel</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
+                    <SelectItem value="Electric">Electric</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
 
-          <DialogFooter className="gap-2" data-oid="w-b0mu.">
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               type="button"
               onClick={onClose}
               className="min-h-[48px]"
-              data-oid=":7576wd"
             >
-              <X className="mr-2 h-4 w-4" data-oid="whin1t2" />
+              <X className="mr-2 h-4 w-4" />
               Cancel
             </Button>
-            <Button type="submit" className="min-h-[48px]" data-oid="vygwe-_">
-              <Save className="mr-2 h-4 w-4" data-oid="i-569zk" />
+            <Button type="submit" className="min-h-[48px]">
+              <Save className="mr-2 h-4 w-4" />
               Save Changes
             </Button>
           </DialogFooter>

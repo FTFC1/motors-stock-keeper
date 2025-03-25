@@ -44,10 +44,10 @@ interface GroupedVehicleCardProps {
   ) => void;
   onUpdateVehicle: (unit: VehicleUnit) => void;
   onAddUnits: (
-    groupId: string, 
-    color: string, 
-    quantity: number, 
-    status: VehicleStatus
+    groupId: string,
+    color: string,
+    quantity: number,
+    status: VehicleStatus,
   ) => void;
   onBatchUpdateStatus: (units: VehicleUnit[], newStatus: VehicleStatus) => void;
   isInventoryOpen?: boolean;
@@ -86,43 +86,56 @@ export function GroupedVehicleCard({
   } | null>(null);
 
   // Use memoized props to prevent re-renders
-  const memoizedProps = useMemo(() => ({
-    brand,
-    model,
-    trim,
-    fuelType,
-    units,
-    groupId,
-    activeColorTab,
-    onActiveColorTabChange,
-    onEditUnit: (unit: VehicleUnit) => {
-      setSelectedUnit(unit);
-    },
-    onAddUnits: (groupId: string, color: string, quantity: number, status: VehicleStatus) => {
-      console.log("InventorySheet onAddUnits called", { groupId, color, quantity, status });
-      if (onActiveColorTabChange) {
-        onActiveColorTabChange(color);
-      }
-      onAddUnits(groupId, color, quantity, status);
-    },
-    onBatchEdit: (units: VehicleUnit[]) => {
-      setSelectedConfig({
-        color: units[0].color || "",
-        units,
-        status: units[0].status,
-      });
-    }
-  }), [
-    brand, 
-    model, 
-    trim, 
-    fuelType, 
-    units, 
-    groupId, 
-    activeColorTab, 
-    onActiveColorTabChange, 
-    onAddUnits
-  ]);
+  const memoizedProps = useMemo(
+    () => ({
+      brand,
+      model,
+      trim,
+      fuelType,
+      units,
+      groupId,
+      activeColorTab,
+      onActiveColorTabChange,
+      onEditUnit: (unit: VehicleUnit) => {
+        setSelectedUnit(unit);
+      },
+      onAddUnits: (
+        groupId: string,
+        color: string,
+        quantity: number,
+        status: VehicleStatus,
+      ) => {
+        console.log("InventorySheet onAddUnits called", {
+          groupId,
+          color,
+          quantity,
+          status,
+        });
+        if (onActiveColorTabChange) {
+          onActiveColorTabChange(color);
+        }
+        onAddUnits(groupId, color, quantity, status);
+      },
+      onBatchEdit: (units: VehicleUnit[]) => {
+        setSelectedConfig({
+          color: units[0].color || "",
+          units,
+          status: units[0].status,
+        });
+      },
+    }),
+    [
+      brand,
+      model,
+      trim,
+      fuelType,
+      units,
+      groupId,
+      activeColorTab,
+      onActiveColorTabChange,
+      onAddUnits,
+    ],
+  );
 
   // Get non-zero status counts
   const activeStatuses = Object.entries(statusCounts)
@@ -148,18 +161,14 @@ export function GroupedVehicleCard({
   };
 
   return (
-    <Card
-      className="w-full bg-background/40 hover:bg-background/60 transition-colors duration-200 shadow-sm hover:shadow border-l-4 border-l-primary/40 overflow-hidden"
-      data-oid="m0xpq3f"
-    >
-      <CardContent className="p-4 space-y-4" data-oid="nuyr2pf">
+    <Card className="w-full bg-background/40 hover:bg-background/60 transition-colors duration-200 shadow-sm hover:shadow border-l-4 border-l-primary/40 overflow-hidden">
+      <CardContent className="p-4 space-y-4">
         {/* Header Section */}
-        <div className="flex flex-col space-y-4" data-oid="iex-8ox">
-          <div className="flex items-center justify-between" data-oid="im_uc79">
+        <div className="flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
             <Badge
               variant="secondary"
               className="h-6 px-2 bg-muted/50 text-foreground/70 hover:bg-muted/70"
-              data-oid="0mu6to0"
             >
               {brand}
             </Badge>
@@ -169,67 +178,38 @@ export function GroupedVehicleCard({
               size="icon"
               className="h-8 w-8"
               onClick={() => setShowModelEdit(true)}
-              data-oid="9p.j4ou"
             >
-              <Edit className="h-4 w-4" data-oid="k9f_d.:" />
+              <Edit className="h-4 w-4" />
             </Button>
           </div>
 
-          <div className="space-y-2" data-oid="9pq0xlv">
-            <h3
-              className="text-lg font-semibold tracking-tight"
-              data-oid="4cs3464"
-            >
-              {model}
-            </h3>
-            <div
-              className="flex flex-wrap items-center gap-1.5 text-sm"
-              data-oid="yfaa_cr"
-            >
-              <span className="text-muted-foreground" data-oid="zv2lcak">
-                {trim}
-              </span>
-              <span className="text-muted-foreground/30" data-oid="0w70xjj">
-                •
-              </span>
-              <Badge
-                variant="outline"
-                className="h-5 px-2 bg-background/50"
-                data-oid="56fy9xb"
-              >
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold tracking-tight">{model}</h3>
+            <div className="flex flex-wrap items-center gap-1.5 text-sm">
+              <span className="text-muted-foreground">{trim}</span>
+              <span className="text-muted-foreground/30">•</span>
+              <Badge variant="outline" className="h-5 px-2 bg-background/50">
                 {fuelType}
               </Badge>
 
               {wheelDrive && (
                 <>
-                  <span className="text-muted-foreground/30" data-oid="3wvp54a">
-                    •
-                  </span>
-                  <div className="flex items-center gap-1" data-oid="wsdu:98">
-                    <ChevronsRight
-                      className="h-3 w-3 text-muted-foreground"
-                      data-oid="wjzitj:"
-                    />
+                  <span className="text-muted-foreground/30">•</span>
+                  <div className="flex items-center gap-1">
+                    <ChevronsRight className="h-3 w-3 text-muted-foreground" />
 
-                    <span className="text-xs font-medium" data-oid="mj727-p">
-                      {wheelDrive}
-                    </span>
+                    <span className="text-xs font-medium">{wheelDrive}</span>
                   </div>
                 </>
               )}
 
               {transmissionType && (
                 <>
-                  <span className="text-muted-foreground/30" data-oid="mjhivfg">
-                    •
-                  </span>
-                  <div className="flex items-center gap-1" data-oid="fvuwy7h">
-                    <Gauge
-                      className="h-3 w-3 text-muted-foreground"
-                      data-oid="s29_.qo"
-                    />
+                  <span className="text-muted-foreground/30">•</span>
+                  <div className="flex items-center gap-1">
+                    <Gauge className="h-3 w-3 text-muted-foreground" />
 
-                    <span className="text-xs font-medium" data-oid="s7e854x">
+                    <span className="text-xs font-medium">
                       {transmissionType}
                     </span>
                   </div>
@@ -240,49 +220,46 @@ export function GroupedVehicleCard({
         </div>
 
         {/* Stats Section */}
-        <div className="flex items-center gap-4" data-oid="e6z8.t7">
-          <div className="space-y-1" data-oid="_ywx0k7">
-            <span className="text-sm text-muted-foreground" data-oid="wjxpreb">
-              Total Stock
-            </span>
-            <div className="text-xl font-semibold" data-oid=".tu_6jy">
-              {totalStock}
-            </div>
+        <div className="flex items-center gap-4">
+          <div className="space-y-1">
+            <span className="text-sm text-muted-foreground">Total Stock</span>
+            <div className="text-xl font-semibold">{totalStock}</div>
           </div>
 
-          <div className="h-10 w-px bg-border/50" data-oid="huor81b" />
+          <div className="h-10 w-px bg-border/50" />
 
-          <div
-            className="flex-1 flex flex-wrap gap-1.5 overflow-hidden"
-            data-oid="6cb:_hh"
-          >
+          <div className="flex-1 flex flex-wrap gap-1.5 overflow-hidden">
             {activeStatuses.map(({ status, count }) => (
-              <StatusBadge
-                key={status}
-                status={status}
-                count={count}
-                data-oid="uxh5ntq"
-              />
+              <StatusBadge key={status} status={status} count={count} />
             ))}
           </div>
         </div>
 
         {/* Actions Section */}
-        <div className="grid grid-cols-2 gap-2" data-oid="m1:pjbg">
+        <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
             className="h-9"
             onClick={() => setShowAddUnits(true)}
-            data-oid="bplfnyk"
           >
-            <Plus className="h-4 w-4 mr-2" data-oid="wvj8.73" />
+            <Plus className="h-4 w-4 mr-2" />
             Add Units
           </Button>
 
           <Button
             variant="default"
             className="h-9"
-            onClick={() => onInventoryOpenChange?.(true)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("View Inventory button clicked");
+              if (onInventoryOpenChange) {
+                console.log("Calling onInventoryOpenChange with true");
+                onInventoryOpenChange(true);
+              } else {
+                console.warn("No onInventoryOpenChange handler provided");
+              }
+            }}
           >
             View Inventory
             <ChevronRight className="h-4 w-4 ml-2" />
@@ -300,7 +277,6 @@ export function GroupedVehicleCard({
         trim={trim}
         fuelType={fuelType}
         onUpdate={onUpdateModel}
-        data-oid="y61f:dc"
       />
 
       {selectedUnit && (
@@ -316,7 +292,6 @@ export function GroupedVehicleCard({
             onUpdateVehicle(updatedUnit);
             setSelectedUnit(null);
           }}
-          data-oid="3v6bwaj"
         />
       )}
 
@@ -324,12 +299,11 @@ export function GroupedVehicleCard({
         <Dialog
           open={!!selectedConfig}
           onOpenChange={() => setSelectedConfig(null)}
-          data-oid="e.52k74"
         >
-          <DialogContent data-oid="-m3pwdc">
-            <DialogHeader data-oid="8d1wd68">
-              <DialogTitle data-oid="ynxlqg7">Batch Edit Units</DialogTitle>
-              <DialogDescription data-oid="soe5gr_">
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Batch Edit Units</DialogTitle>
+              <DialogDescription>
                 Update status for {selectedConfig.units.length}{" "}
                 {selectedConfig.color || "No Color"} units
               </DialogDescription>
@@ -340,21 +314,16 @@ export function GroupedVehicleCard({
               color={selectedConfig.color}
               onSubmit={handleBatchUpdate}
               onCancel={() => setSelectedConfig(null)}
-              data-oid="frp1qq:"
             />
           </DialogContent>
         </Dialog>
       )}
 
-      <Dialog
-        open={showAddUnits}
-        onOpenChange={setShowAddUnits}
-        data-oid="chd7rk_"
-      >
-        <DialogContent data-oid="c3cf:53">
-          <DialogHeader data-oid="5l10d:l">
-            <DialogTitle data-oid="c1f25eq">Add New Units</DialogTitle>
-            <DialogDescription data-oid="mqe:yom">
+      <Dialog open={showAddUnits} onOpenChange={setShowAddUnits}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Units</DialogTitle>
+            <DialogDescription>
               Add multiple units with the same configuration
             </DialogDescription>
           </DialogHeader>
@@ -364,13 +333,12 @@ export function GroupedVehicleCard({
             brandId={brand}
             modelValue={model}
             trimValue={trim}
-            data-oid="x30hp3r"
           />
         </DialogContent>
       </Dialog>
 
       {/* Inventory Sheet - directly render it without a container */}
-      <InventorySheet 
+      <InventorySheet
         key={`inventory-sheet-${groupId}`}
         isOpen={isInventoryOpen || false}
         onClose={() => onInventoryOpenChange?.(false)}

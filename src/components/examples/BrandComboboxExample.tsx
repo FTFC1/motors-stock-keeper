@@ -29,22 +29,19 @@ export function BrandComboboxExample() {
   const [selectedBrand, setSelectedBrand] = useState("");
 
   return (
-    <div className="w-full max-w-md space-y-4" data-oid="vsuzb5x">
-      <h2 className="text-lg font-semibold" data-oid="r--gunq">
-        Select Car Brand
-      </h2>
+    <div className="w-full max-w-md space-y-4">
+      <h2 className="text-lg font-semibold">Select Car Brand</h2>
       <BrandCombobox
         brands={carBrands}
         value={selectedBrand}
         onChange={setSelectedBrand}
         placeholder="Search for a car brand..."
-        data-oid="pafg8a9"
       />
 
       {selectedBrand && (
-        <p className="text-sm" data-oid="hmdxg01">
+        <p className="text-sm">
           Selected brand:{" "}
-          <strong data-oid="rohq26x">
+          <strong>
             {carBrands.find((b) => b.value === selectedBrand)?.label}
           </strong>
         </p>

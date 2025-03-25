@@ -112,13 +112,16 @@ const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, onSelect, value, ...props }, ref) => {
-  const handleMouseDown = React.useCallback((event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    if (onSelect) {
-      onSelect(value as string);
-    }
-  }, [onSelect, value]);
+  const handleMouseDown = React.useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (onSelect) {
+        onSelect(value as string);
+      }
+    },
+    [onSelect, value],
+  );
 
   return (
     <CommandPrimitive.Item

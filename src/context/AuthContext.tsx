@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User, Role } from "@/types";
+import {
+  supabase,
+  signIn as supabaseSignIn,
+  getCurrentUser,
+} from "@/lib/supabase";
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -13,7 +18,7 @@ export const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
   login: async () => {},
-  logout: () => {},
+  logout: async () => {},
   isAuthenticated: false,
 });
 
@@ -27,62 +32,86 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Check for existing session on mount
   useEffect(() => {
-    const checkAuth = () => {
-      const savedUser = localStorage.getItem("user");
+    const checkAuth = async () => {
+      try {
+        const { user: currentUser } = await getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Auth error:", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      if (savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-        } catch (error) {
-          console.error("Failed to parse stored user:", error);
-          localStorage.removeItem("user");
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        const { user: currentUser } = await getCurrentUser();
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    checkAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabaseSignIn(email, password);
+
+      if (error) {
+        console.error("Login error:", error);
+
+        // Handle specific error cases
+        if (error.message.includes("Email not confirmed")) {
+          throw new Error(
+            "Email not confirmed. Please check your email and verify your account.",
+          );
+        } else if (error.message.includes("Invalid login credentials")) {
+          throw new Error("Invalid email or password. Please try again.");
+        } else {
+          throw error;
         }
       }
 
+      if (!data?.user) {
+        throw new Error("No user data returned from login");
+      }
+
+      const { user: currentUser, error: userError } = await getCurrentUser();
+
+      if (userError) {
+        throw userError;
+      }
+
+      setUser(currentUser);
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    } finally {
       setIsLoading(false);
-    };
-
-    checkAuth();
-  }, []);
-
-  // Mock login function - in a real app, this would call an API
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
-
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // For demo purposes, validate email domain and create mock user
-    if (!email.endsWith("@motors.com")) {
-      setIsLoading(false);
-      throw new Error("Only @motors.com email addresses are allowed");
     }
-
-    // Check if password is at least 6 characters
-    if (password.length < 6) {
-      setIsLoading(false);
-      throw new Error("Password must be at least 6 characters");
-    }
-
-    // For demo, admin@motors.com gets admin role, all others get sales role
-    const role: Role = email === "admin@motors.com" ? "admin" : "sales";
-
-    const user: User = {
-      id: "1",
-      email,
-      name: email.split("@")[0],
-      role,
-    };
-
-    // Save user to localStorage (in real app, would use tokens)
-    localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
-    setIsLoading(false);
   };
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+      throw error;
+    }
   };
 
   return (
@@ -94,7 +123,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         isAuthenticated: !!user,
       }}
-      data-oid="hr.:5xv"
     >
       {children}
     </AuthContext.Provider>

@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import {
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,23 +18,25 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import React, { MutableRefObject } from "react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { Sheet } from "@/components/ui/sheet";
 
 // Converts long ID to short format
 function shortenUnitId(id: string): string {
-  const parts = id.split('-');
+  const parts = id.split("-");
   // Extract model code (e.g., CS55) and sequence number
-  const modelCode = parts[1]?.toUpperCase() || '';
-  const sequence = parts[parts.length - 1] || '';
+  const modelCode = parts[1]?.toUpperCase() || "";
+  const sequence = parts[parts.length - 1] || "";
   return `${modelCode}${sequence}`;
 }
 
 // Format date to cleaner format
 function formatDate(isoDate: string): string {
   const date = new Date(isoDate);
-  return date.toLocaleDateString('en-GB', { 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   });
 }
 
@@ -51,7 +49,12 @@ interface InventorySheetProps {
   fuelType: string;
   units: VehicleUnit[];
   onEditUnit: (unit: VehicleUnit) => void;
-  onAddUnits: (groupId: string, color: string, quantity: number, status: VehicleStatus) => void;
+  onAddUnits: (
+    groupId: string,
+    color: string,
+    quantity: number,
+    status: VehicleStatus,
+  ) => void;
   onBatchEdit: (units: VehicleUnit[]) => void;
   groupId: string; // Add groupId so we can pass it to onAddUnits
   activeColorTab?: string | null;
@@ -78,17 +81,17 @@ interface TabContentProps {
 }
 
 // Use React.memo to prevent unnecessary re-renders of the entire sheet
-const MemoizedTabContent = React.memo(function TabContent({ 
-  color, 
-  colorData, 
-  onBatchEdit, 
+const MemoizedTabContent = React.memo(function TabContent({
+  color,
+  colorData,
+  onBatchEdit,
   onEditUnit,
   setSelectedColor,
   setShowAddUnitsDialog,
   lastKnownOpenState,
   brand,
   model,
-  trim 
+  trim,
 }: TabContentProps) {
   return (
     <div className="space-y-4">
@@ -124,7 +127,7 @@ const MemoizedTabContent = React.memo(function TabContent({
           ([status, units]) =>
             units && (
               <div
-                key={`${status}-${units.length}-${units[0]?.id || 'empty'}`}
+                key={`${status}-${units.length}-${units[0]?.id || "empty"}`}
                 className="relative p-3 rounded-lg border bg-card"
               >
                 <div className="flex items-center justify-between mb-2">
@@ -147,7 +150,7 @@ const MemoizedTabContent = React.memo(function TabContent({
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {units.map((unit) => (
                     <Button
                       key={unit.id}
@@ -171,7 +174,7 @@ const MemoizedTabContent = React.memo(function TabContent({
                   ))}
                 </div>
               </div>
-            )
+            ),
         )}
       </div>
     </div>
@@ -199,23 +202,37 @@ export const InventorySheet = React.memo(function InventorySheet({
   const [selectedColor, setSelectedColor] = useState("");
   const [allExistingColors, setAllExistingColors] = useState<string[]>([]);
   const { toast } = useToast();
-  
+
   // Refs for event handlers and state
   const sheetRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const lastKnownOpenState = useRef(isOpen);
   const pendingOperationRef = useRef(false);
   const unitsRef = useRef(units);
-  
+
+  // Add a ref to track scroll position
+  const scrollPositionRef = useRef(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Log isOpen state for debugging
+  useEffect(() => {
+    console.log(
+      `InventorySheet [${groupId}]: isOpen=${isOpen}, units=${units.length}`,
+    );
+  }, [isOpen, groupId, units.length]);
+
   // Add a forceUpdate mechanism
   const [forceUpdateKey, setForceUpdateKey] = useState(0);
 
   // Handle clicks outside the sheet to close it
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (sheetRef.current && backdropRef.current && 
-          !sheetRef.current.contains(e.target as Node) && 
-          backdropRef.current.contains(e.target as Node)) {
+      if (
+        sheetRef.current &&
+        backdropRef.current &&
+        !sheetRef.current.contains(e.target as Node) &&
+        backdropRef.current.contains(e.target as Node)
+      ) {
         if (!pendingOperationRef.current) {
           onClose();
         }
@@ -223,52 +240,56 @@ export const InventorySheet = React.memo(function InventorySheet({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener("mousedown", handleOutsideClick);
       return () => {
-        document.removeEventListener('mousedown', handleOutsideClick);
+        document.removeEventListener("mousedown", handleOutsideClick);
       };
     }
   }, [isOpen, onClose]);
-  
+
   // Handle escape key
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !pendingOperationRef.current) {
+      if (e.key === "Escape" && isOpen && !pendingOperationRef.current) {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscKey);
+      document.addEventListener("keydown", handleEscKey);
       return () => {
-        document.removeEventListener('keydown', handleEscKey);
+        document.removeEventListener("keydown", handleEscKey);
       };
     }
   }, [isOpen, onClose]);
-  
+
   // Update our refs when props change
   useEffect(() => {
-    console.log(`InventorySheet [${groupId}]: Visibility change - isOpen=${isOpen}, lastKnownOpenState=${lastKnownOpenState.current}, pendingOperation=${pendingOperationRef.current}`);
+    console.log(
+      `InventorySheet [${groupId}]: Visibility change - isOpen=${isOpen}, lastKnownOpenState=${lastKnownOpenState.current}, pendingOperation=${pendingOperationRef.current}`,
+    );
+
+    // Only set body overflow style to hidden when the sheet is opening
+    // We'll rely on the sheet's own scrolling
     if (isOpen) {
       lastKnownOpenState.current = true;
-      
-      // When opened, prevent body scrolling
-      document.body.style.overflow = 'hidden';
+      // Don't disable body scrolling - we'll make the sheet itself scrollable
     } else if (!pendingOperationRef.current) {
       lastKnownOpenState.current = false;
-      
-      // When closed, restore body scrolling
-      document.body.style.overflow = '';
     }
-    
+
     return () => {
-      // Ensure body scrolling is restored on unmount
-      document.body.style.overflow = '';
+      // Clean up just in case, but don't change body style if pendingOperation is true
+      if (!pendingOperationRef.current) {
+        document.body.style.overflow = "";
+      }
     };
   }, [isOpen, groupId]);
 
   useEffect(() => {
-    console.log(`InventorySheet [${groupId}]: Units updated, count=${units.length}`);
+    console.log(
+      `InventorySheet [${groupId}]: Units updated, count=${units.length}`,
+    );
     unitsRef.current = units;
   }, [units, groupId]);
 
@@ -277,26 +298,26 @@ export const InventorySheet = React.memo(function InventorySheet({
     return units.reduce((acc, unit) => {
       // Normalize color to uppercase for case-insensitive matching
       const normalizedColor = (unit.color || "No Color").toUpperCase();
-      
+
       // Keep original color for display
       const displayColor = unit.color || "No Color";
-      
+
       // Check if we already have an entry with the same color (case-insensitive)
       const existingColorKey = Object.keys(acc).find(
-        key => key.toUpperCase() === normalizedColor
+        (key) => key.toUpperCase() === normalizedColor,
       );
-      
+
       // Use existing color key if found, otherwise use display color
       const colorKey = existingColorKey || displayColor;
-      
+
       if (!acc[colorKey]) {
         acc[colorKey] = {};
       }
-      
+
       if (!acc[colorKey][unit.status]) {
         acc[colorKey][unit.status] = [];
       }
-      
+
       acc[colorKey][unit.status]?.push(unit);
       return acc;
     }, {} as GroupedUnits);
@@ -304,7 +325,7 @@ export const InventorySheet = React.memo(function InventorySheet({
 
   const colors = useMemo(() => Object.keys(groupedUnits), [groupedUnits]);
   const defaultColor = useMemo(() => colors[0] || "No Color", [colors]);
-  
+
   // Manage active color tab
   useEffect(() => {
     if (colors.length > 0) {
@@ -317,69 +338,120 @@ export const InventorySheet = React.memo(function InventorySheet({
       }
     }
   }, [colors, activeColorTab, defaultColor, onActiveColorTabChange]);
-  
+
   useEffect(() => {
     if (colors.length > 0) {
-      setAllExistingColors(colors.filter(color => color !== "No Color"));
+      setAllExistingColors(colors.filter((color) => color !== "No Color"));
     }
   }, [colors]);
-  
+
   // Handle adding units
-  const handleAddUnits = useCallback((data: {
-    color: string;
-    quantity: number;
-    status: VehicleStatus;
-  }) => {
-    console.log(`InventorySheet [${groupId}]: handleAddUnits called with`, data);
-    
-    // Mark that we're processing an operation
-    pendingOperationRef.current = true;
-    // Ensure we remember this sheet was open
-    lastKnownOpenState.current = true;
-    
-    console.log(`InventorySheet [${groupId}]: Setting pendingOperation=true, lastKnownOpenState=true`);
-    
-    // Call parent's function - this will update the available colors
-    onAddUnits(groupId, data.color, data.quantity, data.status);
-    
-    // Reset dialog state but keep sheet open
-    setSelectedColor("");
-    setShowAddUnitsDialog(false);
-    
-    // Force setting the active tab to the color we just added
-    // Note: We need to use a timeout here to let the state updates finish first
-    setTimeout(() => {
-      // This will ensure we switch to the color tab of the units we just added
-      console.log(`InventorySheet [${groupId}]: Switching to color tab for: ${data.color}`);
-      onActiveColorTabChange?.(data.color);
-      
-      // Show feedback to the user
-      toast({
-        title: "Units Added",
-        description: (
-          <div className="flex items-center gap-2 text-emerald-600">
-            <Check className="h-4 w-4" />
-            <span>Added {data.quantity} new {data.color} {brand} {model} {trim} units</span>
-          </div>
-        ),
-      });
-      
-      pendingOperationRef.current = false;
-      console.log(`InventorySheet [${groupId}]: Add units operation completed, pendingOperation=false, sheet should remain open`);
-    }, 300);
-  }, [onAddUnits, groupId, onActiveColorTabChange, toast, brand, model, trim]);
+  const handleAddUnits = useCallback(
+    (data: { color: string; quantity: number; status: VehicleStatus }) => {
+      console.log(
+        `InventorySheet [${groupId}]: handleAddUnits called with`,
+        data,
+      );
+
+      // Mark that we're processing an operation
+      pendingOperationRef.current = true;
+      // Ensure we remember this sheet was open
+      lastKnownOpenState.current = true;
+
+      console.log(
+        `InventorySheet [${groupId}]: Setting pendingOperation=true, lastKnownOpenState=true`,
+      );
+
+      // Call parent's function - this will update the available colors
+      onAddUnits(groupId, data.color, data.quantity, data.status);
+
+      // Reset dialog state but keep sheet open
+      setSelectedColor("");
+      setShowAddUnitsDialog(false);
+
+      // Force setting the active tab to the color we just added
+      // Note: We need to use a timeout here to let the state updates finish first
+      setTimeout(() => {
+        // This will ensure we switch to the color tab of the units we just added
+        console.log(
+          `InventorySheet [${groupId}]: Switching to color tab for: ${data.color}`,
+        );
+        onActiveColorTabChange?.(data.color);
+
+        // Show feedback to the user
+        toast({
+          title: "Units Added",
+          description: (
+            <div className="flex items-center gap-2 text-emerald-600">
+              <Check className="h-4 w-4" />
+              <span>
+                Added {data.quantity} new {data.color} {brand} {model} {trim}{" "}
+                units
+              </span>
+            </div>
+          ),
+        });
+
+        pendingOperationRef.current = false;
+        console.log(
+          `InventorySheet [${groupId}]: Add units operation completed, pendingOperation=false, sheet should remain open`,
+        );
+      }, 300);
+    },
+    [onAddUnits, groupId, onActiveColorTabChange, toast, brand, model, trim],
+  );
 
   const handleCloseDialog = useCallback(() => {
     setShowAddUnitsDialog(false);
     setSelectedColor("");
   }, []);
-  
-  // Force re-render when units change
+
+  // Modify the force re-render mechanism to preserve scroll position
   useEffect(() => {
-    console.log(`InventorySheet [${groupId}]: Force refreshing UI for units update`);
-    setForceUpdateKey(prev => prev + 1);
+    console.log(
+      `InventorySheet [${groupId}]: Force refreshing UI for units update`,
+    );
+
+    // Store current scroll position before update
+    if (contentRef.current) {
+      scrollPositionRef.current = contentRef.current.scrollTop;
+      console.log(`Saving scroll position: ${scrollPositionRef.current}px`);
+    }
+
+    // Update the key to force re-render
+    setForceUpdateKey((prev) => prev + 1);
   }, [units, groupId]);
-  
+
+  // Add an effect to restore scroll position after update
+  useEffect(() => {
+    // Restore scroll position after DOM update - use requestAnimationFrame for smoother transitions
+    if (contentRef.current && scrollPositionRef.current > 0) {
+      // First, make sure any layout changes are applied
+      const applyScroll = () => {
+        if (contentRef.current) {
+          // Apply the scroll position in the next animation frame for smoother visual transition
+          contentRef.current.scrollTop = scrollPositionRef.current;
+
+          // Secondary check to ensure scroll gets properly applied
+          // Sometimes first attempt can be ignored during rapid updates
+          requestAnimationFrame(() => {
+            if (
+              contentRef.current &&
+              Math.abs(
+                contentRef.current.scrollTop - scrollPositionRef.current,
+              ) > 2
+            ) {
+              contentRef.current.scrollTop = scrollPositionRef.current;
+            }
+          });
+        }
+      };
+
+      // Use requestAnimationFrame for smoother visual transition
+      requestAnimationFrame(applyScroll);
+    }
+  }, [forceUpdateKey]);
+
   // Always render the component regardless of visibility to maintain state
   return (
     <>
@@ -388,22 +460,27 @@ export const InventorySheet = React.memo(function InventorySheet({
         ref={backdropRef}
         className={cn(
           "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-all duration-300 ease-in-out",
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         style={{ transition: "opacity 0.3s ease" }}
         aria-hidden="true"
       />
-      
+
       {/* Custom sheet content */}
-      <div 
+      <div
         ref={sheetRef}
         key={`sheet-content-${forceUpdateKey}`}
         className={cn(
-          "fixed z-50 gap-4 bg-background p-0 shadow-lg transition-all duration-300 ease-in-out",
-          "top-0 bottom-0 right-0 h-full w-full sm:max-w-xl rounded-l-lg",
-          isOpen ? "translate-x-0" : "translate-x-full"
+          "fixed z-50 gap-4 bg-background p-0 shadow-lg transition-all duration-300 ease-in-out overflow-y-auto",
+          "top-0 bottom-0 right-0 h-full w-full sm:max-w-3xl rounded-l-lg",
+          isOpen ? "translate-x-0" : "translate-x-full",
         )}
-        style={{ transition: "transform 0.3s ease" }}
+        style={{
+          transition: "transform 0.3s ease",
+          maxHeight: "100vh",
+        }}
       >
         <div className="flex flex-col h-full">
           {/* Close button */}
@@ -420,16 +497,14 @@ export const InventorySheet = React.memo(function InventorySheet({
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </Button>
-          
+
           {/* Header */}
-          <div className="p-4 border-b">
+          <div className="p-4 border-b sticky top-0 bg-background z-10">
             <div className="flex items-center gap-2">
               <Badge variant="secondary" className="h-6 px-2">
                 {brand}
               </Badge>
-              <h2 className="text-lg font-semibold">
-                {model}
-              </h2>
+              <h2 className="text-lg font-semibold">{model}</h2>
             </div>
             <div className="text-sm text-muted-foreground">
               {trim} • {fuelType}
@@ -437,20 +512,24 @@ export const InventorySheet = React.memo(function InventorySheet({
           </div>
 
           {/* Content */}
-          <div className="flex flex-col h-[calc(100vh-8rem)]">
+          <div className="flex-1">
             <Tabs
               value={activeColorTab || defaultColor}
-              onValueChange={onActiveColorTabChange || ((value) => console.log(`No onActiveColorTabChange handler for: ${value}`))}
+              onValueChange={
+                onActiveColorTabChange ||
+                ((value) =>
+                  console.log(
+                    `No onActiveColorTabChange handler for: ${value}`,
+                  ))
+              }
               className="flex-1"
             >
-              <div className="border-b">
+              <div className="border-b sticky top-[73px] bg-background z-10">
                 <div className="px-4 py-2">
-                  <TabsList
-                    className="w-full h-auto p-1 bg-muted/50 gap-1"
-                  >
+                  <TabsList className="w-full h-auto p-1 bg-muted/50 gap-1">
                     {colors.map((color) => (
                       <TabsTrigger
-                        key={color}
+                        key={`tab-${color}`}
                         value={color}
                         className="flex-1 h-11 data-[state=active]:bg-background"
                       >
@@ -461,14 +540,23 @@ export const InventorySheet = React.memo(function InventorySheet({
                 </div>
               </div>
 
-              <ScrollArea className="flex-1">
+              <div
+                ref={contentRef}
+                className="flex-1 overflow-y-auto"
+                style={{
+                  maxHeight: "calc(100vh - 130px)",
+                  willChange: "scroll-position", // Optimize scrolling
+                  overscrollBehavior: "contain", // Prevent scroll chaining
+                }}
+              >
                 {colors.map((color) => (
                   <TabsContent
-                    key={`${color}-${units.filter(u => (u.color || 'No Color') === color).length}`}
+                    key={`content-${color}-${forceUpdateKey}`}
                     value={color}
-                    className="mt-0 p-4"
+                    className="mt-0 p-4 animate-in fade-in-0 duration-300"
+                    {...(color === activeColorTab ? { forceMount: true } : {})}
                   >
-                    <MemoizedTabContent 
+                    <MemoizedTabContent
                       color={color}
                       colorData={groupedUnits[color]}
                       onBatchEdit={onBatchEdit}
@@ -482,15 +570,15 @@ export const InventorySheet = React.memo(function InventorySheet({
                     />
                   </TabsContent>
                 ))}
-              </ScrollArea>
+              </div>
             </Tabs>
           </div>
         </div>
       </div>
-      
+
       {/* Add Units Dialog */}
-      <Dialog 
-        open={showAddUnitsDialog} 
+      <Dialog
+        open={showAddUnitsDialog}
         onOpenChange={(open) => {
           console.log(`Dialog.onOpenChange called with open=${open}`);
           if (!open) {
@@ -500,9 +588,12 @@ export const InventorySheet = React.memo(function InventorySheet({
       >
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New Units - {brand} {model}</DialogTitle>
+            <DialogTitle>
+              Add New Units - {brand} {model}
+            </DialogTitle>
             <DialogDescription>
-              Add new {selectedColor ? `${selectedColor} ` : ""}units to {brand} {model} {trim}
+              Add new {selectedColor ? `${selectedColor} ` : ""}units to {brand}{" "}
+              {model} {trim}
             </DialogDescription>
           </DialogHeader>
           <AddUnitsForm

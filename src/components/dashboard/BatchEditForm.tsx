@@ -38,65 +38,41 @@ export function BatchEditForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" data-oid="7mz.yit">
-      <Alert data-oid="2r6st5w">
-        <AlertCircle className="h-4 w-4" data-oid="_h8ldp:" />
-        <AlertDescription data-oid="lnfa6oa">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
           This will update {units.length} {color} unit
           {units.length > 1 ? "s" : ""}
           currently marked as {currentStatus}
         </AlertDescription>
       </Alert>
 
-      <div className="space-y-2" data-oid="1b0inqx">
-        <Label htmlFor="status" data-oid=":k_d623">
-          New Status
-        </Label>
+      <div className="space-y-2">
+        <Label htmlFor="status">New Status</Label>
         <Select
           value={status}
           onValueChange={(value) => setStatus(value as VehicleStatus)}
-          data-oid="7c7ohkd"
         >
-          <SelectTrigger id="status" data-oid="cd2ozys">
-            <SelectValue placeholder="Select status" data-oid="blayjk2" />
+          <SelectTrigger id="status">
+            <SelectValue placeholder="Select status" />
           </SelectTrigger>
-          <SelectContent data-oid="0gilw3s">
-            <SelectItem value="available" data-oid="2iizwx7">
-              Available
-            </SelectItem>
-            <SelectItem value="display" data-oid=":zx:e1e">
-              Display
-            </SelectItem>
-            <SelectItem value="transit" data-oid="p6mz8.w">
-              In Transit
-            </SelectItem>
-            <SelectItem value="sold" data-oid="6mvtk:r">
-              Sold
-            </SelectItem>
-            <SelectItem value="reserved" data-oid=".2l.x1z">
-              Reserved
-            </SelectItem>
-            <SelectItem value="unavailable" data-oid="1eeq0fj">
-              Unavailable
-            </SelectItem>
+          <SelectContent>
+            <SelectItem value="available">Available</SelectItem>
+            <SelectItem value="display">Display</SelectItem>
+            <SelectItem value="transit">In Transit</SelectItem>
+            <SelectItem value="sold">Sold</SelectItem>
+            <SelectItem value="reserved">Reserved</SelectItem>
+            <SelectItem value="unavailable">Unavailable</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="flex justify-end gap-2 pt-4" data-oid="hmoo1w8">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          data-oid="tpglzi6"
-        >
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button
-          type="submit"
-          disabled={status === currentStatus}
-          data-oid="8z0o67p"
-        >
+        <Button type="submit" disabled={status === currentStatus}>
           Update Units
         </Button>
       </div>

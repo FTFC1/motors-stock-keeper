@@ -46,13 +46,12 @@ export function StatusBadge({ status, count, className }: StatusBadgeProps) {
         config.color,
         className,
       )}
-      data-oid="-8fzhj7"
     >
       {config.label}
       {count !== undefined && (
         <>
-          <span className="w-px h-3 bg-current opacity-20" data-oid="lcax-ul" />
-          <span data-oid="bfm3j8d">{count}</span>
+          <span className="w-px h-3 bg-current opacity-20" />
+          <span>{count}</span>
         </>
       )}
     </span>

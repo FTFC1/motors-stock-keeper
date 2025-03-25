@@ -78,15 +78,11 @@ export function BrandSearchInput({
   };
 
   return (
-    <div className={className} data-oid="dii.o2u">
+    <div className={className}>
       {label && (
-        <Label htmlFor="brand-search" className="mb-2 block" data-oid="okpkbgk">
+        <Label htmlFor="brand-search" className="mb-2 block">
           {label}
-          {required && (
-            <span className="text-destructive ml-1" data-oid=":__8cy0">
-              *
-            </span>
-          )}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Input
@@ -97,7 +93,6 @@ export function BrandSearchInput({
         onChange={handleChange}
         suggestions={brands}
         onSelectSuggestion={handleSelectSuggestion}
-        data-oid="8fb68zn"
       />
     </div>
   );
@@ -108,24 +103,18 @@ export function BrandSearchExample() {
   const [selectedBrand, setSelectedBrand] = useState("");
 
   return (
-    <div
-      className="space-y-4 p-4 border rounded-md max-w-md mx-auto"
-      data-oid="-71gxpb"
-    >
-      <h2 className="text-lg font-semibold" data-oid="i1v3vm2">
-        Search for a Car Brand
-      </h2>
+    <div className="space-y-4 p-4 border rounded-md max-w-md mx-auto">
+      <h2 className="text-lg font-semibold">Search for a Car Brand</h2>
       <BrandSearchInput
         value={selectedBrand}
         onChange={setSelectedBrand}
         required
-        data-oid="k412wxd"
       />
 
       {selectedBrand && (
-        <div className="mt-4 p-3 bg-muted/30 rounded-md" data-oid="98h2-rf">
-          <p className="text-sm" data-oid="zib15ka">
-            Selected brand: <strong data-oid="zqr_4ro">{selectedBrand}</strong>
+        <div className="mt-4 p-3 bg-muted/30 rounded-md">
+          <p className="text-sm">
+            Selected brand: <strong>{selectedBrand}</strong>
           </p>
         </div>
       )}

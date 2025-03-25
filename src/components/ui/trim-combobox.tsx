@@ -33,16 +33,16 @@ export function TrimCombobox({
 }: TrimComboboxProps) {
   // State for dropdown open/close
   const [open, setOpen] = React.useState(false);
-  
+
   // State for input text (unified for search and display)
   const [inputValue, setInputValue] = React.useState("");
-  
+
   // State for highlighted option (keyboard navigation)
   const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
-  
+
   // Reference to input element
   const inputRef = React.useRef<HTMLInputElement>(null);
-  
+
   // Reference to dropdown list container
   const listRef = React.useRef<HTMLDivElement>(null);
 
@@ -55,11 +55,12 @@ export function TrimCombobox({
   // Filter trims based on input text
   const filteredTrims = React.useMemo(() => {
     if (!inputValue && !open) return trims;
-    
+
     const query = inputValue.toLowerCase().trim();
-    return trims.filter(trim => 
-      trim.label.toLowerCase().includes(query) ||
-      trim.description?.toLowerCase().includes(query)
+    return trims.filter(
+      (trim) =>
+        trim.label.toLowerCase().includes(query) ||
+        trim.description?.toLowerCase().includes(query),
     );
   }, [inputValue, open, trims]);
 
@@ -78,7 +79,7 @@ export function TrimCombobox({
         const newTrim = value.replace("__ADD_NEW__:", "");
         setInputValue(newTrim);
       } else {
-        const selectedTrim = trims.find(trim => trim.value === value);
+        const selectedTrim = trims.find((trim) => trim.value === value);
         if (selectedTrim) {
           setInputValue(selectedTrim.label);
         }
@@ -91,18 +92,18 @@ export function TrimCombobox({
   // Computed list including "Add new" option if needed
   const displayedOptions = React.useMemo(() => {
     let options = [...filteredTrims];
-    
+
     if (shouldShowAddNew && inputValue.trim()) {
       options = [
-        { 
-          value: `__ADD_NEW__:${inputValue.trim()}`, 
-          label: `Add "${inputValue.trim()}"`, 
-          description: "Create new trim"
+        {
+          value: `__ADD_NEW__:${inputValue.trim()}`,
+          label: `Add "${inputValue.trim()}"`,
+          description: "Create new trim",
         },
-        ...options
+        ...options,
       ];
     }
-    
+
     return options;
   }, [filteredTrims, shouldShowAddNew, inputValue]);
 
@@ -121,24 +122,27 @@ export function TrimCombobox({
       case "ArrowDown":
         e.preventDefault();
         if (displayedOptions.length > 0) {
-          setHighlightedIndex(prev => 
-            prev < displayedOptions.length - 1 ? prev + 1 : 0
+          setHighlightedIndex((prev) =>
+            prev < displayedOptions.length - 1 ? prev + 1 : 0,
           );
         }
         break;
-        
+
       case "ArrowUp":
         e.preventDefault();
         if (displayedOptions.length > 0) {
-          setHighlightedIndex(prev => 
-            prev > 0 ? prev - 1 : displayedOptions.length - 1
+          setHighlightedIndex((prev) =>
+            prev > 0 ? prev - 1 : displayedOptions.length - 1,
           );
         }
         break;
-        
+
       case "Enter":
         e.preventDefault();
-        if (highlightedIndex >= 0 && highlightedIndex < displayedOptions.length) {
+        if (
+          highlightedIndex >= 0 &&
+          highlightedIndex < displayedOptions.length
+        ) {
           handleSelect(displayedOptions[highlightedIndex].value);
         } else if (displayedOptions.length === 1) {
           handleSelect(displayedOptions[0].value);
@@ -146,12 +150,12 @@ export function TrimCombobox({
           handleSelect(`__ADD_NEW__:${inputValue.trim()}`);
         }
         break;
-        
+
       case "Escape":
         e.preventDefault();
         setOpen(false);
         break;
-        
+
       case "Tab":
         setOpen(false);
         break;
@@ -161,17 +165,17 @@ export function TrimCombobox({
   // Handle item selection
   const handleSelect = (trimValue: string) => {
     onChange(trimValue);
-    
+
     if (trimValue.startsWith("__ADD_NEW__:")) {
       const newTrim = trimValue.replace("__ADD_NEW__:", "");
       setInputValue(newTrim);
     } else {
-      const selectedTrim = trims.find(trim => trim.value === trimValue);
+      const selectedTrim = trims.find((trim) => trim.value === trimValue);
       if (selectedTrim) {
         setInputValue(selectedTrim.label);
       }
     }
-    
+
     setOpen(false);
     inputRef.current?.focus();
   };
@@ -198,9 +202,9 @@ export function TrimCombobox({
         setOpen(false);
       }
     };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Handle scroll into view for highlighted items
@@ -208,13 +212,13 @@ export function TrimCombobox({
     if (highlightedIndex >= 0 && listRef.current) {
       const container = listRef.current;
       const item = container.children[highlightedIndex] as HTMLElement;
-      
+
       if (item) {
         const itemTop = item.offsetTop;
         const itemBottom = itemTop + item.offsetHeight;
         const containerTop = container.scrollTop;
         const containerBottom = containerTop + container.offsetHeight;
-        
+
         if (itemTop < containerTop) {
           container.scrollTop = itemTop;
         } else if (itemBottom > containerBottom) {
@@ -227,10 +231,10 @@ export function TrimCombobox({
   return (
     <div className="relative w-full">
       {/* Main Input Field */}
-      <div 
+      <div
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-1 focus-within:ring-ring",
-          open && "ring-1 ring-ring"
+          open && "ring-1 ring-ring",
         )}
         onClick={() => {
           setOpen(true);
@@ -268,7 +272,7 @@ export function TrimCombobox({
             variant="ghost"
             size="sm"
             className="h-4 w-4 p-0 opacity-70 hover:opacity-100 ml-2"
-            onClick={() => setOpen(prev => !prev)}
+            onClick={() => setOpen((prev) => !prev)}
             type="button"
             disabled={disabled}
           >
@@ -301,9 +305,10 @@ export function TrimCombobox({
                 className={cn(
                   "relative flex cursor-default select-none items-center justify-between rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
                   {
-                    "bg-accent text-accent-foreground": index === highlightedIndex,
-                    "font-medium": value === option.value
-                  }
+                    "bg-accent text-accent-foreground":
+                      index === highlightedIndex,
+                    "font-medium": value === option.value,
+                  },
                 )}
               >
                 <div>
@@ -323,9 +328,10 @@ export function TrimCombobox({
                     </>
                   )}
                 </div>
-                {value === option.value && !option.value.startsWith("__ADD_NEW__:") && (
-                  <Check className="h-4 w-4 opacity-70" />
-                )}
+                {value === option.value &&
+                  !option.value.startsWith("__ADD_NEW__:") && (
+                    <Check className="h-4 w-4 opacity-70" />
+                  )}
               </div>
             ))
           )}
@@ -333,4 +339,4 @@ export function TrimCombobox({
       )}
     </div>
   );
-} 
+}

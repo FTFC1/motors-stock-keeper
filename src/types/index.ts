@@ -46,34 +46,47 @@ export interface VehicleGroup {
   statusCounts: Record<VehicleStatus, number>;
 }
 
+export type SortOption =
+  | "newest"
+  | "oldest"
+  | "az"
+  | "za"
+  | "quantity-asc"
+  | "quantity-desc"
+  | "units-asc"
+  | "units-desc"
+  | "available-asc"
+  | "available-desc"
+  | "brand-asc"
+  | "brand-desc";
+
+export interface FilterState {
+  search: string;
+  brand?: string;
+  model?: string;
+  trim?: string;
+  fuelType?: string;
+  wheelDrive?: WheelDriveType;
+  transmissionType?: TransmissionType;
+  status?: VehicleStatus;
+  sort?: SortOption;
+}
+
 export interface FilterOptions {
   brands: string[];
   models: string[];
   trims: string[];
   fuelTypes: string[];
-  wheelDrives?: WheelDriveType[];
-  transmissionTypes?: TransmissionType[];
-  statuses: VehicleStatus[];
-}
-
-export type SortOption = 'newest' | 'oldest' | 'az' | 'za' | 'quantity-asc' | 'quantity-desc';
-
-export interface FilterState {
-  search: string;
-  brand: string;
-  model: string;
-  trim: string;
-  fuelType: string;
-  wheelDrive: WheelDriveType | '';
-  transmissionType: TransmissionType | '';
-  status: VehicleStatus | '';
-  sort: SortOption;
+  wheelDrives: string[];
+  transmissionTypes: string[];
+  statuses: string[];
+  modelToBrand: Record<string, string>; // Maps model names to their corresponding brand
 }
 
 // Brand group for brand-first organization
 export interface BrandGroup {
   brand: string;
-  vehicleGroups: VehicleGroup[];
-  totalStock: number;
-  statusCounts: Record<VehicleStatus, number>;
+  totalUnits: number;
+  availableUnits: number;
+  models: Set<string>;
 }

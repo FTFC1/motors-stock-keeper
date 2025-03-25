@@ -40,41 +40,29 @@ export function ButtonModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange} data-oid="0:rkya7">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <div
         onClick={() => setOpen(true)}
         className={cn("cursor-pointer", className)}
-        data-oid="ebpnk9k"
       >
         {trigger}
       </div>
-      <DialogContent
-        className={cn("sm:max-w-[425px]", contentClassName)}
-        data-oid="0wm7w3a"
-      >
-        <DialogHeader data-oid="lvj2gx0">
-          <DialogTitle
-            className="text-lg font-semibold text-[#1E2A44]"
-            data-oid="p6hd2a8"
-          >
+      <DialogContent className={cn("sm:max-w-[425px]", contentClassName)}>
+        <DialogHeader>
+          <DialogTitle className="text-lg font-semibold text-[#1E2A44]">
             {title}
           </DialogTitle>
           {description && (
-            <DialogDescription
-              className="text-sm text-muted-foreground"
-              data-oid="4f-imok"
-            >
+            <DialogDescription className="text-sm text-muted-foreground">
               {description}
             </DialogDescription>
           )}
         </DialogHeader>
 
-        <div className="py-4" data-oid="9m5c1rc">
-          {children}
-        </div>
+        <div className="py-4">{children}</div>
 
         {footerContent && (
-          <DialogFooter className="flex justify-end gap-2" data-oid="51k7e9c">
+          <DialogFooter className="flex justify-end gap-2">
             {footerContent}
           </DialogFooter>
         )}
@@ -87,28 +75,23 @@ export function ButtonModal({
 export function ButtonModalExample() {
   return (
     <ButtonModal
-      trigger={
-        <Button variant="default" data-oid="r:131h8">
-          Open Modal
-        </Button>
-      }
+      trigger={<Button variant="default">Open Modal</Button>}
       title="Modal Title"
       description="This is a description of the modal content."
       footerContent={
         <>
-          <Button variant="outline" onClick={() => {}} data-oid="a_bou9c">
+          <Button variant="outline" onClick={() => {}}>
             Cancel
           </Button>
-          <Button variant="default" onClick={() => {}} data-oid="kr11y:e">
+          <Button variant="default" onClick={() => {}}>
             Save Changes
           </Button>
         </>
       }
-      data-oid="3-jiw6g"
     >
-      <div className="space-y-4" data-oid="w2.emnk">
-        <p data-oid="awap.d6">This is the main content of the modal.</p>
-        <p data-oid="775fpoy">You can add any components or content here.</p>
+      <div className="space-y-4">
+        <p>This is the main content of the modal.</p>
+        <p>You can add any components or content here.</p>
       </div>
     </ButtonModal>
   );
